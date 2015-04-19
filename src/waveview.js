@@ -9,6 +9,8 @@
  * This work is licensed under the MIT License (MIT)
  */
 
+ 'use strict';
+
 function WaveView() {
   this.init.apply(this, arguments);
 }
@@ -101,7 +103,7 @@ WaveView.prototype = (function() {
 
     // compute amplitude by averaging over n values  in the range [rangeL, rangeR]
     function avgAmp(dataIndex, rangeL, rangeR, n) {
-      sum = 0.0;
+      var sum = 0.0;
       for (var i=rangeL; i<=rangeR; i++)
         sum += Math.abs(data[dataIndex + i]);
       return sum/n;
@@ -186,7 +188,7 @@ WaveView.prototype = (function() {
   // create a color stop variation for the colors provided (used for drawing the gradient)
   function _createColorVariations() {
     var colors = { waveColor: [], progressColor: [], hoverColor: [] };
-    for (c in colors) {
+    for (var c in colors) {
       var tmp = WP.UTILS.hex2rgb(this._params[c]);
       colors[c].push(tmp);
       tmp = WP.UTILS.rgb2hsv(tmp);

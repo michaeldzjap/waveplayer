@@ -1,3 +1,5 @@
+'use strict';
+
 var WP = {};
 
 /************
@@ -123,7 +125,7 @@ WP.UTILS.hsv2rgb = function(hsv) {
 
 WP.UTILS.getJSON = function(url) {
   return new Promise(function(resolve, reject) {
-    xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     xhr.onreadystatechange = function() {
       if (xhr.readyState === XMLHttpRequest.DONE) {

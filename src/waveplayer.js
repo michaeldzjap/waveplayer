@@ -9,6 +9,8 @@
  * This work is licensed under the MIT License (MIT)
  */
 
+'use strict';
+
 function WavePlayer() {
   this.init.apply(this, arguments);
 }
