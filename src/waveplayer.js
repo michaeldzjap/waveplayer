@@ -97,10 +97,7 @@ WavePlayer.prototype = (function() {
 
     // initialize the player
     init: function(options) {
-      this.defaultOptions = {
-        repeat: false,
-        onEnd: null
-      };
+      this.defaultOptions = { };
       this._mediator = new WP.Mediator();
 
       this._params = WP.UTILS.extend({}, this.defaultOptions, options, {
@@ -113,15 +110,18 @@ WavePlayer.prototype = (function() {
     // schedule a playlist
     schedulePlaylist: function(options) {
       var me = this;
-      var scheduler = WP.UTILS.stateResolver(function* (urls) {
+      this._scheduler = WP.UTILS.stateResolver(function* (urls) {
         try {
           for (var i=0; i<urls.length; i++) {
             yield me.load(urls[i]);
+            me._mediator.fire('canplay');
             if (i > 0)
               me.play();
             else if (options.onStart)
-              options.onStart.call(me);
+              options.onStart.call(null);
             yield me.ended();
+            if (options.onChange)
+              options.onChange.call(null);
           }
           return 'ended';
         } catch (err) {
@@ -131,15 +131,20 @@ WavePlayer.prototype = (function() {
         }*/
       });
 
-      scheduler(options.urls).then(
+      this._scheduler(options.urls).then(
         function(response) {
+          console.log(response);
           if (options.onEnd)
-            options.onEnd.call(me, response);
+            options.onEnd.call(null, response);
         },
         function(err) {
           console.error(err);
         }
       );
+    },
+
+    cancelPlaylist: function() {
+      this._scheduler = null;
     },
 
     // returns a promise which may be used to perform an action when playback finishes
@@ -170,23 +175,29 @@ WavePlayer.prototype = (function() {
       );
     },
 
-    isPlaying: function() {
-      return !this.audioElm.paused;
+    on: function(topic, fn) {
+      this._mediator.on(topic, fn);
     },
 
-    play: function(fn) {
-      this.audioElm.play();
+    isPlaying: function() {
+      return this.audioElm && !this.audioElm.paused ? true : false;
+    },
+
+    play: function() {
+      this.audioElm && this.audioElm.play();
     },
 
     pause: function() {
-      this.audioElm.pause();
+      this.audioElm && this.audioElm.pause();
     },
 
     volume: function(val) {
-      if (!val)
-        return this.audioElm.volume;
-      else
-        this.audioElm.volume = val;
+      if (this.audioElm) {
+        if (!val)
+          return this.audioElm.volume;
+        else
+          this.audioElm.volume = val;
+      }
     },
 
     interact: function(bool) {
@@ -198,19 +209,24 @@ WavePlayer.prototype = (function() {
     },
 
     skipToSec: function(sec) {
-      this.audioElm.currentTime = sec;
+      if (this.audioElm)
+        this.audioElm.currentTime = sec;
     },
 
     destroy: function() {
       this.pause();
-      this.audioElm.removeEventListener('canplay');
-      this.audioElm.removeEventListener('error');
-      this.audioElm.removeEventListener('timeupdate', this.__timeUpdateHandler);
-      if (this.__ended)
-        this.audioElm.removeEventListener('ended', this.__ended);
-      this._mediator.unAll();
-      this.audioElm.parentNode && this.audioElm.parentNode.removeChild(this.audioElm);
-      this.audioElm = null;
+      if (this._scheduler)
+        this._scheduler = null;
+      if (this.audioElm) {
+        this.audioElm.removeEventListener('canplay');
+        this.audioElm.removeEventListener('error');
+        this.audioElm.removeEventListener('timeupdate', this.__timeUpdateHandler);
+        if (this.__ended)
+          this.audioElm.removeEventListener('ended', this.__ended);
+        this._mediator.unAll();
+        this.audioElm.parentNode && this.audioElm.parentNode.removeChild(this.audioElm);
+        this.audioElm = null;
+      }
       this.waveView.destroy();
     }
 
