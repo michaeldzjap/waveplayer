@@ -1,0 +1,23 @@
+header {
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 30px;
+}
+
+.btn-circle {
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  padding-top: 6px;
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.42;
+  border-radius: 30px;
+}
+
+.glyphicon {
+  font-size: 30px;
+}
+
+#controls, #waveform {
+  margin-bottom: 30px;
+}
