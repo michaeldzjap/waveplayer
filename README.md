@@ -159,3 +159,8 @@ View the code for a full playlist example [here](/examples/demo.js)
   **Arguments**:
   `val` sets the audio playback volume to this value (if provided, otherwise current set value is returned).
   
+### waveplayer.js Events
+
+* `canplay` - Identical to the corresponding [Media event](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events). Sent when enough data is available that the media can be played, at least for a couple of frames.
+* `waveclicked` - Sent when the user clicks somewhere on the waveform. Callback will receive a float denoting the progress `[0..1]`.
+* `waveclickplay` - Sent when the user initiates playback by clicking on the waveform view with the mouse.
