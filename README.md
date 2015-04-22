@@ -94,7 +94,7 @@ View the code for a full playlist example [here](/examples/demo.js)
 
   Setter or getter for enabling/disabling mouse interaction with the waveform view.
   
-  ###### Arguments:
+  **Arguments**:
   `bool` is an optional boolean value for determining whether mouse interaction with the waveform view should be enabled or disabled.
 
 * `isPlaying()`
@@ -105,7 +105,7 @@ View the code for a full playlist example [here](/examples/demo.js)
 
   Subscribe to an event with a custom event handler.
   
-  ###### Arguments:
+  **Arguments**:
   `topic` is a string denoting a valid event name to which to subscribe.
   
   `fn()` is the callback thay will be evaluated every time the event is fired.
@@ -122,14 +122,14 @@ View the code for a full playlist example [here](/examples/demo.js)
 
   Setter or getter for enabling/disabling responsive mode for the waveform view. If set, the width of the waveform view will adapt to the width of its parent container element.
   
-  ###### Arguments:
+  **Arguments**:
   `bool` is an optional boolean value for determining whether to switch between a responsive or fixed design of the waveform view.
 
 * `schedulePlaylist(options)`
 
   Schedules a new playlist.
   
-  ###### Arguments:
+  **Arguments**:
   `options` is an associative array holding the following objects:
     - `urls`: Array of URL's. **Required**
     - `onStart()`: Optional callback function that will be evaluated when first track in playlist has finished loading.
@@ -140,14 +140,14 @@ View the code for a full playlist example [here](/examples/demo.js)
 
   Set the current time in seconds from which to playback audio.
   
-  ###### Arguments:
+  **Arguments**:
   `sec` is a float value denoting the current time from which to playback the audio file.
 
 * `un(topic, fn)`
   
   Unsubscribe a particular callback or from the whole event all together.
 
-  ###### Arguments:
+  **Arguments**:
   `topic` is a string denoting a valid event name from which to unsubscribe.
   
   `fn()` is an optional callback from which to unsubscribe.
@@ -156,6 +156,6 @@ View the code for a full playlist example [here](/examples/demo.js)
 
   Set or get the audio playback volume, range: `[0 - 1]`.
   
-  ###### Arguments:
+  **Arguments**:
   `val` sets the audio playback volume to this value (if provided, otherwise current set value is returned).
   
