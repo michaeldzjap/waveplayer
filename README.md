@@ -1,6 +1,6 @@
 # waveplayer.js
 
-An HTML5 based audio player with a waveform view.
+An HTML5 based audio player with a waveform view. The conceptual idea behind waveplayer.js is inspired by [wavesurfer.js](http://www.wavesurfer.fm/) and [waveform.js](http://www.waveformjs.org/), although the actual implementation of it is quite different from both. 
 
 ![Screenshot](waveform.png?raw=true "Example")
 
@@ -162,6 +162,7 @@ View the code for a full playlist example [here](/examples/demo.js)
 ### waveplayer.js Events
 
 * `canplay` - Identical to the corresponding [Media event](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events). Sent when enough data is available so that the media can be played, at least for a couple of frames.
+* `ended` - Identical to the corresponding [Media event](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events). Sent when playback of an audio file is completed.
 * `playlistended` - Sent when the playlist has finished playing all the queued audio.
 * `playlistqueued` - Sent when the the first audio file in the playlist has finished loading.
 * `waveclicked` - Sent when the user clicks somewhere on the waveform. Callback will receive a float denoting the progress `[0..1]`.
