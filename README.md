@@ -55,4 +55,5 @@ waveplayer.schedulePlaylist({
   }
 });
 ```
-```
+
+View the code for a full playlist example [here](/examples/demo.js)
