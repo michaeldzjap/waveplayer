@@ -14,7 +14,6 @@
     var play = false;
     $listItems.click(function(e) {
       var $currItem = $(this), startPlayback = arguments[1];
-      waveplayer.cancelPlaylist();    // cancel the current playlist
       $listItems.removeClass('active');
       $(this).addClass('active');
 
@@ -22,8 +21,10 @@
       waveplayer.schedulePlaylist({
         urls: urls,
         onStart: function() {
+          waveplayer.un('ended');
           if (typeof startPlayback === 'undefined') {
             waveplayer.play();
+            play = true;
             $icon.removeClass('glyphicon-play').addClass('glyphicon-pause');
           }
         },
@@ -36,8 +37,13 @@
           }
         },
         onEnd: function() {
-          waveplayer.pause();
+          play = false;
           $icon.removeClass('glyphicon-pause').addClass('glyphicon-play');
+          waveplayer.on('ended', function() {
+            console.log('track ended');
+            play = false;
+            $icon.removeClass('glyphicon-pause').addClass('glyphicon-play');
+          });
         }
       });
 
@@ -45,17 +51,29 @@
     });
     $listItems.first().trigger('click', false);
 
-    waveplayer.on('canplay', function() {
-      $('#play-pause').click(function(e) {
-        play = !play;
-        if (play) {
-          waveplayer.play();
-          $icon.removeClass('glyphicon-play').addClass('glyphicon-pause');
-        } else {
-          waveplayer.pause();
-          $icon.removeClass('glyphicon-pause').addClass('glyphicon-play');
-        }
-      });
+
+    /*
+     * Might need another solution here: what if audio has not loaded yet???
+     * Could use 'playlistqueued' event, but would have to remove/rebind on every new
+     * event in order to avoid storing multiple identical click event handlers in
+     * waveplayer's mediator object.
+     */
+    // click handler for play-pause button
+    $('#play-pause').click(function(e) {
+      play = !play;
+      if (play) {
+        waveplayer.play();
+        $icon.removeClass('glyphicon-play').addClass('glyphicon-pause');
+      } else {
+        waveplayer.pause();
+        $icon.removeClass('glyphicon-pause').addClass('glyphicon-play');
+      }
+    });
+
+    // click handler for when user clicks on waveform view
+    waveplayer.on('waveclickplay', function() {
+      play = !play;
+      $icon.removeClass('glyphicon-play').addClass('glyphicon-pause');
     });
 
   });

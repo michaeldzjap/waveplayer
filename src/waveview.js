@@ -68,7 +68,7 @@ WaveView.prototype = (function() {
   }
 
   function _mouseClickHandler(e) {
-    this._mediator.fire('click', _coord2Progress.call(this, e));
+    this._mediator.fire('waveclicked', _coord2Progress.call(this, e));
   }
 
   function _resizeHandler() {
@@ -187,7 +187,7 @@ WaveView.prototype = (function() {
 
   // create a color stop variation for the colors provided (used for drawing the gradient)
   function _createColorVariations() {
-    var colors = { waveColor: [], progressColor: [], hoverColor: [] };
+    var colors = { waveColor: [], progressColor: [] };
     for (var c in colors) {
       var tmp = WP.UTILS.hex2rgb(this._params[c]);
       colors[c].push(tmp);
@@ -212,9 +212,8 @@ WaveView.prototype = (function() {
         height: 128,
         waveColor: '#428bca',
         progressColor: '#31708f',
-        hoverColor: '#72868f',
-        barWidth: 1,
-        barGap: 0,
+        barWidth: 4,
+        barGap: 1,
         interact: true,
         responsive: true,
         data: null

@@ -25,11 +25,16 @@ WP.Mediator.prototype = (function() {
     un: function(topic, callback) {
       if (!this._topics.hasOwnProperty(topic))
         return false;
-      for (var i=0; i<this._topics[topic].length; i++) {
-        if (this._topics[topic][i] === callback) {
-          this._topics[topic].splice(i, 1);
-          return true;
+      if (callback) {
+        for (var i=0; i<this._topics[topic].length; i++) {
+          if (this._topics[topic][i] === callback) {
+            this._topics[topic].splice(i, 1);
+            return true;
+          }
         }
+      } else {
+        delete this._topics[topic];
+        return true;
       }
       return false;
     },

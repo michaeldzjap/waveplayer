@@ -28,7 +28,10 @@ WavePlayer.prototype = (function() {
       me.audioElm.autoplay = false;
       me.audioElm.preload = 'auto';
       me.waveView.container.appendChild(me.audioElm);
-      me.audioElm.addEventListener('canplay', resolve('canplay'));
+      me.audioElm.addEventListener('canplay', function() {
+        me._mediator.fire('canplay');
+        resolve('canplay');
+      });
 
       me.audioElm.addEventListener('error', function(e) {
         switch (e.target.error.code) {
@@ -78,14 +81,15 @@ WavePlayer.prototype = (function() {
 
   function _mediatorHandler() {
     if (this.__onClickHandler)
-      this._mediator.un('click', this.__onClickHandler);
+      this._mediator.un('waveclicked', this.__onClickHandler);
     this.__onClickHandler = (function(progress) {
-      if (!this.isPlaying())  // start playback from beginning if waveform is clicked
+      if (!this.isPlaying()) {  // start playback from beginning if waveform is clicked
         this.play();
-      else                  // skip to new position in audio file
+        this._mediator.fire('waveclickplay');
+      } else                  // skip to new position in audio file
         this.skipToSec(progress*this.audioElm.duration);
     }).bind(this);
-    this._mediator.on('click', this.__onClickHandler);
+    this._mediator.on('waveclicked', this.__onClickHandler);
   }
 
   function _duration2Progress(time) {
@@ -110,20 +114,26 @@ WavePlayer.prototype = (function() {
     // schedule a playlist
     schedulePlaylist: function(options) {
       var me = this;
+
+      if (this._scheduler)    // cancel current playlist before starting a new one
+        this._scheduler = null;
+
       this._scheduler = WP.UTILS.stateResolver(function* (urls) {
         try {
           for (var i=0; i<urls.length; i++) {
             yield me.load(urls[i]);
-            me._mediator.fire('canplay');
             if (i > 0)
               me.play();
-            else if (options.onStart)
-              options.onStart.call(null);
+            else {
+              me._mediator.fire('playlistqueued');
+              if (options.onStart)
+                options.onStart.call(null);
+            }
             yield me.ended();
             if (options.onChange)
               options.onChange.call(null);
           }
-          return 'ended';
+          return 'playlistended';
         } catch (err) {
           console.error(err);
         } /*finally {
@@ -134,6 +144,7 @@ WavePlayer.prototype = (function() {
       this._scheduler(options.urls).then(
         function(response) {
           console.log(response);
+          me._mediator.fire(response);
           if (options.onEnd)
             options.onEnd.call(null, response);
         },
@@ -154,6 +165,7 @@ WavePlayer.prototype = (function() {
         if (me.__ended)
           me.audioElm.removeEventListener('ended', me.__ended);
         me.__ended = (function(e) {
+          me._mediator.fire('ended');
           resolve('ended');
         }).bind(me);
         me.audioElm.addEventListener('ended', me.__ended);
@@ -177,6 +189,10 @@ WavePlayer.prototype = (function() {
 
     on: function(topic, fn) {
       this._mediator.on(topic, fn);
+    },
+
+    un: function(topic, fn) {
+      this._mediator.un(topic, fn);
     },
 
     isPlaying: function() {
