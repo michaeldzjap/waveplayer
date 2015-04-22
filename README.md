@@ -96,6 +96,7 @@ View the code for a full playlist example [here](/examples/demo.js)
   
   ###### Arguments:
   `topic` is a string denoting a valid event name.
+  
   `fn()` is the callback thay will be evaluated every time the event is fired.
 
 * `schedulePlaylist(options)`
