@@ -89,15 +89,27 @@ View the code for a full playlist example [here](/examples/demo.js)
 * `load()`
 
   Load an audio file from a URL and return a Promise which may be used to perform an action when the audio file has finished loading.
+
+* `isPlaying()`
+
+  Returns a bool indicating whether audio is currently playing or not.
   
 * `on(topic, fn)`
 
   Subscribe to an event with a custom event handler.
   
   ###### Arguments:
-  `topic` is a string denoting a valid event name.
+  `topic` is a string denoting a valid event name to which to subscribe.
   
   `fn()` is the callback thay will be evaluated every time the event is fired.
+  
+* `pause()`
+
+  Pause the currently playing audio file.
+  
+* `play()`
+
+  Start playback of currently loaded audio file.
 
 * `schedulePlaylist(options)`
 
@@ -109,3 +121,17 @@ View the code for a full playlist example [here](/examples/demo.js)
     - `onStart()`: Optional callback function that will be evaluated when first track in playlist has finished loading.
     - `onChange()`: Optional callback function that will be evaluated between playback of consecutive tracks.
     - `onEnd()`: Optional callback function that will be evaluated when the playlist reaches its end.
+
+* `un(topic, fn)`
+  
+  Unsubscribe a particular callback or from the whole event all together.
+
+  ###### Arguments:
+  `topic` is a string denoting a valid event name from which to unsubscribe.
+  
+  `fn()` is an optional callback from which to unsubscribe.
+  
+* `volume(val)`
+
+  Set or get the audio playback volume, range: `[0 - 1]`.
+  
