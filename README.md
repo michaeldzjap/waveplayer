@@ -92,7 +92,7 @@ View the code for a full playlist example [here](/examples/demo.js)
   
   ###### Arguments:
   `options` is an associative array holding the following objects:
-    - `urls`: Array of URL's **Required**
+    - `urls`: Array of URL's. **Required**
     - `onStart()`: Optional callback function that will be evaluated when first track in playlist has finished loading.
     - `onChange()`: Optional callback function that will be evaluated between playback of consecutive tracks.
     - `onEnd()`: Optional callback function that will be evaluated when the playlist reaches its end.
