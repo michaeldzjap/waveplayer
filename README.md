@@ -57,3 +57,17 @@ waveplayer.schedulePlaylist({
 ```
 
 View the code for a full playlist example [here](/examples/demo.js)
+
+### waveplayer.js Options
+
+| option | type | default | description |
+| --- | --- | --- | --- |
+| `barGap` | integer | `1` | Gap between bars in pixels. |
+| `barWidth` | integer | `4` | Width of a bar in pixels. |
+| `container` | mixed | `null` | **Required**: CSS-selector or HTML-element for displaying the waveform. |
+| `data` | array | `null` | An array of floating point values representing waveform amplitudes. Note that it is not required to set this explicitly as an option, although it ultimately needs to be supplied by the user somehow (see the `load` method for more information). |
+| `height` | integer | `128` | The height of the waveform in pixels. |
+| `interact` | boolean | `true` | Enables/disables mouse interaction with the waveform view. This may be changed at any point after creation. |
+| `progressColor` | string | `#31708f` | The fill color of the waveform bars that have been played back so far. |
+| `responsive` | boolean | `true` | If set to true, the width of the waveform view adapts to the width of the container element. |
+| `waveColor` | string | `#428bca` | The fill color of the waveform bars that have not been played back so far. |
