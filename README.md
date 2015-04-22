@@ -86,6 +86,10 @@ View the code for a full playlist example [here](/examples/demo.js)
   
   Returns a Promise which may be used to perform an action when a track finishes.
 
+* `load()`
+
+  Load an audio file from a URL and return a Promise which may be used to perform an action when the audio file has finished loading.
+
 * `schedulePlaylist(options)`
 
   Schedules a new playlist.
