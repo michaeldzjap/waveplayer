@@ -15,7 +15,7 @@ waveplayer.js is especially targeted towards the playback and visualisation of l
 
 There exist a number of tools for extracting waveform data in JSON format from an audio file; [wav2json](https://github.com/beschulz/wav2json) or [py-wav2json](https://github.com/michaeldzjap/py-wav2json) can be used for instance. It is enough to provide a single array of floating point values. If the JSON contains an associative array, only the first entree will be used.
 
-### Examples
+### Example 1: load an audio file and play it
 
 Create a waveplayer.js instance and pass in some (optional) options:
 
@@ -28,11 +28,31 @@ var waveplayer = new WavePlayer({
 });
 ```
 
-Load an audio file from an URL and do something when loading has finished
+Load an audio file from a URL and start playback when loading has finished:
 
 ```javascript
 waveplayer.load("audio/fm2.mp3")
   .then(function() {
     waveplayer.play();
   });
+```
+
+### Example 2: schedule a playlist and play it through from start to finish
+
+Load some audio files from a URL and start playback when loading has finished:
+
+```javascript
+waveplayer.schedulePlaylist({
+  urls: ["audio/fm2.mp3", "audio/fm3.mp3", "audio/fm7.mp3", "audio/fm8.mp3", "audio/fm13.mp3"],
+  onStart: function() {   // optional function to be evaluated when first track has finished loading
+    waveplayer.play();
+  },
+  onChange: function() {  // optional function to be evaluated between playback of consecutive tracks
+    console.log("next track will be loaded");
+  },
+  onEnd: function() {     // optional function to be evaluated when the playlist reached its end
+    console.log("playlist is finished");
+  }
+});
+```
 ```
