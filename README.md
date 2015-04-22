@@ -89,10 +89,17 @@ View the code for a full playlist example [here](/examples/demo.js)
 * `load()`
 
   Load an audio file from a URL and return a Promise which may be used to perform an action when the audio file has finished loading.
+  
+* `interact(bool)`
+
+  Setter or getter for enabling/disabling mouse interaction with the waveform view.
+  
+  ###### Arguments:
+  `bool` is an optional boolean value for determining whether mouse interaction with the waveform view should be enabled or disabled.
 
 * `isPlaying()`
 
-  Returns a bool indicating whether audio is currently playing or not.
+  Returns a boolean indicating whether audio is currently playing or not.
   
 * `on(topic, fn)`
 
@@ -110,6 +117,13 @@ View the code for a full playlist example [here](/examples/demo.js)
 * `play()`
 
   Start playback of currently loaded audio file.
+  
+* `responsive(bool)`
+
+  Setter or getter for enabling/disabling responsive mode for the waveform view. If set, the width of the waveform view will adapt to the width of its parent container element.
+  
+  ###### Arguments:
+  `bool` is an optional boolean value for determining whether to switch between a responsive or fixed design of the waveform view.
 
 * `schedulePlaylist(options)`
 
@@ -121,6 +135,13 @@ View the code for a full playlist example [here](/examples/demo.js)
     - `onStart()`: Optional callback function that will be evaluated when first track in playlist has finished loading.
     - `onChange()`: Optional callback function that will be evaluated between playback of consecutive tracks.
     - `onEnd()`: Optional callback function that will be evaluated when the playlist reaches its end.
+
+* `skipToSec(sec)`
+
+  Set the current time in seconds from which to playback audio.
+  
+  ###### Arguments:
+  `sec` is a float value denoting the current time from which to playback the audio file.
 
 * `un(topic, fn)`
   
@@ -134,4 +155,7 @@ View the code for a full playlist example [here](/examples/demo.js)
 * `volume(val)`
 
   Set or get the audio playback volume, range: `[0 - 1]`.
+  
+  ###### Arguments:
+  `val` sets the audio playback volume to this value (if provided, otherwise current set value is returned).
   
