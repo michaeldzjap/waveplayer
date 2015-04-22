@@ -89,6 +89,14 @@ View the code for a full playlist example [here](/examples/demo.js)
 * `load()`
 
   Load an audio file from a URL and return a Promise which may be used to perform an action when the audio file has finished loading.
+  
+* `on(topic, fn)`
+
+  Subscribe to an event with a custom event handler.
+  
+  ###### Arguments:
+  `topic` is a string denoting a valid event name.
+  `fn()` is the callback thay will be evaluated every time the event is fired.
 
 * `schedulePlaylist(options)`
 
