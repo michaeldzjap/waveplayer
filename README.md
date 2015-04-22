@@ -27,3 +27,12 @@ var waveplayer = new WavePlayer({
   height: 128
 });
 ```
+
+Load an audio file from an URL and do something when loading has finished
+
+```javascript
+waveplayer.load("audio/fm2.mp3")
+  .then(function() {
+    waveplayer.play();
+  });
+```
