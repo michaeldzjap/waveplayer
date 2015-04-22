@@ -71,3 +71,28 @@ View the code for a full playlist example [here](/examples/demo.js)
 | `progressColor` | string | `#31708f` | The fill color of the waveform bars that have been played back so far. |
 | `responsive` | boolean | `true` | If set to true, the width of the waveform view adapts to the width of the container element. |
 | `waveColor` | string | `#428bca` | The fill color of the waveform bars that have not been played back so far. |
+
+### waveplayer.js Methods
+
+* `cancelPlaylist()`
+
+  Cancels the currently active playlist (will also stop the audio instantly). 
+  
+* `destroy()`
+  
+  Stops playback, cancels any running playlists and unsubscribes from any events that are listened for.
+
+* `ended()`
+  
+  Returns a Promise which may be used to perform an action when a track finishes.
+
+* `schedulePlaylist(options)`
+
+  Schedules a new playlist.
+  
+  ###### Arguments:
+  `options` is an associative array holding the following objects:
+    - `urls`: Array of URL's **Required**
+    - `onStart()`: Optional callback function that will be evaluated when first track in playlist has finished loading.
+    - `onChange()`: Optional callback function that will be evaluated between playback of consecutive tracks.
+    - `onEnd()`: Optional callback function that will be evaluated when the playlist reaches its end.
