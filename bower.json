@@ -1,0 +1,25 @@
+{
+  "name": "waveplayer.js",
+  "version": "0.1.1",
+  "homepage": "https://github.com/michaeldzjap/waveplayer.js",
+  "authors": [
+    "Michael Dzjaparidze <michael.dzjaparidze@gmail.com>"
+  ],
+  "description": "An HTML5 based audio player with a waveform view",
+  "keywords": [
+    "audio",
+    "player",
+    "waveform",
+    "canvas",
+    "html5",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
