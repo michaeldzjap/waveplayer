@@ -27,7 +27,7 @@ WaveView.prototype = (function() {
 
   function _createWaveContainer() {
     this.waveContainer = document.createElement('div');
-    this.waveContainer.id = 'waveform-container';
+    this.waveContainer.className = 'waveform-container';
     this.container.appendChild(this.waveContainer);
     this.style(this.waveContainer, {
       display: 'block',
