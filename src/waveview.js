@@ -40,6 +40,7 @@ WaveView.prototype = (function() {
   }
 
   function _createCanvas() {
+    var me = this;
     var clientWidth = this.waveContainer.clientWidth;
     var canvas = this.waveContainer.appendChild(
       this.style(document.createElement('canvas'), {
@@ -76,7 +77,7 @@ WaveView.prototype = (function() {
       if (this.__resizeHandler)
         window.removeEventListener('resize', this.__resizeHandler);
       this.__resizeHandler = (function(e) {
-        var width = this.waveContainer.clientWidth
+        var width = this.waveContainer.clientWidth;
         this.style(this.canvasContext.canvas, { width: width + 'px' });
         this.canvasContext.canvas.width = width;
         this._barData = _calcAvgAmps.call(this);
@@ -254,9 +255,30 @@ WaveView.prototype = (function() {
 
     // update an existing wave
     updateWave: function(progress) {
-      this._progress = progress;
+      if (progress)
+        this._progress = progress;
       this.clearWave();
-      _drawBars.call(this, progress*this.waveContainer.clientWidth);
+      _drawBars.call(this, this._progress*this.waveContainer.clientWidth);
+    },
+
+    width: function(val) {
+      if (val) {
+        this.style(this.waveContainer, { width: 100 + '%' });
+        this.style(this.canvasContext.canvas, { width: val + 'px' });
+        this.canvasContext.canvas.width = val;
+        this._barData = _calcAvgAmps.call(this);
+      } else
+        return this.waveContainer.clientWidth;
+    },
+
+    height: function(val) {
+      if (val) {
+        this.style(this.waveContainer, { height: 100 + '%' });
+        this.style(this.canvasContext.canvas, { height: val + 'px' });
+        this.canvasContext.canvas.height = val;
+        this._barData = _calcAvgAmps.call(this);
+      } else
+        return this.waveContainer.clientHeight;
     },
 
     // clear the wave before new drawing
