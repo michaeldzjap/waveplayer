@@ -40,7 +40,6 @@
           play = false;
           $icon.removeClass('glyphicon-pause').addClass('glyphicon-play');
           waveplayer.on('ended', function() {
-            console.log('track ended');
             play = false;
             $icon.removeClass('glyphicon-pause').addClass('glyphicon-play');
           });

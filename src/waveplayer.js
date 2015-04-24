@@ -143,7 +143,6 @@ WavePlayer.prototype = (function() {
 
       this._scheduler(options.urls).then(
         function(response) {
-          console.log(response);
           me._mediator.fire(response);
           if (options.onEnd)
             options.onEnd.call(null, response);
