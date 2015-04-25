@@ -9,7 +9,7 @@ Author: Michael Dzjaparidze
 License: MIT
 
 ### Browser Support & Other Requirements
-waveplayer.js relies on new ES6 features such as Promises and Generators, and hence, will only work on modern browsers. waveplayer.js is tested to work on Chrome, Firefox, Safari and Opera (no Internet Explorer yet).
+waveplayer.js relies on new ES6 features such as promises and generators, and hence, will only work on modern browsers. waveplayer.js is tested to work on Chrome, Firefox and Opera (no Internet Explorer yet). Safari 8 doesn't seem to support generators yet.
 
 In order to minimize waveform drawing and audio file loading times, it is necessary to supply an URL to a JSON file representing the waveform of the audio file numerically. This JSON file should be named identically to the corresponding audio file and should exist at the same location. If this JSON file does not exist, an error will be raised.
 
