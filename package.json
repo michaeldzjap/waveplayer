@@ -1,0 +1,36 @@
+{
+  "name": "waveplayer.js",
+  "version": "1.0.0",
+  "description": "A HTML and JavaScript based audio player with a waveform view",
+  "main": "dist/waveplayer.min.js",
+  "es6": "src/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/rollup --config",
+    "watch": "./node_modules/.bin/rollup --config --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaeldzjap/waveplayer.js.git"
+  },
+  "keywords": [
+    "audio",
+    "waveform",
+    "canvas",
+    "html",
+    "javascript"
+  ],
+  "author": "Michael Dzjaparidze",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaeldzjap/waveplayer.js/issues"
+  },
+  "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
+  "devDependencies": {
+    "babel-eslint": "^8.0.3",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-eslint": "^4.0.0",
+    "rollup-plugin-uglify": "^2.0.1"
+  }
+}
