@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A HTML and JavaScript based audio player with a waveform view",
   "main": "dist/waveplayer.min.js",
-  "es6": "src/index.js",
+  "jsnext:main": "src/index.js",
   "scripts": {
     "build": "./node_modules/.bin/rollup --config",
     "watch": "./node_modules/.bin/rollup --config --watch"
@@ -32,5 +32,11 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-eslint": "^4.0.0",
     "rollup-plugin-uglify": "^2.0.1"
-  }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist/",
+    "src/"
+  ]
 }

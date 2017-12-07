@@ -131,3 +131,20 @@ export const stateResolver = generatorFunction => {
         });
     };
 };
+
+/**
+ * Set the CSS styles for the given element.
+ *
+ * @param {object} elm
+ * @param {object} styles
+ * @return {object}
+ */
+export const style = (elm, styles) => {
+    for (const key in styles) {
+        if (elm.style[key] !== styles[key]) {
+            elm.style[key] = styles[key];
+        }
+    }
+
+    return elm;
+};
