@@ -9,7 +9,7 @@
  * This work is licensed under the ISC License (ISC)
  */
 
-import { style, hex2rgb, rgb2hsv, hsv2rgb } from './lib';
+import { style, hex2rgb, rgb2hsv, hsv2rgb } from './lib/index.js';
 
 class WaveView {
 
@@ -20,6 +20,7 @@ class WaveView {
      */
     _defaultOptions = {
         container: null,
+        width: 512,
         height: 128,
         waveColor: '#428bca',
         progressColor: '#31708f',
@@ -71,6 +72,13 @@ class WaveView {
      * @var {object};
      */
     _colors;
+
+    /**
+     * The progress in the range [0-1] of the waveform.
+     *
+     * @var {number}
+     */
+    _progress = 0;
 
     /**
      * Initialize a new waveview instance.
@@ -182,6 +190,97 @@ class WaveView {
         this._initializeResizeHandler();
     }
 
+    /**
+     * Get the width of the drawn waveform.
+     *
+     * @return {number}
+     */
+    get width() {
+        return this._waveContainer.clientWidth;
+    }
+
+    /**
+     * Set the width of the drawn waveform. Only has an effect if the waveview
+     * instance is not operating in responsive mode.
+     *
+     * @param {number} value
+     * @return {void}
+     */
+    set width(value) {
+        this._options.width = value;
+        if (!this._options.responsive) {
+            style(this._waveContainer, {width: this._options.width + 'px'});
+            style(this._canvasContext.canvas, {width: this._options.width + 'px'});
+            this._canvasContext.canvas.width = this._options.width;
+            this._barData = this._calcAvgAmps();
+        }
+    }
+
+    /**
+     * Get the height of the drawn waveform.
+     *
+     * @return {number}
+     */
+    get height() {
+        return this._waveContainer.clientHeight;
+    }
+
+    /**
+     * Set the height of the drawn waveform.
+     *
+     * @param {number} value
+     * @return {void}
+     */
+    set height(value) {
+        this._options.height = value;
+        style(this._waveContainer, {height: this._options.height + 'px'});
+        style(this.canvasContext.canvas, {height: this._options.height + 'px'});
+        this._canvasContext.canvas.height = this._options.height;
+        this._barData = this._calcAvgAmps();
+    }
+
+    /*********************
+     * Public functions. *
+     *********************/
+
+    /**
+     * Draw a waveform from supplied waveform data.
+     *
+     * @param {array} values
+     * @param {number} progress
+     * @param {void}
+     */
+    drawWave(values, progress) {
+        this.data = values;
+        this._progress = progress;
+        this._barData = this._calcAvgAmps();
+        this.clearWave();
+        this._drawBars(this._progress * this._waveContainer.clientWidth);
+    }
+
+    /**
+     * Update an existing waveform.
+     *
+     * @param {number} progress
+     * @return {void}
+     */
+    updateWave(progress) {
+        if (progress) {
+            this._progress = progress;
+        }
+        this.clearWave();
+        this._drawBars(this._progress * this._waveContainer.clientWidth);
+    }
+
+    /**
+     * Clear the canvas HTML element where the waveform is drawn in.
+     *
+     * @return {void}
+     */
+    clearWave() {
+        this._canvasContext.clearRect(0, 0, this._canvasContext.canvas.width, this._canvasContext.canvas.height);
+    }
+
     /**********************
      * Private functions. *
      **********************/
@@ -196,10 +295,10 @@ class WaveView {
         this._waveContainer = document.createElement('div');
         this._waveContainer.className = 'waveform-container';
         this._container.appendChild(this._waveContainer);
-        this.style(this._waveContainer, {
+        style(this._waveContainer, {
             display: 'block',
             position: 'relative',
-            width: '100%',
+            width: this._options.responsive ? '100%' : this._options.width + 'px',
             height: this._options.height + 'px',
             overflow: 'hidden'
         });
@@ -265,13 +364,13 @@ class WaveView {
             let tmp = hex2rgb(this._options[c]);
             colors[c].push(tmp);
             tmp = rgb2hsv(tmp);
-            colors[c].push(hsv2rgb({ h: tmp.h, s: tmp.s, v: tmp.v * 1.4 }));
+            colors[c].push(hsv2rgb({h: tmp.h, s: tmp.s, v: tmp.v * 1.4}));
         }
 
         colors.dc = {
-            r: (colors.waveColor[0].r - colors.progressColor[0].r),
-            g: (colors.waveColor[0].g - colors.progressColor[0].g),
-            b: (colors.waveColor[0].b - colors.progressColor[0].b)
+            r: colors.waveColor[0].r - colors.progressColor[0].r,
+            g: colors.waveColor[0].g - colors.progressColor[0].g,
+            b: colors.waveColor[0].b - colors.progressColor[0].b
         };
 
         return colors;
@@ -290,9 +389,12 @@ class WaveView {
             if (this._resizeHandler) {
                 window.removeEventListener('resize', this._resizeHandler);
             }
+            style(this._waveContainer, {width: this._options.width});
 
             return;
         }
+
+        style(this._waveContainer, {width: '100%'});
 
         if (this._resizeHandler) {
             window.removeEventListener('resize', this._resizeHandler);
@@ -352,6 +454,85 @@ class WaveView {
         bd.norm = 1 / Math.max.apply(Math, bd.amps);
 
         return bd;
+    }
+
+    /**
+     * Draw the individual waveform bars with a gradient.
+     *
+     * @param {number} progressCoord
+     * @return {void}
+     */
+    _drawBars(progressCoord) {
+        const ctx = this.canvasContext;
+        const h0 = ctx.canvas.height;
+        const totalBarWidth = this._options.barWidth + this._options.barGap;
+        let changeGrad = true;
+        let gradient = this._generateGradient(this._colors.progressColor, h0);
+
+        ctx.fillStyle = gradient;
+
+        for (let i = 0; i < this._barData.x.length; i++) {
+            const xpos = this._barData.x[i];
+            if (xpos >= progressCoord - totalBarWidth && changeGrad) {
+                if (xpos >= progressCoord) {   // gradient rule for bars after currently playing bar
+                    gradient = this._generateGradient(this._colors.waveColor, h0);
+                    ctx.fillStyle = gradient;
+                    changeGrad = false;   // more efficient: avoids changing this gradient rule multiple times per single function call
+                } else {  // fade between colors when on currently playing bar
+                    const incr = (progressCoord - xpos) / totalBarWidth;
+                    const c1 = {
+                        r: this._colors.waveColor[0].r - this._colors.dc.r * incr,
+                        g: this._colors.waveColor[0].g - this._colors.dc.g * incr,
+                        b: this._colors.waveColor[0].b - this._colors.dc.b * incr
+                    };
+                    let c2 = rgb2hsv(c1);
+                    c2 = hsv2rgb({h: c2.h, s: c2.s, v: c2.v * 1.4});
+                    gradient = this._generateGradient([c1, c2], h0);
+                    ctx.fillStyle = gradient;
+                }
+            }
+            const h = Math.max(h0 * this._barData.amps[i] * this._barData.norm, 0.5);
+            ctx.fillRect(xpos, (h0 - h) / 2, this._options.barWidth, h);
+        }
+    }
+
+    /**
+     * Generate a linear gradient from the provided colors.
+     *
+     * @param {array} c
+     * @param {number} h
+     * @return {object}
+     */
+    _generateGradient(c, h) {
+        const grd = this.canvasContext.createLinearGradient(0, 0, 0, h);
+        const c1 = 'rgba(' + ~~c[1].r + ', ' + ~~c[1].g + ', ' + ~~c[1].b + ', 1)';
+        grd.addColorStop(0.0, c1);
+        grd.addColorStop(0.3, 'rgba(' + ~~c[0].r + ', ' + ~~c[0].g + ', ' + ~~c[0].b + ', 1)');
+        grd.addColorStop(1.0, c1);
+
+        return grd;
+    }
+
+    /**
+     * Calculate the x-coordinate of the current mouse position. The origin is
+     * assumed to be at the location of the waveform container HTML element.
+     *
+     * @param {object} e
+     * @return {number}
+     */
+    _calcMouseCoordX(e) {
+        e.preventDefault();
+        return e.clientX - this._waveContainer.getBoundingClientRect().left;
+    }
+
+    /**
+     * Convert a coordinate to a progress in the range [0-1].
+     *
+     * @param {object} e
+     * @return {number}
+     */
+    _coord2Progress(e) {
+        return this._calcMouseCoordX(e) / this._waveContainer.clientWidth;
     }
 
 }

@@ -3,7 +3,7 @@ import eslint from 'rollup-plugin-eslint';
 import uglify from 'rollup-plugin-uglify';
 
 export default [
-    {
+    /*{
         entry: 'src/index.js',
         dest: 'dist/waveplayer.min.js',
         format: 'cjs',
@@ -15,7 +15,7 @@ export default [
             }),
             uglify()
         ]
-    },
+    },*/
     {
         entry: 'src/index.js',
         dest: 'dist/waveplayer.js',
@@ -26,13 +26,16 @@ export default [
                 exclude: 'node_modules/**'
             })
         ]
-    }
+    }/*,
     {
         entry: 'src/index.js',
         dest: 'dist/waveplayer.es6.js',
         format: 'es',
         plugins: [
-            eslint()
+            eslint(),
+            babel({
+                exclude: 'node_modules/**'
+            })
         ]
-    }
+    }*/
 ];

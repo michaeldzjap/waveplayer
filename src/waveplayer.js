@@ -11,7 +11,7 @@
 
 import Mediator from './Mediator.js';
 import WaveView from './WaveView.js';
-import { stateResolver, getJSON } from './lib';
+import { stateResolver, getJSON } from './lib/index.js';
 
 class WavePlayer {
 
@@ -237,7 +237,7 @@ class WavePlayer {
                 }
                 return 'waveplayer:playlist:ended';
             } catch (err) {
-                console.error(err);
+                // console.error(err);
             }
         });
 
@@ -248,9 +248,7 @@ class WavePlayer {
                     options.onEnd.call(null, response);
                 }
             },
-            (err) => {
-                console.error(err);
-            }
+            err => console.error(err)
         );
     }
 

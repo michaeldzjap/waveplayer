@@ -1,0 +1,33 @@
+{
+  "name": "playlist example",
+  "version": "1.0.0",
+  "description": "A playlist example for waveplayer.js",
+  "main": "dist/playlist.js",
+  "jsnext:main": "src/playlist.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack --progress --hide-modules",
+    "watch": "./node_modules/.bin/webpack --watch --progress --hide-modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaeldzjap/waveplayer.js.git"
+  },
+  "keywords": [
+    "audio",
+    "waveform",
+    "canvas",
+    "html",
+    "javascript"
+  ],
+  "author": "Michael Dzjaparidze",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaeldzjap/waveplayer.js/issues"
+  },
+  "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "webpack": "^3.10.0"
+  }
+}
