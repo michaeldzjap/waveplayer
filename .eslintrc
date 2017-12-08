@@ -28,5 +28,8 @@
             "error",
             "always"
         ]
+    },
+    "globals": {
+        "__dirname": false
     }
 }

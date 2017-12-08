@@ -1,4 +1,4 @@
-import WavePlayer from '../dist/waveplayer.js';
+import WavePlayer from '../../dist/waveplayer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Create a new waveplayer.js instance
