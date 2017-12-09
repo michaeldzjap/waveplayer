@@ -11,7 +11,8 @@
 
 import Mediator from './Mediator.js';
 import WaveView from './WaveView.js';
-import { stateResolver, getJSON } from './lib/index.js';
+import Playlist from './Playlist.js';
+import { getJSON } from './lib/index.js';
 
 class WavePlayer {
 
@@ -38,11 +39,11 @@ class WavePlayer {
     _audioElm;
 
     /**
-     * The scheduler instance used for handling a playlist.
+     * The playlist instance.
      *
-     * @var {Object}
+     * @var {Playlist}
      */
-    _scheduler;
+    _playlist;
 
     /**
      * Initialize a new waveplayer instance.
@@ -142,7 +143,6 @@ class WavePlayer {
             Promise.resolve((() => {
                 this._audioElm.src = url;
                 this._audioElm.load();
-                console.log(1);
             })()),
             this._getWaveformData(url)
         ]);
@@ -208,49 +208,18 @@ class WavePlayer {
     }
 
     /**
-     * Schedule a playlist.
+     * Create a new playlist.
      *
      * @param {Array} urls
+     * @param {Object} options
      * @return {void}
      */
-    schedulePlaylist(urls) {
-        if (!urls || !(urls instanceof Array)) {
-            throw new TypeError('Argument \'urls\' is invalid.');
-        }
+    createPlaylist(urls, options = {}) {
 
-        if (urls.length === 0) {
-            throw new Error('Argument \'urls\' needs to contain at least 1 item.');
-        }
-
-        // cancel current playlist before starting a new one
+        // Cancel current playlist before starting a new one
         this.cancelPlaylist();
 
-        this._scheduler = stateResolver((function* (urls) {
-            try {
-                let i = 0;
-                for (i = 0; i < urls.length; i++) {
-                    yield this.load(urls[i]);
-                    console.log(3);
-                    if (i > 0) {
-                        WavePlayer._mediator.fire('waveplayer:playlist:next', this, {url: urls[i], trackNumber: i + 1});
-                        this.play();
-                    } else {
-                        WavePlayer._mediator.fire('waveplayer:playlist:ready', this);
-                    }
-                    // Wait until the current track finishes playing
-                    yield this._onEnd();
-                }
-
-                return i;
-            } catch (err) {
-                // console.error(err);
-            }
-        })).bind(this);
-
-        this._scheduler(urls).then(
-            response => WavePlayer._mediator.fire('waveplayer:playlist:finished', response),
-            err => console.log(err)
-        );
+        this._playlist = new Playlist(this._audioElm, urls, options);
     }
 
     /**
@@ -259,8 +228,8 @@ class WavePlayer {
      * @return {void}
      */
     cancelPlaylist() {
-        if (this._scheduler) {
-            this._scheduler = null;
+        if (this._playlist) {
+            this._playlist.destroy();
         }
     }
 
@@ -396,7 +365,6 @@ class WavePlayer {
                     } else {
                         this._waveView.drawWave(response, 0);
                     }
-                    console.log(2);
                     resolve('waveplayer:json:fetched');
                 })
                 .catch(err => reject(err));
@@ -421,22 +389,6 @@ class WavePlayer {
      */
     _progressToDuration(progress) {
         return progress * this._audioElm.duration;
-    }
-
-    /**
-     * Return a promise that resolves itself when the HTML audio element fires an
-     * 'ended' event (i.e. when an audio track finished playing).
-     *
-     * @return {Promise}
-     */
-    _onEnd() {
-        return new Promise((resolve) => {
-            if (this._ended) {
-                this._audioElm.removeEventListener('ended', this._ended);
-            }
-            this._ended = () => resolve('ended');
-            this._audioElm.addEventListener('ended', this._ended.bind(this));
-        });
     }
 
 }

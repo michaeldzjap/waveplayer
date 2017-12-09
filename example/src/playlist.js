@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     trackNodes = [...document.querySelectorAll('.panel-block')];
 
     // Schedule a new playlist and load the first audio track
-    wavePlayer.schedulePlaylist(
+    wavePlayer.createPlaylist(
         // Fetch audio URL's
         trackNodes.map(elm => elm.dataset.url)
     );
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fired after the next track in the playlist is loaded and just before it
     // will start playing
-    wavePlayer.on('waveplayer:playlist:next', (me, trackInfo) => console.log(trackInfo));
+    wavePlayer.on('waveplayer:playlist:next', handleChange);
 
     for (const trackNode of trackNodes) {
         trackNode.onclick = handleClick.bind(null, trackNode);
@@ -73,18 +73,59 @@ const handleClick = node => {
     }
 
     if (trackNumber !== state.selectedTrackNumber) {
-        const previousNode = trackNodes.find(trackNode => state.selectedTrackNumber === parseInt(trackNode.dataset.trackNumber));
+        switchTracks(node);
 
-        // Update the play/pause icons
-        addClass(removeClass(previousNode.firstElementChild.firstElementChild, 'fa-pause'), 'fa-play');
-        addClass(removeClass(node.firstElementChild.firstElementChild, 'fa-play'), 'fa-pause');
+        // console.log(trackNumber, state.selectedTrackNumber);
+        // if (trackNumber > state.selectedTrackNumber) {
+        //     for (let i = 0; i < trackNumber - state.selectedTrackNumber; i++) {
+        //         console.log(i);
+        //         wavePlayer.next();
+        //     }
+        // }
 
-        // Update the active panel block
-        removeClass(previousNode, 'is-active');
-        addClass(node, 'is-active');
+        setState({selectedTrackNumber: trackNumber});
 
-        setState({selectedTrackNumber: trackNumber, isPlaying: true});
+        // Schedule a new playlist
+        // wavePlayer.schedulePlaylist(
+        //     // Fetch audio URL's
+        //     (trackNumber === 1 ? trackNodes : trackNodes.slice(trackNumber - 1))
+        //         .map(elm => elm.dataset.url),
+        //     {autoPlay: true}
+        // );
     }
+};
+
+/**
+ * Update the UI in response to switching tracks.
+ *
+ * @param {node} node
+ * @param {Number} trackNumber
+ * @return {void}
+ */
+const switchTracks = node => {
+    const previousNode = trackNodes.find(trackNode => state.selectedTrackNumber === parseInt(trackNode.dataset.trackNumber));
+
+    // Update the play/pause icons
+    addClass(removeClass(previousNode.firstElementChild.firstElementChild, 'fa-pause'), 'fa-play');
+    addClass(removeClass(node.firstElementChild.firstElementChild, 'fa-play'), 'fa-pause');
+
+    // Update the active panel block
+    removeClass(previousNode, 'is-active');
+    addClass(node, 'is-active');
+};
+
+/**
+ * Handle the case where the waveplayer instance advances to the next track in
+ * the playlist.
+ *
+ * @param {WavePlayer} me
+ * @param {Object} trackInfo
+ * @return {void}
+ */
+const handleChange = (me, {url, trackNumber}) => {
+    console.log(url, trackNumber);
+    const node = trackNodes.find(trackNode => trackNumber === parseInt(trackNode.dataset.trackNumber));
+    switchTracks(node, trackNumber);
 };
 
 /**

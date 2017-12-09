@@ -148,3 +148,11 @@ export const style = (elm, styles) => {
 
     return elm;
 };
+
+/**
+ * Check if the given value is an objet
+ *
+ * @param {mixed} value
+ * @return {boolean}
+ */
+export const isObject = value => value === Object(value); 
