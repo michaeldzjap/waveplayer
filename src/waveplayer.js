@@ -306,12 +306,11 @@ class WavePlayer {
             // that indicates the position of the click relative to the starting point
             // of the waveform
             this._onClickHandler = progress => {
-                if (!this.isPlaying()) {    // Start playback from beginning if nothing is playing currently
-                    this.play();
-                    WavePlayer._mediator.fire('waveplayer:start-playback');
-                } else {    // Skip to new position in audio file if we are currently playing something
-                    this.skipTo(this._progressToDuration(progress));
-                    WavePlayer._mediator.fire('waveplayer:skip-playback');
+                if (this.isPlaying()) {
+                    // Skip to new position in audio file if we are currently playing something
+                    const time = this._progressToDuration(progress);
+                    this.skipTo(time);
+                    WavePlayer._mediator.fire('waveplayer:skipped', this, time);
                 }
             };
             WavePlayer._mediator.on('waveview:clicked', this._onClickHandler.bind(this));
