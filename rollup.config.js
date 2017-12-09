@@ -11,7 +11,9 @@ export default [
         plugins: [
             eslint(),
             babel({
-                exclude: 'node_modules/**'
+                exclude: 'node_modules/**',
+                plugins: ['external-helpers', 'transform-runtime'],
+                runtimeHelpers: true
             }),
             uglify()
         ]
@@ -23,7 +25,9 @@ export default [
         plugins: [
             eslint(),
             babel({
-                exclude: 'node_modules/**'
+                exclude: 'node_modules/**',
+                plugins: ['external-helpers', 'transform-runtime'],
+                runtimeHelpers: true
             })
         ]
     },
@@ -34,7 +38,9 @@ export default [
         plugins: [
             eslint(),
             babel({
-                exclude: 'node_modules/**'
+                exclude: 'node_modules/**',
+                plugins: ['external-helpers', 'transform-runtime'],
+                runtimeHelpers: true
             })
         ]
     }

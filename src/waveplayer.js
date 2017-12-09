@@ -139,10 +139,11 @@ class WavePlayer {
      */
     load(url) {
         return Promise.all([
-            Promise.resolve(() => {
+            Promise.resolve((() => {
                 this._audioElm.src = url;
                 this._audioElm.load();
-            }),
+                console.log(1);
+            })()),
             this._getWaveformData(url)
         ]);
     }
@@ -209,46 +210,46 @@ class WavePlayer {
     /**
      * Schedule a playlist.
      *
-     * @param {object} options
+     * @param {array} urls
+     * @return {void}
      */
-    schedulePlaylist(options) {
-        const me = this;
+    schedulePlaylist(urls) {
+        if (!urls || !(urls instanceof Array)) {
+            throw new TypeError('Argument \'urls\' is invalid.');
+        }
+
+        if (urls.length === 0) {
+            throw new Error('Argument \'urls\' needs to contain at least 1 item.');
+        }
 
         // cancel current playlist before starting a new one
         this.cancelPlaylist();
 
-        this._scheduler = stateResolver(function* (urls) {
+        this._scheduler = stateResolver((function* (urls) {
             try {
-                for (let i = 0; i < urls.length; i++) {
-                    yield me.load(urls[i]);
+                let i = 0;
+                for (i = 0; i < urls.length; i++) {
+                    yield this.load(urls[i]);
+                    console.log(3);
                     if (i > 0) {
-                        me.play();
+                        WavePlayer._mediator.fire('waveplayer:playlist:next', i);
+                        this.play();
                     } else {
-                        WavePlayer._mediator.fire('waveplayer:playlist:queued');
-                        if (options.onStart) {
-                            options.onStart.call(null);
-                        }
-                        // Wait until the current track finishes playing
-                        yield me._onEnd();
-                        if (options.onChange) {
-                            options.onChange.call(null);
-                        }
+                        WavePlayer._mediator.fire('waveplayer:playlist:ready');
                     }
+                    // Wait until the current track finishes playing
+                    yield this._onEnd();
                 }
-                return 'waveplayer:playlist:ended';
+
+                return i;
             } catch (err) {
                 // console.error(err);
             }
-        });
+        })).bind(this);
 
-        this._scheduler(options.urls).then(
-            (response) => {
-                WavePlayer._mediator.fire(response);
-                if (options.onEnd) {
-                    options.onEnd.call(null, response);
-                }
-            },
-            err => console.error(err)
+        this._scheduler(urls).then(
+            response => WavePlayer._mediator.fire('waveplayer:playlist:finished', response),
+            err => console.log(err)
         );
     }
 
@@ -390,17 +391,16 @@ class WavePlayer {
     _getWaveformData(url) {
         return new Promise((resolve, reject) => {
             getJSON(url.substr(0, url.lastIndexOf('.')) + '.json')
-                .then((response) => {
+                .then(response => {
                     if (typeof response === 'object') {
                         this._waveView.drawWave(response[Object.keys(response)[0]], 0);
                     } else {
                         this._waveView.drawWave(response, 0);
                     }
+                    console.log(2);
                     resolve('waveplayer:json:fetched');
                 })
-                .catch(function(err) {
-                    reject(err);
-                });
+                .catch(err => reject(err));
         });
     }
 
@@ -411,7 +411,7 @@ class WavePlayer {
      * @return {number}
      */
     _durationToProgress(time) {
-        return time / this.audioElm.duration;
+        return time / this._audioElm.duration;
     }
 
     /**
@@ -421,7 +421,7 @@ class WavePlayer {
      * @return {number}
      */
     _progressToDuration(progress) {
-        return progress * this.audioElm.duration;
+        return progress * this._audioElm.duration;
     }
 
     /**

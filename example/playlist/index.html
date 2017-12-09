@@ -7,10 +7,42 @@
 
     <title>waveplayer.js | Playlist Example</title>
 
+    <link rel="stylesheet" type="text/css" href="../node_modules/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="../node_modules/bulma/css/bulma.css">
 </head>
 <body>
-
+    <div class="container">
+        <h1 class="title is-2">waveplayer.js</h1>
+        <h2 class="subtitle">Playlist Example</h2>
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+                <div id="waveform"></div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+                <nav class="panel">
+                    <p class="panel-heading">Select a track:</p>
+                    <a class="panel-block is-active" data-url="../audio/extase_1.mp3" data-track-number="1">
+                        <span class="panel-icon"><i class="fa fa-play" aria-hidden="true"></i></span> Extase 1
+                        <span class="tag is-rounded" style="margin-left:auto;">08:40</span>
+                    </a>
+                    <a class="panel-block" data-url="../audio/extase_2_3_4.mp3" data-track-number="2">
+                        <span class="panel-icon"><i class="fa fa-play" aria-hidden="true"></i></span> Extase 2, 3 & 4
+                        <span class="tag is-rounded" style="margin-left:auto;">19:33</span>
+                    </a>
+                    <a class="panel-block" data-url="../audio/extase_3_version.mp3" data-track-number="3">
+                        <span class="panel-icon"><i class="fa fa-play" aria-hidden="true"></i></span> Extase 3 (Version)
+                        <span class="tag is-rounded" style="margin-left:auto;">05:15</span>
+                    </a>
+                    <a class="panel-block" data-url="../audio/extase_4_version.mp3" data-track-number="4">
+                        <span class="panel-icon"><i class="fa fa-play" aria-hidden="true"></i></span> Extase 4 (Version)
+                        <span class="tag is-rounded" style="margin-left:auto;">13:51</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="../dist/manifest.js"></script>

@@ -89,8 +89,7 @@ class WaveView {
      */
     constructor(data, options) {
         this._data = data;
-        this._options = {...options};
-
+        this._options = {...this._defaultOptions, ...options};
         this.container = 'string' === typeof this._options.container ?
             document.querySelector(this._options.container) : this._options.container;
 
@@ -463,7 +462,7 @@ class WaveView {
      * @return {void}
      */
     _drawBars(progressCoord) {
-        const ctx = this.canvasContext;
+        const ctx = this._canvasContext;
         const h0 = ctx.canvas.height;
         const totalBarWidth = this._options.barWidth + this._options.barGap;
         let changeGrad = true;
@@ -504,7 +503,7 @@ class WaveView {
      * @return {object}
      */
     _generateGradient(c, h) {
-        const grd = this.canvasContext.createLinearGradient(0, 0, 0, h);
+        const grd = this._canvasContext.createLinearGradient(0, 0, 0, h);
         const c1 = 'rgba(' + ~~c[1].r + ', ' + ~~c[1].g + ', ' + ~~c[1].b + ', 1)';
         grd.addColorStop(0.0, c1);
         grd.addColorStop(0.3, 'rgba(' + ~~c[0].r + ', ' + ~~c[0].g + ', ' + ~~c[0].b + ', 1)');
