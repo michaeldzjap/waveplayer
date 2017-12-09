@@ -61,7 +61,7 @@ class WavePlayer {
         Promise.all([
             this._initializeAudioElm(),
             this._initializeWaveViewInteraction()
-        ]);
+        ]).then(() => WavePlayer._mediator.fire('waveplayer:initialized'));
     }
 
     /************************
@@ -297,7 +297,7 @@ class WavePlayer {
      * @return {Promise}
      */
     _initializeWaveViewInteraction() {
-        return Promise.resolve(() => {
+        return Promise.resolve((() => {
             if (this._onClickHandler) {
                 WavePlayer._mediator.un('waveview:clicked', this._onClickHandler);
             }
@@ -315,7 +315,7 @@ class WavePlayer {
                 }
             };
             WavePlayer._mediator.on('waveview:clicked', this._onClickHandler.bind(this));
-        });
+        })());
     }
 
     /**

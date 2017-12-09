@@ -287,6 +287,21 @@ class WaveView {
         this._canvasContext.clearRect(0, 0, this._canvasContext.canvas.width, this._canvasContext.canvas.height);
     }
 
+    /**
+     * Destroy the waveview instance and do the appropriate clean up.
+     *
+     * @return {void}
+     */
+    destroy() {
+        this._removeCanvasHandlers();
+        if (this._resizeHandler) {
+            window.removeEventListener('resize', this._resizeHandler);
+        }
+        WavePlayer._mediator.unAll();
+        this._waveContainer && this._container.removeChild(this._waveContainer);
+        this._waveContainer = null;
+    }
+
     /**********************
      * Private functions. *
      **********************/
@@ -342,8 +357,9 @@ class WaveView {
      * @return {void}
      */
     _addCanvasHandlers() {
-        console.log(WavePlayer._mediator);
-        this._mouseClickHandler = e => WavePlayer._mediator.fire('waveview:clicked', this._coord2Progress(e));
+        this._mouseClickHandler = e => (
+            WavePlayer._mediator.fire('waveview:clicked', this._coord2Progress(e))
+        );
         this._canvasContext.canvas.addEventListener('click', this._mouseClickHandler.bind(this));
     }
 
@@ -524,7 +540,7 @@ class WaveView {
      * Calculate the x-coordinate of the current mouse position. The origin is
      * assumed to be at the location of the waveform container HTML element.
      *
-     * @param {Object} e
+     * @param {MouseEvent} e
      * @return {Number}
      */
     _calcMouseCoordX(e) {
@@ -535,7 +551,7 @@ class WaveView {
     /**
      * Convert a coordinate to a progress in the range [0-1].
      *
-     * @param {Object} e
+     * @param {MouseEvent} e
      * @return {Number}
      */
     _coord2Progress(e) {
