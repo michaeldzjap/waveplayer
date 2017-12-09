@@ -1,6 +1,6 @@
 # waveplayer.js
 
-An HTML5 based audio player with a waveform view. Inspired by [wavesurfer.js](http://www.wavesurfer.fm/) and [waveform.js](http://www.waveformjs.org/), although the implementation is quite different from both. 
+An HTML5 based audio player with a waveform view. Inspired by [wavesurfer.js](http://wavesurfer-js.org/) and [waveform.js](http://www.waveformjs.org/), although the implementation is quite different from both. 
 
 ![Screenshot](waveform.png?raw=true "Example")
 
