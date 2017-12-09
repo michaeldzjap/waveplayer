@@ -232,7 +232,7 @@ class WavePlayer {
                     yield this.load(urls[i]);
                     console.log(3);
                     if (i > 0) {
-                        WavePlayer._mediator.fire('waveplayer:playlist:next', this, {url: urls[i], trackNumber: i});
+                        WavePlayer._mediator.fire('waveplayer:playlist:next', this, {url: urls[i], trackNumber: i + 1});
                         this.play();
                     } else {
                         WavePlayer._mediator.fire('waveplayer:playlist:ready', this);

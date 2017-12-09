@@ -1,5 +1,5 @@
 import WavePlayer from '../../dist/waveplayer';
-import { hasClass, toggleClass, addClass, removeClass } from './lib';
+import { toggleClass, addClass, removeClass } from './lib';
 
 /**
  * Application state.
@@ -7,8 +7,7 @@ import { hasClass, toggleClass, addClass, removeClass } from './lib';
  * @var {Object}
  */
 let state = {
-    selectedTrackNumber: 1,
-    isPlaying: false
+    selectedTrackNumber: 1
 };
 
 /**
@@ -47,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fired after the next track in the playlist is loaded and just before it
     // will start playing
-    wavePlayer.on('waveplayer:playlist:next', (me, trackInfo) => console.log(me, trackInfo));
+    wavePlayer.on('waveplayer:playlist:next', (me, trackInfo) => console.log(trackInfo));
 
     for (const trackNode of trackNodes) {
         trackNode.onclick = handleClick.bind(null, trackNode);
@@ -66,12 +65,11 @@ const handleClick = node => {
 
     if (trackNumber === state.selectedTrackNumber) {
         toggleClass(node.firstElementChild.firstElementChild, 'fa-pause', 'fa-play');
-        if (state.isPlaying) {
+        if (wavePlayer.isPlaying()) {
             wavePlayer.pause();
         } else {
             wavePlayer.play();
         }
-        setState({isPlaying: !state.isPlaying});
     }
 
     if (trackNumber !== state.selectedTrackNumber) {
