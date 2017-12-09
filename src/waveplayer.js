@@ -19,14 +19,14 @@ class WavePlayer {
      * The mediator singleton that will be used to listen to events and fire actions
      * in response.
      *
-     * @var {object}
+     * @var {Object}
      */
     static _mediator;
 
     /**
      * The waveview instance associated with this waveplayer instance.
      *
-     * @var {object}
+     * @var {Object}
      */
     _waveView;
 
@@ -40,23 +40,23 @@ class WavePlayer {
     /**
      * The scheduler instance used for handling a playlist.
      *
-     * @var {object}
+     * @var {Object}
      */
     _scheduler;
 
     /**
      * Initialize a new waveplayer instance.
      *
-     * @param {object} options
+     * @param {Object} options
      * @return {void}
      */
     constructor(options) {
         // Create a new mediator if there does not exist one yet
         if (!WavePlayer._mediator) {
-            WavePlayer._mediator = new Mediator();
+            WavePlayer._mediator = new Mediator;
         }
 
-        this._waveView = new WaveView(null, {...options, mediator: WavePlayer._mediator});
+        this._waveView = new WaveView(null, {...options});
 
         Promise.all([
             this._initializeAudioElm(),
@@ -71,7 +71,7 @@ class WavePlayer {
     /**
      * Get the current volume of the audio.
      *
-     * @return {number}
+     * @return {Number}
      */
     get volume() {
         return this._audioElm.volume;
@@ -80,7 +80,7 @@ class WavePlayer {
     /**
      * Set the current volume of the audio.
      *
-     * @param {number} value
+     * @param {Number} value
      * @return {void}
      */
     set volume(value) {
@@ -134,8 +134,8 @@ class WavePlayer {
      * Load a track and return a promise which may be used to perform an action
      * when the track has finished loading.
      *
-     * @param {string} url
-     * @return {promise}
+     * @param {String} url
+     * @return {Promise}
      */
     load(url) {
         return Promise.all([
@@ -169,7 +169,7 @@ class WavePlayer {
     /**
      * Move the playback header to a specific time in the audio file.
      *
-     * @param {number} seconds
+     * @param {Number} seconds
      * @return {void}
      */
     skipTo(seconds) {
@@ -188,8 +188,8 @@ class WavePlayer {
     /**
      * Subscribe to a waveplayer.js event.
      *
-     * @param {string} topic
-     * @param {function} fn
+     * @param {String} topic
+     * @param {Function} fn
      * @return {void}
      */
     on(topic, fn) {
@@ -199,8 +199,8 @@ class WavePlayer {
     /**
      * Unsubscibe from a waveplayer.js event.
      *
-     * @param {string} topic
-     * @param {function} fn
+     * @param {String} topic
+     * @param {Function} fn
      * @return {void}
      */
     un(topic, fn) {
@@ -210,7 +210,7 @@ class WavePlayer {
     /**
      * Schedule a playlist.
      *
-     * @param {array} urls
+     * @param {Array} urls
      * @return {void}
      */
     schedulePlaylist(urls) {
@@ -232,10 +232,10 @@ class WavePlayer {
                     yield this.load(urls[i]);
                     console.log(3);
                     if (i > 0) {
-                        WavePlayer._mediator.fire('waveplayer:playlist:next', i);
+                        WavePlayer._mediator.fire('waveplayer:playlist:next', this, {url: urls[i], trackNumber: i});
                         this.play();
                     } else {
-                        WavePlayer._mediator.fire('waveplayer:playlist:ready');
+                        WavePlayer._mediator.fire('waveplayer:playlist:ready', this);
                     }
                     // Wait until the current track finishes playing
                     yield this._onEnd();
@@ -294,7 +294,7 @@ class WavePlayer {
      * Initialize the interaction with the associated waveview instance by attaching
      * a click handler to the 'waveview:clicked' event.
      *
-     * @return {promise}
+     * @return {Promise}
      */
     _initializeWaveViewInteraction() {
         return Promise.resolve(() => {
@@ -322,7 +322,7 @@ class WavePlayer {
      * Create and initialize the HTML audio element associated with this waveplayer
      * instance.
      *
-     * @return {promise}
+     * @return {Promise}
      */
     _initializeAudioElm() {
         return new Promise((resolve, reject) => {
@@ -385,8 +385,8 @@ class WavePlayer {
     /**
      * Get the waveform data for an audio file.
      *
-     * @param {string} url
-     * @return {promise}
+     * @param {String} url
+     * @return {Promise}
      */
     _getWaveformData(url) {
         return new Promise((resolve, reject) => {
@@ -417,8 +417,8 @@ class WavePlayer {
     /**
      * Convert a progress in the range [0-1] to a time in seconds.
      *
-     * @param {number} progress
-     * @return {number}
+     * @param {Number} progress
+     * @return {Number}
      */
     _progressToDuration(progress) {
         return progress * this._audioElm.duration;
@@ -428,7 +428,7 @@ class WavePlayer {
      * Return a promise that resolves itself when the HTML audio element fires an
      * 'ended' event (i.e. when an audio track finished playing).
      *
-     * @return {promise}
+     * @return {Promise}
      */
     _onEnd() {
         return new Promise((resolve) => {

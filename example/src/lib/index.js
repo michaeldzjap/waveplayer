@@ -2,10 +2,10 @@
  * Check if a given node contains a certain class name.
  *
  * @param {node} node
- * @param {string} className
+ * @param {String} className
  * @return {boolean}
  */
-const hasClass = (node, className) => {
+export const hasClass = (node, className) => {
     if (node.classList) {
         return node.classList.contains(className);
     } else {
@@ -17,7 +17,7 @@ const hasClass = (node, className) => {
  * Add a class name to a given node.
  *
  * @param {node} node
- * @param {string} className
+ * @param {String} className
  * @return {node}
  */
 export const addClass = (node, className) => {
@@ -34,7 +34,7 @@ export const addClass = (node, className) => {
  * Remove a class name from a given node.
  *
  * @param {node} node
- * @param {string} className
+ * @param {String} className
  * @return {node}
  */
 export const removeClass = (node, className) => {
@@ -51,8 +51,8 @@ export const removeClass = (node, className) => {
  * Toggle between to given classes.
  *
  * @param {node} node
- * @param {string} firstClass
- * @param {string} secondClass
+ * @param {String} firstClass
+ * @param {String} secondClass
  * @return {void}
  */
 export const toggleClass = (node, firstClass, secondClass) => {

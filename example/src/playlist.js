@@ -1,10 +1,10 @@
 import WavePlayer from '../../dist/waveplayer';
-import { toggleClass, addClass, removeClass } from './lib';
+import { hasClass, toggleClass, addClass, removeClass } from './lib';
 
 /**
  * Application state.
  *
- * @var {object}
+ * @var {Object}
  */
 let state = {
     selectedTrackNumber: 1,
@@ -14,13 +14,20 @@ let state = {
 /**
  * The HTML elements representing the tracks.
  *
- * @var {array}
+ * @var {Array}
  */
 let trackNodes;
 
+/**
+ * The WavePlayer instance.
+ *
+ * @var {WavePlayer}
+ */
+let wavePlayer;
+
 document.addEventListener('DOMContentLoaded', () => {
     // Create a new waveplayer.js instance
-    const wavePlayer = new WavePlayer({
+    wavePlayer = new WavePlayer({
         container: '#waveform',
         barWidth: 4,
         barGap: 1,
@@ -36,26 +43,34 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Fired when the playlist is ready to be played
-    wavePlayer.on('waveplayer:playlist:ready', () => console.log('Playlist is ready for playback'));
+    // wavePlayer.on('waveplayer:playlist:ready', me => console.log(me));
+
+    // Fired after the next track in the playlist is loaded and just before it
+    // will start playing
+    wavePlayer.on('waveplayer:playlist:next', (me, trackInfo) => console.log(me, trackInfo));
 
     for (const trackNode of trackNodes) {
-        trackNode.onclick = handleClick;
+        trackNode.onclick = handleClick.bind(null, trackNode);
     }
 });
 
 /**
  * Handle track selection by the user.
  *
- * @param {number} trackNumber
+ * @param {node} node
  * @param {MouseEvent} e
  * @return {void}
  */
-const handleClick = e => {
-    const node = e.target;
+const handleClick = node => {
     const trackNumber = parseInt(node.dataset.trackNumber);
 
     if (trackNumber === state.selectedTrackNumber) {
         toggleClass(node.firstElementChild.firstElementChild, 'fa-pause', 'fa-play');
+        if (state.isPlaying) {
+            wavePlayer.pause();
+        } else {
+            wavePlayer.play();
+        }
         setState({isPlaying: !state.isPlaying});
     }
 
@@ -77,7 +92,7 @@ const handleClick = e => {
 /**
  * Update the application state.
  *
- * @param {object} newState
+ * @param {Object} newState
  * @return {void}
  */
 const setState = newState => state = {...state, ...newState};

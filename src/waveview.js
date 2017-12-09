@@ -9,6 +9,8 @@
  * This work is licensed under the ISC License (ISC)
  */
 
+import Mediator from './Mediator.js';
+import WavePlayer from './WavePlayer.js';
 import { style, hex2rgb, rgb2hsv, hsv2rgb } from './lib/index.js';
 
 class WaveView {
@@ -16,7 +18,7 @@ class WaveView {
     /**
      * The default options for a new instance.
      *
-     * @var {object}
+     * @var {Object}
      */
     _defaultOptions = {
         container: null,
@@ -34,60 +36,65 @@ class WaveView {
     /**
      * The amplitude data that will be used to draw the waveform.
      *
-     * @var {array}
+     * @var {Array}
      */
     _data;
 
     /**
      * The options for this waveplayer instance.
      *
-     * @var {object}
+     * @var {Object}
      */
     _options;
 
     /**
      * The HTML container element for the waveview instance.
      *
-     * @var {object}
+     * @var {Object}
      */
     _container;
 
     /**
      * The HTML container element for the canvas element.
      *
-     * @var {object}
+     * @var {Object}
      */
     _waveContainer;
 
     /**
      * The HTML canvas element context.
      *
-     * @var {object}
+     * @var {Object}
      */
     _canvasContext;
 
     /**
      * The color variations that will be used for drawing the waveform.
      *
-     * @var {object};
+     * @var {Object};
      */
     _colors;
 
     /**
      * The progress in the range [0-1] of the waveform.
      *
-     * @var {number}
+     * @var {Number}
      */
     _progress = 0;
 
     /**
      * Initialize a new waveview instance.
      *
-     * @param {array} data
-     * @param {object} options
+     * @param {Array} data
+     * @param {Object} options
      * @return {void}
      */
     constructor(data, options) {
+        // Create a new mediator if there does not exist one yet
+        if (!WavePlayer._mediator) {
+            WavePlayer._mediator = new Mediator;
+        }
+
         this._data = data;
         this._options = {...this._defaultOptions, ...options};
         this.container = 'string' === typeof this._options.container ?
@@ -105,7 +112,7 @@ class WaveView {
     /**
      * Get the HTML container element for the waveview instance.
      *
-     * @return {object}
+     * @return {Object}
      */
     get container() {
         return this._container;
@@ -114,7 +121,7 @@ class WaveView {
     /**
      * Set the HTML container element for the waveview instance.
      *
-     * @param {object} container
+     * @param {Object} container
      * @return {void}
      */
     set container(container) {
@@ -128,7 +135,7 @@ class WaveView {
     /**
      * Get the waveform amplitude data.
      *
-     * @return {array}
+     * @return {Array}
      */
     get data() {
         return this._data;
@@ -137,7 +144,7 @@ class WaveView {
     /**
      * Set the waveform amplitude data.
      *
-     * @param {array} values
+     * @param {Array} values
      * @return {void}
      */
     set data(values) {
@@ -192,7 +199,7 @@ class WaveView {
     /**
      * Get the width of the drawn waveform.
      *
-     * @return {number}
+     * @return {Number}
      */
     get width() {
         return this._waveContainer.clientWidth;
@@ -202,7 +209,7 @@ class WaveView {
      * Set the width of the drawn waveform. Only has an effect if the waveview
      * instance is not operating in responsive mode.
      *
-     * @param {number} value
+     * @param {Number} value
      * @return {void}
      */
     set width(value) {
@@ -218,7 +225,7 @@ class WaveView {
     /**
      * Get the height of the drawn waveform.
      *
-     * @return {number}
+     * @return {Number}
      */
     get height() {
         return this._waveContainer.clientHeight;
@@ -227,7 +234,7 @@ class WaveView {
     /**
      * Set the height of the drawn waveform.
      *
-     * @param {number} value
+     * @param {Number} value
      * @return {void}
      */
     set height(value) {
@@ -245,8 +252,8 @@ class WaveView {
     /**
      * Draw a waveform from supplied waveform data.
      *
-     * @param {array} values
-     * @param {number} progress
+     * @param {Array} values
+     * @param {Number} progress
      * @param {void}
      */
     drawWave(values, progress) {
@@ -260,7 +267,7 @@ class WaveView {
     /**
      * Update an existing waveform.
      *
-     * @param {number} progress
+     * @param {Number} progress
      * @return {void}
      */
     updateWave(progress) {
@@ -335,7 +342,8 @@ class WaveView {
      * @return {void}
      */
     _addCanvasHandlers() {
-        this._mouseClickHandler = e => this._mediator.fire('waveview:clicked', this._coord2Progress(e));
+        console.log(WavePlayer._mediator);
+        this._mouseClickHandler = e => WavePlayer._mediator.fire('waveview:clicked', this._coord2Progress(e));
         this._canvasContext.canvas.addEventListener('click', this._mouseClickHandler.bind(this));
     }
 
@@ -354,7 +362,7 @@ class WaveView {
      * Create a color stop variation for the colors provided (used for drawing
      * the gradient).
      *
-     * @return {object}
+     * @return {Object}
      */
     _createColorVariations() {
         const colors = {waveColor: [], progressColor: []};
@@ -412,7 +420,7 @@ class WaveView {
     /**
      * Compute average absolute waveform amplitudes.
      *
-     * @return {object}
+     * @return {Object}
      */
     _calcAvgAmps() {
         // Compute amplitude by averaging over n values in the range [rangeL, rangeR]
@@ -458,7 +466,7 @@ class WaveView {
     /**
      * Draw the individual waveform bars with a gradient.
      *
-     * @param {number} progressCoord
+     * @param {Number} progressCoord
      * @return {void}
      */
     _drawBars(progressCoord) {
@@ -498,9 +506,9 @@ class WaveView {
     /**
      * Generate a linear gradient from the provided colors.
      *
-     * @param {array} c
-     * @param {number} h
-     * @return {object}
+     * @param {Array} c
+     * @param {Number} h
+     * @return {Object}
      */
     _generateGradient(c, h) {
         const grd = this._canvasContext.createLinearGradient(0, 0, 0, h);
@@ -516,8 +524,8 @@ class WaveView {
      * Calculate the x-coordinate of the current mouse position. The origin is
      * assumed to be at the location of the waveform container HTML element.
      *
-     * @param {object} e
-     * @return {number}
+     * @param {Object} e
+     * @return {Number}
      */
     _calcMouseCoordX(e) {
         e.preventDefault();
@@ -527,8 +535,8 @@ class WaveView {
     /**
      * Convert a coordinate to a progress in the range [0-1].
      *
-     * @param {object} e
-     * @return {number}
+     * @param {Object} e
+     * @return {Number}
      */
     _coord2Progress(e) {
         return this._calcMouseCoordX(e) / this._waveContainer.clientWidth;
