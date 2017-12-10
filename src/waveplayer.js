@@ -62,7 +62,7 @@ class WavePlayer {
         Promise.all([
             this._initializeAudioElm(),
             this._initializeWaveViewInteraction()
-        ]).then(() => WavePlayer._mediator.fire('waveplayer:initialized'));
+        ]).then(() => WavePlayer._mediator.fire('waveplayer:initialized', this));
     }
 
     /************************
@@ -225,14 +225,14 @@ class WavePlayer {
      *
      * @param {Array} urls
      * @param {Object} options
-     * @return {void}
+     * @return {Playlist}
      */
     createPlaylist(urls, options = {}) {
-
         // Cancel current playlist before starting a new one
         this.cancelPlaylist();
-
         this._playlist = new Playlist(this, urls, options);
+
+        return this._playlist;
     }
 
     /**
@@ -319,7 +319,7 @@ class WavePlayer {
             this._waveView.container.appendChild(this._audioElm);
 
             this._canplayHandler = () => {
-                WavePlayer._mediator.fire('waveplayer:canplay');
+                WavePlayer._mediator.fire('waveplayer:canplay', this);
                 resolve('waveplayer:canplay');
             };
             this._audioElm.addEventListener('canplay', this._canplayHandler.bind(this));
