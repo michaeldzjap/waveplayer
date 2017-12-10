@@ -1,5 +1,5 @@
 {
-  "name": "waveplayer.js",
+  "name": "waveplayer",
   "version": "1.0.2",
   "description": "A HTML and JavaScript based audio player with a waveform view",
   "main": "dist/waveplayer.min.js",
