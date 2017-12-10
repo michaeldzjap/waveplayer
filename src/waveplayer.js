@@ -127,6 +127,19 @@ class WavePlayer {
         this._waveView.responsive = value;
     }
 
+    /**
+     * Get the playlist instance associated with this waveplayer instance.
+     *
+     * @return {null|Playlist}
+     */
+    get playlist() {
+        if (this._playlist) {
+            return this._playlist;
+        }
+
+        return null;
+    }
+
     /*********************
      * Public functions. *
      *********************/

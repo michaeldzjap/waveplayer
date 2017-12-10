@@ -38,9 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Schedule a new playlist and load the first audio track
     wavePlayer.createPlaylist(trackNodes.map(elm => elm.dataset.url));
 
-    // Fired when the playlist is ready to be played
-    // wavePlayer.on('waveplayer:playlist:ready', me => console.log(me));
-
     // Fired after the next track in the playlist is loaded and just before it
     // will start playing
     wavePlayer.on('waveplayer:playlist:next', handleChange);
@@ -73,23 +70,19 @@ const handleClick = node => {
     if (trackNumber !== state.selectedTrackNumber) {
         switchTracks(node);
 
-        // console.log(trackNumber, state.selectedTrackNumber);
-        // if (trackNumber > state.selectedTrackNumber) {
-        //     for (let i = 0; i < trackNumber - state.selectedTrackNumber; i++) {
-        //         console.log(i);
-        //         wavePlayer.next();
-        //     }
-        // }
+        if (trackNumber - state.selectedTrackNumber === 1) {
+            wavePlayer.playlist.next();
+        }
+
+        if (trackNumber - state.selectedTrackNumber === -1) {
+            wavePlayer.playlist.previous();
+        }
+
+        if (Math.abs(trackNumber - state.selectedTrackNumber) > 1) {
+            wavePlayer.playlist.skipTo(trackNumber);
+        }
 
         setState({selectedTrackNumber: trackNumber});
-
-        // Schedule a new playlist
-        // wavePlayer.schedulePlaylist(
-        //     // Fetch audio URL's
-        //     (trackNumber === 1 ? trackNodes : trackNodes.slice(trackNumber - 1))
-        //         .map(elm => elm.dataset.url),
-        //     {autoPlay: true}
-        // );
     }
 };
 
@@ -120,8 +113,7 @@ const switchTracks = node => {
  * @param {Object} trackInfo
  * @return {void}
  */
-const handleChange = (me, {url, trackNumber}) => {
-    console.log(url, trackNumber);
+const handleChange = (me, {trackNumber}) => {
     const node = trackNodes.find(trackNode => trackNumber === parseInt(trackNode.dataset.trackNumber));
     switchTracks(node, trackNumber);
 };

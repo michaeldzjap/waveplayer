@@ -46,6 +46,13 @@ class Playlist {
     _wavePlayer;
 
     /**
+     * The URL's pointing to the audio files that make up the playlist.
+     *
+     * @var {Array}
+     */
+    _urls;
+
+    /**
      * The HTML audio element associated with a waveplayer instance.
      *
      * @var {audio}
@@ -53,11 +60,18 @@ class Playlist {
     _audioElm;
 
     /**
-     * The number of the current track that is selected in the playlist.
+     * The index of the current track that is selected in the playlist.
      *
      * @var {Number}
      */
-    _currentTrackNumber;
+    _currentTrackIndex;
+
+    /**
+     * Indicates if the user skipped to a different track in the playlist.
+     *
+     * @param {boolean}
+     */
+    _skipped = false;
 
     /**
      * Initialize a new playlist instance.
@@ -88,19 +102,49 @@ class Playlist {
         // Merge any supplied options with default options
         this._options = {...this._defaultOptions, ...options};
         this._wavePlayer = wavePlayer;
+        this._urls = [...urls];
         this._audioElm = this._wavePlayer._audioElm;
         this._scheduler = this._createScheduler(urls, this._options.autoplay);
     }
 
+    /**
+     * Go to the next track in the playlist.
+     *
+     * @return {void}
+     */
     next() {
-        this._audioElm.dispatchEvent(new Event('ended'));
+        if (this._currentTrackIndex < this._urls.length) {
+            this._skipped = true;
+            this._audioElm.dispatchEvent(new Event('ended'));
+        }
     }
 
+    /**
+     * Go to the previous track in the playlist.
+     *
+     * @return {void}
+     */
     previous() {
-        if (this._currentTrackNumber > 0) {
-            this._currentTrackNumber -= 2;
+        if (this._currentTrackIndex > 0) {
+            this._currentTrackIndex -= 2;
+            this._skipped = true;
+            this._audioElm.dispatchEvent(new Event('ended'));
         }
-        this._audioElm.dispatchEvent(new Event('ended'));
+    }
+
+    /**
+     * Skip to a specific track in the playlist.
+     *
+     * @param {Number} trackNumber
+     * @return {void}
+     */
+    skipTo(trackNumber) {
+        const trackIndex = trackNumber - 1;
+        if (trackIndex !== this._currentTrackIndex && trackIndex < this._urls.length && trackIndex >= 0) {
+            this._currentTrackIndex = trackIndex - 1;
+            this._skipped = true;
+            this._audioElm.dispatchEvent(new Event('ended'));
+        }
     }
 
     /**
@@ -109,6 +153,7 @@ class Playlist {
      * @return {void}
      */
     destroy() {
+        this._wavePlayer.pause();
         this._scheduler = null;
     }
 
@@ -120,33 +165,36 @@ class Playlist {
      * @return {Promise}
      */
     _createScheduler(urls, autoPlay) {
-        this._currentTrackNumber = 0;
+        this._currentTrackIndex = 0;
         const scheduler = stateResolver((function* (urls) {
-            while (this._currentTrackNumber < urls.length) {
-                yield this._wavePlayer.load(urls[this._currentTrackNumber]);
-                if (this._currentTrackNumber > 0) {
+            while (this._currentTrackIndex < urls.length) {
+                yield this._wavePlayer.load(urls[this._currentTrackIndex]);
+                if (this._currentTrackIndex > 0) {
                     WavePlayer._mediator.fire(
                         'waveplayer:playlist:next',
                         this._wavePlayer,
-                        {url: urls[this._currentTrackNumber], trackNumber: this._currentTrackNumber + 1}
+                        {url: urls[this._currentTrackIndex], trackNumber: this._currentTrackIndex + 1}
                     );
                     this._wavePlayer.play();
                 } else {
                     WavePlayer._mediator.fire('waveplayer:playlist:ready', this._wavePlayer);
-                    if (autoPlay) {
+                    if (autoPlay || this._skipped) {
                         this._wavePlayer.play();
                     }
                 }
                 // Wait until the current track finishes playing
                 yield this._onEnd();
-                this._currentTrackNumber++;
+                this._currentTrackIndex++;
             }
 
-            return this._currentTrackNumber;
+            return this._currentTrackIndex;
         })).bind(this);
 
         scheduler(urls).then(
-            response => WavePlayer._mediator.fire('waveplayer:playlist:finished', this._wavePlayer, response)
+            response => {
+                this._skipped = false;
+                WavePlayer._mediator.fire('waveplayer:playlist:finished', this._wavePlayer, response);
+            }
         );
 
         return scheduler;
