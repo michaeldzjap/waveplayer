@@ -36,11 +36,5 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-eslint": "^4.0.0",
     "rollup-plugin-uglify": "^2.0.1"
-  },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "dist/",
-    "src/"
-  ]
+  }
 }
