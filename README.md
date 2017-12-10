@@ -9,7 +9,7 @@ Author: Michael Dzjaparidze
 License: MIT
 
 ## Browser Support & Other Requirements
-waveplayer.js is tested to work on Chrome, Firefox and Opera (no Internet Explorer yet).
+*waveplayer.js* is tested to work on Chrome, Firefox and Opera (no Internet Explorer yet).
 
 In order to minimize waveform drawing and audio file loading times, it is necessary to supply an URL to a JSON file representing the waveform of the audio file numerically. This JSON file should be named identically to the corresponding audio file and should exist at the same location. An error will be thrown if this JSON file does not exist.
 
