@@ -34,20 +34,5 @@ export default [
                 runtimeHelpers: true
             })
         ]
-    },
-    {
-        input: 'src/index.js',
-        output: {
-            file: 'dist/waveplayer.es6.js',
-            format: 'es'
-        },
-        plugins: [
-            eslint(),
-            babel({
-                exclude: 'node_modules/**',
-                plugins: ['external-helpers', 'transform-runtime'],
-                runtimeHelpers: true
-            })
-        ]
     }
 ];
