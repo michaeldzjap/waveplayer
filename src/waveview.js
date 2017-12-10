@@ -1,8 +1,8 @@
 /**
  * waveview.js
  *
- * © Michaël Dzjaparidze 2015
- * http://www.michaeldzjaparidze.com, https://github.com/michaeldzjap
+ * © Michaël Dzjaparidze 2017
+ * https://github.com/michaeldzjap
  *
  * Draws a waveform using the HTML5 canvas object
  *

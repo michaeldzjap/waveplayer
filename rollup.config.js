@@ -4,10 +4,12 @@ import uglify from 'rollup-plugin-uglify';
 
 export default [
     {
-        entry: 'src/index.js',
-        dest: 'dist/waveplayer.min.js',
-        format: 'cjs',
-        sourceMap: true,
+        input: 'src/index.js',
+        output: {
+            file: 'dist/waveplayer.min.js',
+            format: 'cjs'
+        },
+        sourcemap: true,
         plugins: [
             eslint(),
             babel({
@@ -19,9 +21,11 @@ export default [
         ]
     },
     {
-        entry: 'src/index.js',
-        dest: 'dist/waveplayer.js',
-        format: 'cjs',
+        input: 'src/index.js',
+        output: {
+            file: 'dist/waveplayer.js',
+            format: 'cjs'
+        },
         plugins: [
             eslint(),
             babel({
@@ -32,9 +36,11 @@ export default [
         ]
     },
     {
-        entry: 'src/index.js',
-        dest: 'dist/waveplayer.es6.js',
-        format: 'es',
+        input: 'src/index.js',
+        output: {
+            file: 'dist/waveplayer.es6.js',
+            format: 'es'
+        },
         plugins: [
             eslint(),
             babel({

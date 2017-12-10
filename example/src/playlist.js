@@ -36,10 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     trackNodes = [...document.querySelectorAll('.panel-block')];
 
     // Schedule a new playlist and load the first audio track
-    wavePlayer.createPlaylist(
-        // Fetch audio URL's
-        trackNodes.map(elm => elm.dataset.url)
-    );
+    wavePlayer.createPlaylist(trackNodes.map(elm => elm.dataset.url));
 
     // Fired when the playlist is ready to be played
     // wavePlayer.on('waveplayer:playlist:ready', me => console.log(me));
@@ -48,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // will start playing
     wavePlayer.on('waveplayer:playlist:next', handleChange);
 
+    // Bind click handlers
     for (const trackNode of trackNodes) {
         trackNode.onclick = handleClick.bind(null, trackNode);
     }

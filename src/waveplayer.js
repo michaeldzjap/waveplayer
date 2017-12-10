@@ -1,8 +1,8 @@
 /**
  * waveplayer.js
  *
- * © Michaël Dzjaparidze 2015
- * http://www.michaeldzjaparidze.com, https://github.com/michaeldzjap
+ * © Michaël Dzjaparidze 2017
+ * https://github.com/michaeldzjap
  *
  * A HTML5 based audio player with a waveform view
  *
@@ -219,7 +219,7 @@ class WavePlayer {
         // Cancel current playlist before starting a new one
         this.cancelPlaylist();
 
-        this._playlist = new Playlist(this._audioElm, urls, options);
+        this._playlist = new Playlist(this, urls, options);
     }
 
     /**

@@ -1,10 +1,10 @@
 /**
  * playlist.js
  *
- * © Michaël Dzjaparidze 2015
+ * © Michaël Dzjaparidze 2017
  * http://www.michaeldzjaparidze.com, https://github.com/michaeldzjap
  *
- * A HTML5 based audio player with a waveform view
+ * Playlist functionality for waveplayer.js
  *
  * This work is licensed under the ISC License (ISC)
  */
@@ -123,7 +123,7 @@ class Playlist {
         this._currentTrackNumber = 0;
         const scheduler = stateResolver((function* (urls) {
             while (this._currentTrackNumber < urls.length) {
-                yield this.load(urls[this._currentTrackNumber]);
+                yield this._wavePlayer.load(urls[this._currentTrackNumber]);
                 if (this._currentTrackNumber > 0) {
                     WavePlayer._mediator.fire(
                         'waveplayer:playlist:next',
@@ -145,7 +145,7 @@ class Playlist {
             return this._currentTrackNumber;
         })).bind(this);
 
-        this._scheduler(urls).then(
+        scheduler(urls).then(
             response => WavePlayer._mediator.fire('waveplayer:playlist:finished', this._wavePlayer, response)
         );
 

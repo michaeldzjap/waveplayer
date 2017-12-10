@@ -3,7 +3,7 @@ class Mediator {
     /**
      * The topics to subscribe to.
      *
-     * @var {object}
+     * @var {Object}
      */
     _topics;
 
@@ -14,8 +14,8 @@ class Mediator {
     /**
      * Subscribe to the given topic with the given callback.
      *
-     * @param {string} topic
-     * @param {function} callback
+     * @param {String} topic
+     * @param {Function} callback
      * @return {boolean}
      */
     on(topic, callback) {
@@ -30,8 +30,8 @@ class Mediator {
     /**
      * Unsubscibe the given callback from the given topic.
      *
-     * @param {string} topic
-     * @param {function} callback
+     * @param {String} topic
+     * @param {Function} callback
      * @return {boolean}
      */
     un(topic, callback = null) {
@@ -72,7 +72,7 @@ class Mediator {
     /**
      * Fire an event and evaluate any registered callbacks in response.
      *
-     * @param {string} topic
+     * @param {String} topic
      * @param {mixed} args
      * @return {boolean}
      */
