@@ -1,6 +1,6 @@
 # waveplayer.js
 
-An HTML5 based audio player with a waveform view. Inspired by [wavesurfer.js](http://wavesurfer-js.org/) and [waveform.js](http://www.waveformjs.org/), although the implementation is quite different from both.
+An HTML5 based audio player with a waveform view. Inspired by [wavesurfer.js](http://wavesurfer-js.org/) and [waveform.js](http://www.waveformjs.org/), but different.
 
 ![Screenshot](waveform.png?raw=true "Example")
 
@@ -9,9 +9,9 @@ Author: Michael Dzjaparidze
 License: MIT
 
 ## Browser Support & Other Requirements
-*waveplayer.js* is tested to work on Chrome, Firefox and Opera (no Internet Explorer yet).
+*waveplayer.js* is tested to work on *Chrome*, *Firefox* and *Opera* (no support for *Internet Explorer* yet).
 
-In order to minimize waveform drawing and audio file loading times, it is necessary to supply an URL to a JSON file representing the waveform of the audio file numerically. This JSON file should be named identically to the corresponding audio file and should exist at the same location. An error will be thrown if this JSON file does not exist.
+In order to minimise waveform drawing times it is necessary to supply a URL to a JSON file representing the waveform of the audio file numerically. This JSON file should have the same name as the corresponding audio file and should exist at the same location. An error will be thrown if this JSON file does not exist.
 
 There exist a number of tools for extracting waveform data in JSON format from an audio file; [wav2json](https://github.com/beschulz/wav2json) or [py-wav2json](https://github.com/michaeldzjap/py-wav2json) can be used for instance. It is enough to provide a single array of floating point values. If the JSON contains an associative array, only the first entree will be used.
 
@@ -24,11 +24,11 @@ The package is also still available through [bower](https://bower.io/), although
 ```
 bower install waveplayer.js
 ```
-After that the package may be directly included in a `<script>` tag:
+After that the package may be directly included using a `<script>` tag:
 ```html
 <script src="path-to-waveform-js/waveplayer.min.js"></script>
 ```
-or may be imported (ES6) in your JavaScript file:
+or may be imported (ES6) in your own scripts files:
 ```javascript
 import WavePlayer from 'waveplayer';
 ```
@@ -48,7 +48,6 @@ var wavePlayer = new WavePlayer({
     height: 128
 });
 ```
-
 Load an audio file from a URL and start playback when loading has finished:
 
 ```javascript
@@ -57,8 +56,7 @@ wavePlayer.load('url-to-some-audio-file.mp3')
 ```
 
 ### Schedule a playlist and play it through from start to finish
-Load some audio files from an URL and start playback when loading has finished:
-
+Load some audio files from a URL and start playback when loading has finished:
 ```javascript
 wavePlayer.createPlaylist(
     ["1.mp3", "2.mp3", "3.mp3", "4.mp3", "5.mp3"]

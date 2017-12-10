@@ -116,6 +116,7 @@ const switchTracks = node => {
 const handleChange = (me, {trackNumber}) => {
     const node = trackNodes.find(trackNode => trackNumber === parseInt(trackNode.dataset.trackNumber));
     switchTracks(node, trackNumber);
+    setState({selectedTrackNumber: trackNumber});
 };
 
 /**
