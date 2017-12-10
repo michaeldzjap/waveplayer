@@ -3,7 +3,8 @@ import webpack from 'webpack';
 
 export default {
     entry: {
-        playlist: './src/playlist'
+        playlist: './src/playlist',
+        simple: './src/simple'
     },
     output: {
         filename: '[name].js',
