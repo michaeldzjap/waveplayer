@@ -8,7 +8,7 @@
     "parserOptions": {
         "sourceType": "module",
         "ecmaVersion": 6,
-        experimentalObjectRestSpread: true
+        "experimentalObjectRestSpread": true
     },
     "rules": {
         "indent": [
