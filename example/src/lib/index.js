@@ -1,24 +1,25 @@
 /**
  * Check if a given node contains a certain class name.
  *
- * @param {node} node
- * @param {String} className
- * @return {boolean}
+ * @param  {node} node
+ * @param  {string} className
+ * @returns {boolean}
  */
 export const hasClass = (node, className) => {
     if (node.classList) {
         return node.classList.contains(className);
-    } else {
-        return !!node.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
     }
+
+    return !!node.className
+        .match(new RegExp(`(\\s|^)${className}(\\s|$)`));
 };
 
 /**
  * Add a class name to a given node.
  *
- * @param {node} node
- * @param {String} className
- * @return {node}
+ * @param  {node} node
+ * @param  {string} className
+ * @returns {node}
  */
 export const addClass = (node, className) => {
     if (node.classList) {
@@ -33,15 +34,16 @@ export const addClass = (node, className) => {
 /**
  * Remove a class name from a given node.
  *
- * @param {node} node
- * @param {String} className
- * @return {node}
+ * @param  {node} node
+ * @param  {string} className
+ * @returns {node}
  */
 export const removeClass = (node, className) => {
     if (node.classList) {
         node.classList.remove(className);
     } else if (hasClass(node, className)) {
-        node.className = node.className.replace(new RegExp('(\\s|^)' + className + '(\\s|$)'), ' ');
+        node.className = node.className
+            .replace(new RegExp(`(\\s|^)${className}(\\s|$)`), ' ');
     }
 
     return node;
@@ -50,10 +52,10 @@ export const removeClass = (node, className) => {
 /**
  * Toggle between to given classes.
  *
- * @param {node} node
- * @param {String} firstClass
- * @param {String} secondClass
- * @return {void}
+ * @param  {node} node
+ * @param  {string} firstClass
+ * @param  {string} secondClass
+ * @returns {void}
  */
 export const toggleClass = (node, firstClass, secondClass) => {
     if (hasClass(node, firstClass)) {

@@ -5,8 +5,8 @@
 /**
  * Convert a hex color code to RGB format.
  *
- * @param {string} hex
- * @return {object}
+ * @param  {string} hex
+ * @returns {Object}
  */
 export const hex2rgb = hex => {
     const bigint = parseInt(hex.charAt(0) === '#' ? hex.substring(1, 7) : hex, 16);
@@ -17,14 +17,16 @@ export const hex2rgb = hex => {
 /**
  * Convert a color in RGB format to a color in HSV format.
  *
- * @param {object} rgb
- * @return {object}
+ * @param  {Object} rgb
+ * @returns {Object}
  */
 export const rgb2hsv = rgb => {
-    const r = rgb.r / 255, g = rgb.g / 255, b = rgb.b / 255;
+    const r = rgb.r / 255;
+    const g = rgb.g / 255;
+    const b = rgb.b / 255;
     const v = Math.max(r, g, b);
     const diff = v - Math.min(r, g, b);
-    const diffc = (c) => (v - c) / 6 / diff + 1 / 2;
+    const diffc = c => (v - c) / 6 / diff + 1 / 2;
 
     if (diff === 0) {
         return {h: 0, s: 0, v: Math.round(v * 100)};
@@ -32,7 +34,9 @@ export const rgb2hsv = rgb => {
 
     let h;
     const s = diff / v;
-    const rr = diffc(r), gg = diffc(g), bb = diffc(b);
+    const rr = diffc(r);
+    const gg = diffc(g);
+    const bb = diffc(b);
 
     if (r === v) {
         h = bb - gg;
@@ -52,18 +56,25 @@ export const rgb2hsv = rgb => {
 };
 
 /**
- * Conver a color in HSV format to a color in RGB format.
+ * Convert a color in HSV format to a color in RGB format.
  *
- * @param {object} hsv
- * @return {object}
+ * @param  {Object} hsv
+ * @returns {Object}
  */
 export const hsv2rgb = hsv => {
     if (hsv.s === 0) {
         return {r: hsv.v, g: hsv.v, b: hsv.v};
     }
 
-    const h = hsv.h / 60, i = Math.floor(h), s = hsv.s / 100, v = hsv.v / 100 * 255;
-    const data = [v * (1 - s), v * (1 - s * (h - i)), v * (1 - s * (1 - (h - i)))];
+    const h = hsv.h / 60;
+    const i = Math.floor(h);
+    const s = hsv.s / 100;
+    const v = hsv.v / 100 * 255;
+    const data = [
+        v * (1 - s),
+        v * (1 - s * (h - i)),
+        v * (1 - s * (1 - (h - i)))
+    ];
     switch (i) {
         case 0:
             return {r: v, g: data[2], b: data[0]};
@@ -83,11 +94,11 @@ export const hsv2rgb = hsv => {
 /**
  * Fetch a JSON file from the given URL.
  *
- * @param {string} url
- * @return {promise}
+ * @param  {string} url
+ * @returns {Promise}
  */
-export const getJSON = url => {
-    return new Promise((resolve, reject) => {
+export const getJSON = url => (
+    new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', url);
         xhr.onreadystatechange = () => {
@@ -100,22 +111,22 @@ export const getJSON = url => {
             }
         };
         xhr.send();
-    });
-};
+    })
+);
 
 /**
  * Convert a generator into a promise resolving state machine.
  *
- * @param {generator} generatorFunction
- * @return {promise}
+ * @param  {Generator} generatorFunction
+ * @returns {Promise}
  */
-export const stateResolver = generatorFunction => {
-    return function () {
+export const stateResolver = generatorFunction => (
+    function () {
         const generator = generatorFunction.apply(this, arguments);
         return new Promise((resolve, reject) => {
             const resume = (method, value) => {
                 try {
-                    var result = generator[method](value);
+                    const result = generator[method](value);
                     if (result.done) {
                         resolve(result.value);
                     } else {
@@ -129,15 +140,15 @@ export const stateResolver = generatorFunction => {
             const resumeThrow = resume.bind(null, 'throw');
             resumeNext();
         });
-    };
-};
+    }
+);
 
 /**
  * Set the CSS styles for the given element.
  *
- * @param {object} elm
- * @param {object} styles
- * @return {object}
+ * @param  {Object} elm
+ * @param  {Object} styles
+ * @returns {Object}
  */
 export const style = (elm, styles) => {
     for (const key in styles) {
@@ -152,7 +163,7 @@ export const style = (elm, styles) => {
 /**
  * Check if the given value is an objet
  *
- * @param {mixed} value
- * @return {boolean}
+ * @param  {mixed} value
+ * @returns {boolean}
  */
-export const isObject = value => value === Object(value); 
+export const isObject = value => value === Object(value);

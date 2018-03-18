@@ -11,7 +11,7 @@
 
 import Mediator from './Mediator.js';
 import WavePlayer from './WavePlayer.js';
-import { style, hex2rgb, rgb2hsv, hsv2rgb } from './lib/index.js';
+import {style, hex2rgb, rgb2hsv, hsv2rgb} from './lib/index.js';
 
 class WaveView {
 
@@ -85,9 +85,9 @@ class WaveView {
     /**
      * Initialize a new waveview instance.
      *
-     * @param {Array} data
-     * @param {Object} options
-     * @return {void}
+     * @param  {Array} data
+     * @param  {Object} options
+     * @returns {void}
      */
     constructor(data, options) {
         // Create a new mediator if there does not exist one yet
@@ -97,8 +97,9 @@ class WaveView {
 
         this._data = data;
         this._options = {...this._defaultOptions, ...options};
-        this.container = 'string' === typeof this._options.container ?
-            document.querySelector(this._options.container) : this._options.container;
+        this.container = 'string' === typeof this._options.container
+            ? document.querySelector(this._options.container)
+            : this._options.container;
 
         this._createWaveContainer();
         this._colors = this._createColorVariations();
@@ -112,7 +113,7 @@ class WaveView {
     /**
      * Get the HTML container element for the waveview instance.
      *
-     * @return {Object}
+     * @returns {Object}
      */
     get container() {
         return this._container;
@@ -121,8 +122,8 @@ class WaveView {
     /**
      * Set the HTML container element for the waveview instance.
      *
-     * @param {Object} container
-     * @return {void}
+     * @param  {Object} container
+     * @returns {void}
      */
     set container(container) {
         if (!container) {
@@ -135,7 +136,7 @@ class WaveView {
     /**
      * Get the waveform amplitude data.
      *
-     * @return {Array}
+     * @returns {Array}
      */
     get data() {
         return this._data;
@@ -144,8 +145,8 @@ class WaveView {
     /**
      * Set the waveform amplitude data.
      *
-     * @param {Array} values
-     * @return {void}
+     * @param  {Array} values
+     * @returns {void}
      */
     set data(values) {
         this._data = values;
@@ -154,7 +155,7 @@ class WaveView {
     /**
      * Check if we can currently interact with the waveview instance.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     get interact() {
         return this._options.interact;
@@ -163,8 +164,8 @@ class WaveView {
     /**
      * Set the interaction state of the waveview instance.
      *
-     * @param {boolean} value
-     * @return {void}
+     * @param  {boolean} value
+     * @returns {void}
      */
     set interact(value) {
         this._options.interact = value;
@@ -178,7 +179,7 @@ class WaveView {
     /**
      * Check if the waveview instance is operating in responsive mode.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     get responsive() {
         return this._options.responsive;
@@ -188,8 +189,8 @@ class WaveView {
      * Make the waveview instance responsive, meaning its width will scale along
      * with the width of its parent container.
      *
-     * @param {boolean} value
-     * @return {void}
+     * @param  {boolean} value
+     * @returns {void}
      */
     set responsive(value) {
         this._options.responsive = value;
@@ -199,7 +200,7 @@ class WaveView {
     /**
      * Get the width of the drawn waveform.
      *
-     * @return {Number}
+     * @returns {number}
      */
     get width() {
         return this._waveContainer.clientWidth;
@@ -209,14 +210,14 @@ class WaveView {
      * Set the width of the drawn waveform. Only has an effect if the waveview
      * instance is not operating in responsive mode.
      *
-     * @param {Number} value
-     * @return {void}
+     * @param  {number} value
+     * @returns {void}
      */
     set width(value) {
         this._options.width = value;
         if (!this._options.responsive) {
-            style(this._waveContainer, {width: this._options.width + 'px'});
-            style(this._canvasContext.canvas, {width: this._options.width + 'px'});
+            style(this._waveContainer, {width: `${this._options.width}px`});
+            style(this._canvasContext.canvas, {width: `${this._options.width}px`});
             this._canvasContext.canvas.width = this._options.width;
             this._barData = this._calcAvgAmps();
         }
@@ -225,7 +226,7 @@ class WaveView {
     /**
      * Get the height of the drawn waveform.
      *
-     * @return {Number}
+     * @returns {number}
      */
     get height() {
         return this._waveContainer.clientHeight;
@@ -234,13 +235,13 @@ class WaveView {
     /**
      * Set the height of the drawn waveform.
      *
-     * @param {Number} value
-     * @return {void}
+     * @param  {number} value
+     * @returns {void}
      */
     set height(value) {
         this._options.height = value;
-        style(this._waveContainer, {height: this._options.height + 'px'});
-        style(this.canvasContext.canvas, {height: this._options.height + 'px'});
+        style(this._waveContainer, {height: `${this._options.height}px`});
+        style(this.canvasContext.canvas, {height: `${this._options.height}px`});
         this._canvasContext.canvas.height = this._options.height;
         this._barData = this._calcAvgAmps();
     }
@@ -252,9 +253,9 @@ class WaveView {
     /**
      * Draw a waveform from supplied waveform data.
      *
-     * @param {Array} values
-     * @param {Number} progress
-     * @param {void}
+     * @param  {Array} values
+     * @param  {number} progress
+     * @returns {void}
      */
     drawWave(values, progress) {
         this.data = values;
@@ -267,8 +268,8 @@ class WaveView {
     /**
      * Update an existing waveform.
      *
-     * @param {Number} progress
-     * @return {void}
+     * @param  {number} progress
+     * @returns {void}
      */
     updateWave(progress) {
         if (progress) {
@@ -281,16 +282,22 @@ class WaveView {
     /**
      * Clear the canvas HTML element where the waveform is drawn in.
      *
-     * @return {void}
+     * @returns {void}
      */
     clearWave() {
-        this._canvasContext.clearRect(0, 0, this._canvasContext.canvas.width, this._canvasContext.canvas.height);
+        this._canvasContext
+            .clearRect(
+                0,
+                0,
+                this._canvasContext.canvas.width,
+                this._canvasContext.canvas.height
+            );
     }
 
     /**
      * Destroy the waveview instance and do the appropriate clean up.
      *
-     * @return {void}
+     * @returns {void}
      */
     destroy() {
         this._removeCanvasHandlers();
@@ -310,7 +317,7 @@ class WaveView {
      * Create the HTML container element for the HTML canvas element in which we
      * will draw the waveform.
      *
-     * @return {void}
+     * @returns {void}
      */
     _createWaveContainer() {
         this._waveContainer = document.createElement('div');
@@ -319,8 +326,8 @@ class WaveView {
         style(this._waveContainer, {
             display: 'block',
             position: 'relative',
-            width: this._options.responsive ? '100%' : this._options.width + 'px',
-            height: this._options.height + 'px',
+            width: this._options.responsive ? '100%' : `${this._options.width}px`,
+            height: `${this._options.height}px`,
             overflow: 'hidden'
         });
         this._createCanvas();
@@ -329,18 +336,18 @@ class WaveView {
     /**
      * Create the HTML canvas element in which we will draw the waveform.
      *
-     * @return {void}
+     * @returns {void}
      */
     _createCanvas() {
-        const clientWidth = this._waveContainer.clientWidth;
+        const {clientWidth} = this._waveContainer;
         const canvas = this._waveContainer.appendChild(
             style(document.createElement('canvas'), {
                 position: 'absolute',
                 top: 0,
                 bottom: 0,
                 zIndex: 1,
-                height: this._options.height + 'px',
-                width: clientWidth + 'px'   // for responsive, enough to set this to 100% ???
+                height: `${this._options.height}px`,
+                width: `${clientWidth}px` // For responsive, enough to set this to 100% ???
             })
         );
         this._canvasContext = canvas.getContext('2d');
@@ -354,23 +361,26 @@ class WaveView {
     /**
      * Add a canvas click handler.
      *
-     * @return {void}
+     * @returns {void}
      */
     _addCanvasHandlers() {
         this._mouseClickHandler = e => (
-            WavePlayer._mediator.fire('waveview:clicked', this._coord2Progress(e))
+            WavePlayer._mediator
+                .fire('waveview:clicked', this._coord2Progress(e))
         );
-        this._canvasContext.canvas.addEventListener('click', this._mouseClickHandler.bind(this));
+        this._canvasContext.canvas
+            .addEventListener('click', this._mouseClickHandler.bind(this));
     }
 
     /**
      * Remove the canvas click handler.
      *
-     * @return {void}
+     * @returns {void}
      */
     _removeCanvasHandlers() {
         if (this._mouseClickHandler) {
-            this.canvasContect.canvas.removeEventListener('click', this._mouseClickHandler);
+            this.canvasContect.canvas
+                .removeEventListener('click', this._mouseClickHandler);
         }
     }
 
@@ -378,7 +388,7 @@ class WaveView {
      * Create a color stop variation for the colors provided (used for drawing
      * the gradient).
      *
-     * @return {Object}
+     * @returns {Object}
      */
     _createColorVariations() {
         const colors = {waveColor: [], progressColor: []};
@@ -401,11 +411,11 @@ class WaveView {
 
     /**
      * Initialize the resize handler for the waveview. If the waveview instance
-     * is not in responsive mode we do nothing on a resize event, meaning the wave
-     * will not be redrawn. If we are in responsive mode the width of the canvas
-     * is rescaled and hence the waveform needs to be redrawn after this.
+     * is not in responsive mode we do nothing on a resize event, meaning the
+     * wave will not be redrawn. If we are in responsive mode the width of the
+     * canvas is rescaled and hence the waveform needs to be redrawn after this.
      *
-     * @return {void}
+     * @returns {void}
      */
     _initializeResizeHandler() {
         if (!this._options.responsive) {
@@ -425,7 +435,7 @@ class WaveView {
 
         this._resizeHandler = () => {
             const width = this._waveContainer.clientWidth;
-            style(this._canvasContext.canvas, {width: width + 'px'});
+            style(this._canvasContext.canvas, {width: `${width}px`});
             this._canvasContext.canvas.width = width;
             this._barData = this._calcAvgAmps();
             this.updateWave(this._progress);
@@ -436,10 +446,11 @@ class WaveView {
     /**
      * Compute average absolute waveform amplitudes.
      *
-     * @return {Object}
+     * @returns {Object}
      */
     _calcAvgAmps() {
-        // Compute amplitude by averaging over n values in the range [rangeL, rangeR]
+        // Compute amplitude by averaging over n values in the range
+        // [rangeL, rangeR]
         const avgAmp = (dataIndex, rangeL, rangeR, n) => {
             let sum = 0.0;
             for (let i = rangeL; i <= rangeR; i++) {
@@ -450,7 +461,9 @@ class WaveView {
         };
 
         const totalWidth = this._waveContainer.clientWidth;
-        const ratio = totalWidth !== this._data.length ? this._data.length / totalWidth : 1;
+        const ratio = totalWidth !== this._data.length
+            ? this._data.length / totalWidth
+            : 1;
         const totalBarWidth = this._options.barWidth + this._options.barGap;
         let rangeR = (totalBarWidth - 1) / 2;
         const rangeL = -~~rangeR;
@@ -460,7 +473,7 @@ class WaveView {
 
         bd.amps.push(avgAmp(0, 0, rangeR, totalBarWidth));
         bd.x.push(0);
-        var i, j;
+        let i, j;
         for (i = totalBarWidth, j = incr; j + rangeR < this._data.length; i += totalBarWidth, j += incr) {
             bd.amps.push(avgAmp(~~j, rangeL, rangeR, totalBarWidth));
             bd.x.push(i);
@@ -482,8 +495,8 @@ class WaveView {
     /**
      * Draw the individual waveform bars with a gradient.
      *
-     * @param {Number} progressCoord
-     * @return {void}
+     * @param  {number} progressCoord
+     * @returns {void}
      */
     _drawBars(progressCoord) {
         const ctx = this._canvasContext;
@@ -497,11 +510,11 @@ class WaveView {
         for (let i = 0; i < this._barData.x.length; i++) {
             const xpos = this._barData.x[i];
             if (xpos >= progressCoord - totalBarWidth && changeGrad) {
-                if (xpos >= progressCoord) {   // gradient rule for bars after currently playing bar
+                if (xpos >= progressCoord) { // gradient rule for bars after currently playing bar
                     gradient = this._generateGradient(this._colors.waveColor, h0);
                     ctx.fillStyle = gradient;
-                    changeGrad = false;   // more efficient: avoids changing this gradient rule multiple times per single function call
-                } else {  // fade between colors when on currently playing bar
+                    changeGrad = false; // more efficient: avoids changing this gradient rule multiple times per single function call
+                } else { // fade between colors when on currently playing bar
                     const incr = (progressCoord - xpos) / totalBarWidth;
                     const c1 = {
                         r: this._colors.waveColor[0].r - this._colors.dc.r * incr,
@@ -522,15 +535,15 @@ class WaveView {
     /**
      * Generate a linear gradient from the provided colors.
      *
-     * @param {Array} c
-     * @param {Number} h
-     * @return {Object}
+     * @param  {Array} c
+     * @param  {number} h
+     * @returns {Object}
      */
     _generateGradient(c, h) {
         const grd = this._canvasContext.createLinearGradient(0, 0, 0, h);
-        const c1 = 'rgba(' + ~~c[1].r + ', ' + ~~c[1].g + ', ' + ~~c[1].b + ', 1)';
+        const c1 = `rgba(${~~c[1].r}, ${~~c[1].g}, ${~~c[1].b}, 1)`;
         grd.addColorStop(0.0, c1);
-        grd.addColorStop(0.3, 'rgba(' + ~~c[0].r + ', ' + ~~c[0].g + ', ' + ~~c[0].b + ', 1)');
+        grd.addColorStop(0.3, `rgba(${~~c[0].r}, ${~~c[0].g}, ${~~c[0].b}, 1)`);
         grd.addColorStop(1.0, c1);
 
         return grd;
@@ -540,8 +553,8 @@ class WaveView {
      * Calculate the x-coordinate of the current mouse position. The origin is
      * assumed to be at the location of the waveform container HTML element.
      *
-     * @param {MouseEvent} e
-     * @return {Number}
+     * @param  {MouseEvent} e
+     * @returns {number}
      */
     _calcMouseCoordX(e) {
         e.preventDefault();
@@ -551,8 +564,8 @@ class WaveView {
     /**
      * Convert a coordinate to a progress in the range [0-1].
      *
-     * @param {MouseEvent} e
-     * @return {Number}
+     * @param  {MouseEvent} e
+     * @returns {number}
      */
     _coord2Progress(e) {
         return this._calcMouseCoordX(e) / this._waveContainer.clientWidth;

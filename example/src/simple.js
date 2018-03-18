@@ -1,5 +1,5 @@
 import WavePlayer from '../../dist/waveplayer';
-import { toggleClass } from './lib';
+import {toggleClass} from './lib';
 
 /**
  * The WavePlayer instance.
@@ -20,10 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('playback-button');
 
     // Load a track and activate the playback button when finished
-    wavePlayer.load('../audio/extase_1.mp3').then(() => button.disabled = false);
+    wavePlayer.load('../audio/extase_1.mp3')
+        .then(() => button.disabled = false);
 
     button.onclick = () => {
-        toggleClass(button.firstElementChild.firstElementChild, 'fa-pause', 'fa-play');
+        toggleClass(
+            button.firstElementChild.firstElementChild,
+            'fa-pause',
+            'fa-play'
+        );
 
         if (wavePlayer.isPlaying()) {
             wavePlayer.pause();

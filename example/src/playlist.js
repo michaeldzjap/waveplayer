@@ -1,5 +1,5 @@
 import WavePlayer from '../../dist/waveplayer';
-import { toggleClass, addClass, removeClass } from './lib';
+import {toggleClass, addClass, removeClass} from './lib';
 
 /**
  * Application state.
@@ -24,36 +24,65 @@ let trackNodes;
  */
 let wavePlayer;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Create a new waveplayer.js instance
-    wavePlayer = new WavePlayer({
-        container: '#waveform',
-        barWidth: 4,
-        barGap: 1,
-        height: 128
-    });
+/**
+ * Update the application state.
+ *
+ * @param  {Object} newState
+ * @returns {void}
+ */
+const setState = newState => state = {...state, ...newState};
 
-    trackNodes = [...document.querySelectorAll('.panel-block')];
+/**
+ * Update the UI in response to switching tracks.
+ *
+ * @param  {node} node
+ * @param  {number} trackNumber
+ * @returns {void}
+ */
+const switchTracks = node => {
+    const previousNode = trackNodes
+        .find(trackNode => (
+            state.selectedTrackNumber === parseInt(trackNode.dataset.trackNumber)
+        ));
 
-    // Schedule a new playlist and load the first audio track
-    wavePlayer.createPlaylist(trackNodes.map(elm => elm.dataset.url));
+    // Update the play/pause icons
+    addClass(
+        removeClass(previousNode.firstElementChild.firstElementChild, 'fa-pause'),
+        'fa-play'
+    );
+    addClass(
+        removeClass(node.firstElementChild.firstElementChild, 'fa-play'),
+        'fa-pause'
+    );
 
-    // Fired after the next track in the playlist is loaded and just before it
-    // will start playing
-    wavePlayer.on('waveplayer:playlist:next', handleChange);
+    // Update the active panel block
+    removeClass(previousNode, 'is-active');
+    addClass(node, 'is-active');
+};
 
-    // Bind click handlers
-    for (const trackNode of trackNodes) {
-        trackNode.onclick = handleClick.bind(null, trackNode);
-    }
-});
+/**
+ * Handle the case where the waveplayer instance advances to the next track in
+ * the playlist.
+ *
+ * @param  {WavePlayer} me
+ * @param  {Object} trackInfo
+ * @returns {void}
+ */
+const handleChange = (me, {trackNumber}) => {
+    const node = trackNodes
+        .find(trackNode => (
+            trackNumber === parseInt(trackNode.dataset.trackNumber)
+        ));
+    switchTracks(node, trackNumber);
+    setState({selectedTrackNumber: trackNumber});
+};
 
 /**
  * Handle track selection by the user.
  *
- * @param {node} node
- * @param {MouseEvent} e
- * @return {void}
+ * @param  {node} node
+ * @param  {MouseEvent} e
+ * @returns {void}
  */
 const handleClick = node => {
     const trackNumber = parseInt(node.dataset.trackNumber);
@@ -86,43 +115,26 @@ const handleClick = node => {
     }
 };
 
-/**
- * Update the UI in response to switching tracks.
- *
- * @param {node} node
- * @param {Number} trackNumber
- * @return {void}
- */
-const switchTracks = node => {
-    const previousNode = trackNodes.find(trackNode => state.selectedTrackNumber === parseInt(trackNode.dataset.trackNumber));
+document.addEventListener('DOMContentLoaded', () => {
+    // Create a new waveplayer.js instance
+    wavePlayer = new WavePlayer({
+        container: '#waveform',
+        barWidth: 4,
+        barGap: 1,
+        height: 128
+    });
 
-    // Update the play/pause icons
-    addClass(removeClass(previousNode.firstElementChild.firstElementChild, 'fa-pause'), 'fa-play');
-    addClass(removeClass(node.firstElementChild.firstElementChild, 'fa-play'), 'fa-pause');
+    trackNodes = [...document.querySelectorAll('.panel-block')];
 
-    // Update the active panel block
-    removeClass(previousNode, 'is-active');
-    addClass(node, 'is-active');
-};
+    // Schedule a new playlist and load the first audio track
+    wavePlayer.createPlaylist(trackNodes.map(elm => elm.dataset.url));
 
-/**
- * Handle the case where the waveplayer instance advances to the next track in
- * the playlist.
- *
- * @param {WavePlayer} me
- * @param {Object} trackInfo
- * @return {void}
- */
-const handleChange = (me, {trackNumber}) => {
-    const node = trackNodes.find(trackNode => trackNumber === parseInt(trackNode.dataset.trackNumber));
-    switchTracks(node, trackNumber);
-    setState({selectedTrackNumber: trackNumber});
-};
+    // Fired after the next track in the playlist is loaded and just before it
+    // will start playing
+    wavePlayer.on('waveplayer:playlist:next', handleChange);
 
-/**
- * Update the application state.
- *
- * @param {Object} newState
- * @return {void}
- */
-const setState = newState => state = {...state, ...newState};
+    // Bind click handlers
+    for (const trackNode of trackNodes) {
+        trackNode.onclick = handleClick.bind(null, trackNode);
+    }
+});

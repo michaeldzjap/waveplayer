@@ -14,9 +14,9 @@ class Mediator {
     /**
      * Subscribe to the given topic with the given callback.
      *
-     * @param {String} topic
-     * @param {Function} callback
-     * @return {boolean}
+     * @param  {string} topic
+     * @param  {Function} callback
+     * @returns {boolean}
      */
     on(topic, callback) {
         if (!this._topics.hasOwnProperty(topic)) {
@@ -30,9 +30,9 @@ class Mediator {
     /**
      * Unsubscibe the given callback from the given topic.
      *
-     * @param {String} topic
-     * @param {Function} callback
-     * @return {boolean}
+     * @param  {string} topic
+     * @param  {Function} callback
+     * @returns {boolean}
      */
     un(topic, callback = null) {
         // If the topic does not exist, return early
@@ -63,7 +63,7 @@ class Mediator {
     /**
      * Unsubscribe from all topic.
      *
-     * @return {void}
+     * @returns {void}
      */
     unAll() {
         this._topics = null;
@@ -72,9 +72,9 @@ class Mediator {
     /**
      * Fire an event and evaluate any registered callbacks in response.
      *
-     * @param {String} topic
-     * @param {mixed} args
-     * @return {boolean}
+     * @param  {string} topic
+     * @param  {mixed} args
+     * @returns {boolean}
      */
     fire(topic, ...args) {
         if (!this._topics.hasOwnProperty(topic)) {

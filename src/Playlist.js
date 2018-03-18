@@ -11,7 +11,7 @@
 
 import Mediator from './Mediator.js';
 import WavePlayer from './WavePlayer.js';
-import { stateResolver, isObject } from './lib/index.js';
+import {stateResolver, isObject} from './lib/index.js';
 
 class Playlist {
 
@@ -69,17 +69,17 @@ class Playlist {
     /**
      * Indicates if the user skipped to a different track in the playlist.
      *
-     * @param {boolean}
+     * @var {boolean}
      */
     _skipped = false;
 
     /**
      * Initialize a new playlist instance.
      *
-     * @param {audio} audioElm
-     * @param {Array} urls
-     * @param {Object} options
-     * @return {void}
+     * @param  {Object} wavePlayer
+     * @param  {Array} urls
+     * @param  {Object} options
+     * @returns {void}
      */
     constructor(wavePlayer, urls, options = {}) {
         if (!urls || !(urls instanceof Array)) {
@@ -87,7 +87,9 @@ class Playlist {
         }
 
         if (urls.length === 0) {
-            throw new Error('Argument \'urls\' needs to contain at least 1 item.');
+            throw new Error(
+                'Argument \'urls\' needs to contain at least 1 item.'
+            );
         }
 
         if (!isObject(options)) {
@@ -110,7 +112,7 @@ class Playlist {
     /**
      * Go to the next track in the playlist.
      *
-     * @return {void}
+     * @returns {void}
      */
     next() {
         if (this._currentTrackIndex < this._urls.length) {
@@ -122,7 +124,7 @@ class Playlist {
     /**
      * Go to the previous track in the playlist.
      *
-     * @return {void}
+     * @returns {void}
      */
     previous() {
         if (this._currentTrackIndex > 0) {
@@ -135,12 +137,13 @@ class Playlist {
     /**
      * Skip to a specific track in the playlist.
      *
-     * @param {Number} trackNumber
-     * @return {void}
+     * @param  {number} trackNumber
+     * @returns {void}
      */
     skipTo(trackNumber) {
         const trackIndex = trackNumber - 1;
-        if (trackIndex !== this._currentTrackIndex && trackIndex < this._urls.length && trackIndex >= 0) {
+        if (trackIndex !== this._currentTrackIndex
+            && trackIndex < this._urls.length && trackIndex >= 0) {
             this._currentTrackIndex = trackIndex - 1;
             this._skipped = true;
             this._audioElm.dispatchEvent(new Event('ended'));
@@ -150,7 +153,7 @@ class Playlist {
     /**
      * Destroy the playlist instance and do the appropriate clean up.
      *
-     * @return {void}
+     * @returns {void}
      */
     destroy() {
         this._wavePlayer.pause();
@@ -160,24 +163,28 @@ class Playlist {
     /**
      * Create a new scheduler for the playlist instance.
      *
-     * @param {array} urls
-     * @param {boolean} autoPlay
-     * @return {Promise}
+     * @param  {array} urls
+     * @param  {boolean} autoPlay
+     * @returns {Promise}
      */
     _createScheduler(urls, autoPlay) {
         this._currentTrackIndex = 0;
-        const scheduler = stateResolver((function* (urls) {
+        const scheduler = stateResolver((function *(urls) {
             while (this._currentTrackIndex < urls.length) {
                 yield this._wavePlayer.load(urls[this._currentTrackIndex]);
                 if (this._currentTrackIndex > 0) {
                     WavePlayer._mediator.fire(
                         'waveplayer:playlist:next',
                         this._wavePlayer,
-                        {url: urls[this._currentTrackIndex], trackNumber: this._currentTrackIndex + 1}
+                        {
+                            url: urls[this._currentTrackIndex],
+                            trackNumber: this._currentTrackIndex + 1
+                        }
                     );
                     this._wavePlayer.play();
                 } else {
-                    WavePlayer._mediator.fire('waveplayer:playlist:ready', this._wavePlayer);
+                    WavePlayer._mediator
+                        .fire('waveplayer:playlist:ready', this._wavePlayer);
                     if (autoPlay || this._skipped) {
                         this._wavePlayer.play();
                     }
@@ -193,7 +200,11 @@ class Playlist {
         scheduler(urls).then(
             response => {
                 this._skipped = false;
-                WavePlayer._mediator.fire('waveplayer:playlist:finished', this._wavePlayer, response);
+                WavePlayer._mediator
+                    .fire(
+                        'waveplayer:playlist:finished',
+                        this._wavePlayer, response
+                    );
             }
         );
 
@@ -204,10 +215,10 @@ class Playlist {
     * Return a promise that resolves itself when the HTML audio element fires an
     * 'ended' event (i.e. when an audio track finished playing).
     *
-    * @return {Promise}
+    * @returns {Promise}
     */
     _onEnd() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (this._ended) {
                 this._audioElm.removeEventListener('ended', this._ended);
             }
