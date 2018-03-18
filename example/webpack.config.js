@@ -1,7 +1,7 @@
 import path from 'path';
-import webpack from 'webpack';
 
 export default {
+    mode: 'development',
     entry: {
         playlist: './src/playlist',
         simple: './src/simple'
@@ -26,10 +26,8 @@ export default {
     resolve: {
         extensions: ['.js'],
     },
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['manifest']
-        })
-    ],
-    devtool: 'cheap-module-eval-source-map'
+    devtool: 'cheap-module-eval-source-map',
+    optimization: {
+        noEmitOnErrors: true
+    }
 };

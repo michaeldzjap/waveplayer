@@ -499,6 +499,10 @@ class WaveView {
      * @returns {void}
      */
     _drawBars(progressCoord) {
+        if (!this._barData) {
+            return;
+        }
+
         const ctx = this._canvasContext;
         const h0 = ctx.canvas.height;
         const totalBarWidth = this._options.barWidth + this._options.barGap;
