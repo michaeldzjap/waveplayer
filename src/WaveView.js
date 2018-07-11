@@ -30,7 +30,8 @@ class WaveView {
         barGap: 1,
         interact: true,
         responsive: true,
-        progress: 0
+        progress: 0,
+        useGradient: true
     };
 
     /**
@@ -244,6 +245,25 @@ class WaveView {
         style(this.canvasContext.canvas, {height: `${this._options.height}px`});
         this._canvasContext.canvas.height = this._options.height;
         this._barData = this._calcAvgAmps();
+    }
+
+    /**
+     * Get the flag for if the waveform is drawn with a gradient.
+     *
+     * @returns {boolean}
+     */
+    get useGradient() {
+        return this._options.useGradient;
+    }
+
+    /**
+     * Set the flag for if the waveform is drawn with a gradient.
+     *
+     * @param  {boolean} value
+     * @returns {void}
+     */
+    set useGradient(value) {
+        this._options.useGradient = value;
     }
 
     /*********************
@@ -499,24 +519,23 @@ class WaveView {
      * @returns {void}
      */
     _drawBars(progressCoord) {
-        if (!this._barData) {
-            return;
-        }
+        if (!this._barData) return;
 
         const ctx = this._canvasContext;
         const h0 = ctx.canvas.height;
         const totalBarWidth = this._options.barWidth + this._options.barGap;
         let changeGrad = true;
-        let gradient = this._generateGradient(this._colors.progressColor, h0);
-
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = this._options.useGradient
+            ? this._generateGradient(this._colors.progressColor, h0)
+            : this._generateColor(this._colors.progressColor[0]);
 
         for (let i = 0; i < this._barData.x.length; i++) {
             const xpos = this._barData.x[i];
             if (xpos >= progressCoord - totalBarWidth && changeGrad) {
                 if (xpos >= progressCoord) { // gradient rule for bars after currently playing bar
-                    gradient = this._generateGradient(this._colors.waveColor, h0);
-                    ctx.fillStyle = gradient;
+                    ctx.fillStyle = this._options.useGradient
+                        ? this._generateGradient(this._colors.waveColor, h0)
+                        : this._generateColor(this._colors.waveColor[0]);
                     changeGrad = false; // more efficient: avoids changing this gradient rule multiple times per single function call
                 } else { // fade between colors when on currently playing bar
                     const incr = (progressCoord - xpos) / totalBarWidth;
@@ -525,10 +544,16 @@ class WaveView {
                         g: this._colors.waveColor[0].g - this._colors.dc.g * incr,
                         b: this._colors.waveColor[0].b - this._colors.dc.b * incr
                     };
-                    let c2 = rgb2hsv(c1);
-                    c2 = hsv2rgb({h: c2.h, s: c2.s, v: c2.v * 1.4});
-                    gradient = this._generateGradient([c1, c2], h0);
-                    ctx.fillStyle = gradient;
+
+                    let c2 = null;
+                    if (this._options.useGradient) {
+                        c2 = rgb2hsv(c1);
+                        c2 = hsv2rgb({h: c2.h, s: c2.s, v: c2.v * 1.4});
+                    }
+
+                    ctx.fillStyle = this._options.useGradient
+                        ? this._generateGradient([c1, c2], h0)
+                        : this._generateColor(c1);
                 }
             }
             const h = Math.max(h0 * this._barData.amps[i] * this._barData.norm, 0.5);
@@ -551,6 +576,16 @@ class WaveView {
         grd.addColorStop(1.0, c1);
 
         return grd;
+    }
+
+    /**
+     * Generate a CSS color string from a given color object.
+     *
+     * @param  {Object} c
+     * @returns {string}
+     */
+    _generateColor(c) {
+        return `rgb(${~~c.r}, ${~~c.g}, ${~~c.b})`;
     }
 
     /**
