@@ -1,7 +1,7 @@
 /**
- * waveplayer.js
+ * WavePlayer.js
  *
- * © Michaël Dzjaparidze 2017
+ * © Michaël Dzjaparidze 2018
  * https://github.com/michaeldzjap
  *
  * A HTML5 based audio player with a waveform view
@@ -46,6 +46,14 @@ class WavePlayer {
     _playlist;
 
     /**
+     * The position of the playback header relative to the duration of the
+     * currently playing track
+     *
+     * @var {number}
+     */
+    _currentTime;
+
+    /**
      * Initialize a new waveplayer instance.
      *
      * @param  {Object} options
@@ -73,7 +81,7 @@ class WavePlayer {
      ************************/
 
     /**
-     * Get the current volume of the audio.
+     * Get the current volume of the currently loaded / playing track.
      *
      * @returns {number}
      */
@@ -82,7 +90,7 @@ class WavePlayer {
     }
 
     /**
-     * Set the current volume of the audio.
+     * Set the current volume of the currently loaded / playing track.
      *
      * @param  {number} value
      * @returns {void}
@@ -111,7 +119,8 @@ class WavePlayer {
     }
 
     /**
-     * Check if the associated waveview instance is operating in responsive mode.
+     * Check if the associated waveview instance is operating in responsive
+     * mode.
      *
      * @returns {boolean}
      */
@@ -143,6 +152,25 @@ class WavePlayer {
         return null;
     }
 
+    /**
+     * Get the position of the playback header relative to the duration of the
+     * currently loaded / playing track.
+     *
+     * @returns {number}
+     */
+    get currentTime() {
+        return this._currentTime;
+    }
+
+    /**
+     * Get the duration of the currently loaded / playing track.
+     *
+     * @returns {number}
+     */
+    get duration() {
+        return this._audioElm.duration;
+    }
+
     /*********************
      * Public functions. *
      *********************/
@@ -156,10 +184,12 @@ class WavePlayer {
      */
     load(url) {
         return Promise.all([
-            Promise.resolve((() => {
+            new Promise(resolve => {
                 this._audioElm.src = url;
                 this._audioElm.load();
-            })()),
+                this._currentTime = 0;
+                WavePlayer._mediator.on('waveplayer:canplay', () => resolve());
+            }),
             this._getWaveformData(url)
         ]);
     }
@@ -373,10 +403,11 @@ class WavePlayer {
             };
             this._audioElm.addEventListener('error', this._errorHandler.bind(this));
 
-            this._timeUpdateHandler = e => (
+            this._timeUpdateHandler = e => {
+                this._currentTime = e.target.currentTime;
                 this._waveView
-                    .updateWave(this._durationToProgress(e.target.currentTime))
-            );
+                    .updateWave(this._durationToProgress(this._currentTime));
+            };
             this._audioElm.addEventListener(
                 'timeupdate',
                 this._timeUpdateHandler.bind(this)

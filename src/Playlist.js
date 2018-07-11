@@ -1,8 +1,8 @@
 /**
- * playlist.js
+ * Playlist.js
  *
- * © Michaël Dzjaparidze 2017
- * http://www.michaeldzjaparidze.com, https://github.com/michaeldzjap
+ * © Michaël Dzjaparidze 2018
+ * https://github.com/michaeldzjap
  *
  * Playlist functionality for waveplayer.js
  *
