@@ -54,6 +54,10 @@ class WavePlayer {
     _currentTime;
 
     /**
+     * The waveform amplitude data.
+     */
+
+    /**
      * Initialize a new waveplayer instance.
      *
      * @param  {Object} options
@@ -61,9 +65,7 @@ class WavePlayer {
      */
     constructor(options) {
         // Create a new mediator if there does not exist one yet
-        if (!WavePlayer._mediator) {
-            WavePlayer._mediator = new Mediator;
-        }
+        if (!WavePlayer._mediator) WavePlayer._mediator = new Mediator;
 
         this._waveView = new WaveView(null, {...options});
 
@@ -180,9 +182,10 @@ class WavePlayer {
      * when the track has finished loading.
      *
      * @param  {string} url
+     * @param  {Object|Array|null} data
      * @returns {Promise}
      */
-    load(url) {
+    load(url, data = null) {
         return Promise.all([
             new Promise(resolve => {
                 this._audioElm.src = url;
@@ -190,7 +193,14 @@ class WavePlayer {
                 this._currentTime = 0;
                 WavePlayer._mediator.on('waveplayer:canplay', () => resolve());
             }),
-            this._getWaveformData(url)
+            data
+                ? Promise.resolve(this._waveView.drawWave(
+                    typeof data === 'object'
+                        ? [...data[Object.keys(data)[0]]]
+                        : [...data],
+                    0
+                ))
+                : this._getWaveformData(url)
         ]);
     }
 
@@ -439,12 +449,12 @@ class WavePlayer {
         return new Promise((resolve, reject) => {
             getJSON(`${url.substr(0, url.lastIndexOf('.'))}.json`)
                 .then(response => {
-                    if (typeof response === 'object') {
-                        this._waveView
-                            .drawWave(response[Object.keys(response)[0]], 0);
-                    } else {
-                        this._waveView.drawWave(response, 0);
-                    }
+                    this._waveView.drawWave(
+                        typeof response === 'object'
+                            ? response[Object.keys(response)[0]]
+                            : response,
+                        0
+                    );
                     resolve('waveplayer:json:fetched');
                 })
                 .catch(err => reject(err));

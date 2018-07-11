@@ -104,7 +104,7 @@ class Playlist {
         // Merge any supplied options with default options
         this._options = {...this._defaultOptions, ...options};
         this._wavePlayer = wavePlayer;
-        this._urls = [...urls];
+        this._urls = urls;
         this._audioElm = this._wavePlayer._audioElm;
         this._scheduler = this._createScheduler(urls, this._options.autoplay);
     }
@@ -163,47 +163,52 @@ class Playlist {
     /**
      * Create a new scheduler for the playlist instance.
      *
-     * @param  {array} urls
+     * @param  {Array} urls
      * @param  {boolean} autoPlay
      * @returns {Promise}
      */
     _createScheduler(urls, autoPlay) {
         this._currentTrackIndex = 0;
-        const scheduler = stateResolver((function *(urls) {
-            while (this._currentTrackIndex < urls.length) {
-                yield this._wavePlayer.load(urls[this._currentTrackIndex]);
-                if (this._currentTrackIndex > 0) {
+        const scheduler = stateResolver((function *(urls, me) { // eslint-disable-line
+            while (me._currentTrackIndex < urls.length) {
+                const {url, data} = isObject(urls[me._currentTrackIndex])
+                    ? urls[me._currentTrackIndex]
+                    : {url: urls[me._currentTrackIndex], data: null};
+
+                yield me._wavePlayer.load(url, data);
+
+                if (me._currentTrackIndex > 0) {
                     WavePlayer._mediator.fire(
                         'waveplayer:playlist:next',
-                        this._wavePlayer,
+                        me._wavePlayer,
                         {
-                            url: urls[this._currentTrackIndex],
-                            trackNumber: this._currentTrackIndex + 1
+                            url: urls[me._currentTrackIndex],
+                            trackNumber: me._currentTrackIndex + 1
                         }
                     );
-                    this._wavePlayer.play();
+                    me._wavePlayer.play();
                 } else {
                     WavePlayer._mediator
-                        .fire('waveplayer:playlist:ready', this._wavePlayer);
-                    if (autoPlay || this._skipped) {
-                        this._wavePlayer.play();
-                    }
+                        .fire('waveplayer:playlist:ready', me._wavePlayer);
+                    if (autoPlay || me._skipped) me._wavePlayer.play();
                 }
+
                 // Wait until the current track finishes playing
-                yield this._onEnd();
-                this._currentTrackIndex++;
+                yield me._onEnd();
+                me._currentTrackIndex++;
             }
 
-            return this._currentTrackIndex;
-        })).bind(this);
+            return me._currentTrackIndex;
+        }));
 
-        scheduler(urls).then(
+        scheduler(urls, this).then(
             response => {
                 this._skipped = false;
                 WavePlayer._mediator
                     .fire(
                         'waveplayer:playlist:finished',
-                        this._wavePlayer, response
+                        this._wavePlayer,
+                        response
                     );
             }
         );

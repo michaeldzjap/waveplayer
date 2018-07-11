@@ -16,7 +16,7 @@ License: MIT
 ## Browser Support & Other Requirements
 *waveplayer.js* is tested to work on *Chrome*, *Firefox* and *Opera* (no support for *Internet Explorer* yet).
 
-In order to minimise waveform drawing times it is necessary to supply a URL to a JSON file representing the waveform of the audio file numerically. This JSON file should have the same name as the corresponding audio file and should exist at the same location. An error will be thrown if this JSON file does not exist.
+In order to minimise waveform drawing times it is necessary to supply an URL to a JSON file or a data array / object representing the waveform of the audio file numerically. When supplying a JSON file, it should have the same name as the corresponding audio file and should exist at the same location. An error will be thrown if this JSON file does not exist and no waveform data was passed in explicitly as a second argument to the `load()` function.
 
 There exist a number of tools for extracting waveform data in JSON format from an audio file; [wav2json](https://github.com/beschulz/wav2json) or [py-wav2json](https://github.com/michaeldzjap/py-wav2json) can be used for instance. It is enough to provide a single array of floating point values. If the JSON contains an associative array, only the first entree will be used.
 
@@ -84,6 +84,7 @@ View the code for a full playlist example [here](/example/src/playlist.js)
 | `interact` | boolean | `true` | Enables/disables mouse interaction with the waveform view. This may be changed at any point after creation. |
 | `progressColor` | string | `#31708f` | The fill color of the waveform bars that have been played back so far. |
 | `responsive` | boolean | `true` | If set to true, the width of the waveform view adapts to the width of the container element. |
+| `useGradient` | boolean | `true` | Indicates if the waveform should be drawn with a gradient or not. |
 | `waveColor` | string | `#428bca` | The fill color of the waveform bars that have not been played back so far. |
 | `width` | integer | 512 | The width of the waveform in pixels (only relevant when the `responsive` option is set to `false`). |
 
@@ -91,27 +92,35 @@ View the code for a full playlist example [here](/example/src/playlist.js)
 * `cancelPlaylist()`
 
     Cancels the currently active playlist (will also stop the audio instantly).
-* `createPlaylist(urls)`
+* `createPlaylist(urls, options)`
 
     Creates a new playlist (it will cancel the currently active playlist if there is one).
 
     **Arguments**:
 
-    `urls` is an array of valid audio file URL's.
+    `urls` is an array of valid audio file URL's or an array of objects each having an `url` and `data` property, where `url` points to the audio file URL and `data` is an array or object holding valid waveform data (also see documentation for `load()`).
 
     `options` (**optional**) is an object with the following keys:
 
     - `autoPlay`: A boolean that indicates if the playlist should start playing automatically after it was created.
+* `currentTime`
+
+    Getter for the playback time (in seconds) of the currently loaded / playing track.
 * `destroy()`
 
     Stops playback, cancels any running playlists and unsubscribes from any events that are listened for.
-* `load(url)`
+* `duration`
+
+    Getter for the total duration (in seconds) of the currently loaded / playing track.
+* `load(url, data)`
 
     Load an audio file from a URL and return a Promise which may be used to perform an action when the audio file has finished loading.
 
     **Arguments**:
 
     `url` is a valid URL to an audio file.
+
+    `data` (**optional**) is an array or object containing waveform data. If it is not supplied, the waveform data is extracted from the JSON file. If `data` is an object it is expected that the first key points to an array of waveform values. Note that only the first key found in the object is queried for waveform data.
 * `interact` or `interact = bool`
 
     Setter or getter for enabling/disabling mouse interaction with the waveform view.

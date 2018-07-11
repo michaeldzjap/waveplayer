@@ -31,15 +31,15 @@ class WaveView {
         interact: true,
         responsive: true,
         progress: 0,
-        useGradient: true
+        useGradient: true,
     };
 
     /**
      * The amplitude data that will be used to draw the waveform.
      *
-     * @var {Array}
+     * @var {Array|null}
      */
-    _data;
+    _data = null;
 
     /**
      * The options for this waveplayer instance.
@@ -96,7 +96,7 @@ class WaveView {
             WavePlayer._mediator = new Mediator;
         }
 
-        this._data = data;
+        if (data) this.drawWave(data, 0);
         this._options = {...this._defaultOptions, ...options};
         this.container = 'string' === typeof this._options.container
             ? document.querySelector(this._options.container)
@@ -278,7 +278,7 @@ class WaveView {
      * @returns {void}
      */
     drawWave(values, progress) {
-        this.data = values;
+        this._data = values;
         this._progress = progress;
         this._barData = this._calcAvgAmps();
         this.clearWave();
