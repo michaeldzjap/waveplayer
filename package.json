@@ -35,9 +35,9 @@
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^5.3.0",
     "eslint-plugin-import": "^2.13.0",
-    "rollup": "^0.64.0",
+    "rollup": "^0.64.1",
     "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-commonjs": "^9.1.4",
+    "rollup-plugin-commonjs": "^9.1.5",
     "rollup-plugin-eslint": "^5.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-uglify": "^4.0.0"
