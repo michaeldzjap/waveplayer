@@ -1,6 +1,6 @@
 {
   "name": "waveplayer",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A HTML and JavaScript based audio player with a waveform view",
   "main": "dist/waveplayer.min.js",
   "jsnext:main": "src/index.js",
