@@ -16,7 +16,11 @@ export default [
             eslint(),
             babel({
                 exclude: 'node_modules/**',
-                plugins: ['external-helpers', 'transform-runtime'],
+                plugins: [
+                    '@babel/plugin-external-helpers',
+                    '@babel/plugin-transform-runtime',
+                    '@babel/plugin-proposal-class-properties',
+                ],
                 runtimeHelpers: true
             }),
             commonjs(),
@@ -39,7 +43,11 @@ export default [
             eslint(),
             babel({
                 exclude: 'node_modules/**',
-                plugins: ['external-helpers', 'transform-runtime'],
+                plugins: [
+                    '@babel/plugin-external-helpers',
+                    '@babel/plugin-transform-runtime',
+                    '@babel/plugin-proposal-class-properties',
+                ],
                 runtimeHelpers: true
             }),
             commonjs(),

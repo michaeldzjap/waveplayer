@@ -42,7 +42,7 @@ class WaveView {
     _data = null;
 
     /**
-     * The options for this waveplayer instance.
+     * The options for this waveview instance.
      *
      * @var {Object}
      */
