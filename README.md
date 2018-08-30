@@ -87,7 +87,7 @@ View the code for a full playlist example [here](/example/src/playlist.js)
 | `responsive` | boolean | `true` | If set to true, the width of the waveform view adapts to the width of the container element. |
 | `useGradient` | boolean | `true` | Indicates if the waveform should be drawn with a gradient or not. |
 | `waveColor` | string | `#428bca` | The fill color of the waveform bars that have not been played back so far. |
-| `width` | integer | 512 | The width of the waveform in pixels (only relevant when the `responsive` option is set to `false`). |
+| `width` | integer | `512` | The width of the waveform in pixels (only relevant when the `responsive` option is set to `false`). |
 
 ## waveplayer.js Methods
 * `cancelPlaylist()`
