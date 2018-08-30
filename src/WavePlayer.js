@@ -17,6 +17,22 @@ import {getJSON, isString, isObject} from './lib/index.js';
 class WavePlayer {
 
     /**
+     * The default options for a new instance.
+     *
+     * @var {Object}
+     */
+    _defaultOptions = {
+        preload: 'metadata'
+    };
+
+    /**
+     * The options for this waveplayer instance.
+     *
+     * @var {Object}
+     */
+    _options;
+
+    /**
      * The mediator singleton that will be used to listen to events and fire
      * actions in response.
      *
@@ -67,7 +83,8 @@ class WavePlayer {
         // Create a new mediator if there does not exist one yet
         if (!WavePlayer._mediator) WavePlayer._mediator = new Mediator;
 
-        this._waveView = new WaveView(null, {...options});
+        this._options = {...this._defaultOptions, ...options};
+        this._waveView = new WaveView(null, {...this._options});
 
         Promise.all([
             this._initializeAudioElm(),
@@ -457,7 +474,7 @@ class WavePlayer {
         const audioElm = document.createElement('audio');
         audioElm.controls = false;
         audioElm.autoplay = false;
-        audioElm.preload = 'auto';
+        audioElm.preload = this._options.preload;
 
         return audioElm;
     }
@@ -473,7 +490,7 @@ class WavePlayer {
             getJSON(url)
                 .then(response => {
                     this._waveView.drawWave(
-                        typeof response === 'object'
+                        isObject(response)
                             ? response[Object.keys(response)[0]]
                             : response,
                         0

@@ -82,6 +82,7 @@ View the code for a full playlist example [here](/example/src/playlist.js)
 | `container` | mixed | `null` | **Required**: CSS-selector or HTML-element for displaying the waveform. |
 | `height` | integer | `128` | The height of the waveform in pixels. |
 | `interact` | boolean | `true` | Enables/disables mouse interaction with the waveform view. This may be changed at any point after creation. |
+| `preload` | string | `metadata` | The value of the preload attribute of the audio element. |
 | `progressColor` | string | `#31708f` | The fill color of the waveform bars that have been played back so far. |
 | `responsive` | boolean | `true` | If set to true, the width of the waveform view adapts to the width of the container element. |
 | `useGradient` | boolean | `true` | Indicates if the waveform should be drawn with a gradient or not. |
@@ -121,6 +122,20 @@ View the code for a full playlist example [here](/example/src/playlist.js)
     `url` is a valid URL to an audio file.
 
     `data` (**optional**) is an array or object containing waveform data. If it is not supplied, the waveform data is extracted from the JSON file. If `data` is an object it is expected that the first key points to an array of waveform values. Note that only the first key found in the object is queried for waveform data.
+* `loadAudio(url)`
+
+    Load an audio file from a URL without loading the waveform data and rendering the waveform.
+
+    **Arguments**:
+
+    `url` is a valid URL to an audio file.
+* `loadWaveform(data)`
+
+    Load the waveform data from a URL to a JSON file or explicitly provided waveform data without loading the audio file.
+
+    **Arguments**:
+
+    `data` is either a string representing a valid URL to a JSON file containing the waveform data or an array or object containing waveform data.
 * `interact` or `interact = bool`
 
     Setter or getter for enabling/disabling mouse interaction with the waveform view.
