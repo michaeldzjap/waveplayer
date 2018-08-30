@@ -163,9 +163,25 @@ export const style = (elm, styles) => {
 };
 
 /**
- * Check if the given value is an objet
+ * Check if the given value is an object.
  *
  * @param  {mixed} value
  * @returns {boolean}
  */
-export const isObject = value => value === Object(value);
+export const isObject = value => {
+    const type = typeof value;
+    return value !== null && (type === 'object' || type === 'function');
+};
+
+/**
+ * Check if the given value is a string.
+ *
+ * @param  {mixed} value
+ * @returns {boolean}
+ */
+export const isString = value => {
+    const type = typeof value;
+    return type === 'string'
+        || (type === 'object' && value !== null && !Array.isArray(value)
+            && Object.prototype.toString.call(value) === '[object String]');
+};

@@ -12,7 +12,7 @@
 import Mediator from './Mediator.js';
 import WaveView from './WaveView.js';
 import Playlist from './Playlist.js';
-import {getJSON} from './lib/index.js';
+import {getJSON, isString, isObject} from './lib/index.js';
 
 class WavePlayer {
 
@@ -178,8 +178,8 @@ class WavePlayer {
      *********************/
 
     /**
-     * Load a track and return a promise which may be used to perform an action
-     * when the track has finished loading.
+     * Load an audio file and return a promise which may be used to perform an
+     * action when the audio has finished loading.
      *
      * @param  {string} url
      * @param  {Object|Array|null} data
@@ -187,21 +187,44 @@ class WavePlayer {
      */
     load(url, data = null) {
         return Promise.all([
-            new Promise(resolve => {
-                this._audioElm.src = url;
-                this._audioElm.load();
-                this._currentTime = 0;
-                WavePlayer._mediator.on('waveplayer:canplay', () => resolve());
-            }),
-            data
-                ? Promise.resolve(this._waveView.drawWave(
-                    typeof data === 'object'
-                        ? [...data[Object.keys(data)[0]]]
-                        : [...data],
-                    0
-                ))
-                : this._getWaveformData(url)
+            this.loadAudio(url),
+            this.loadWaveform(data || this._jsonUrl(url)),
         ]);
+    }
+
+    /**
+     * Load the audio from the given URL.
+     *
+     * @param  {string} url
+     * @returns {Promise}
+     */
+    loadAudio(url) {
+        return new Promise(resolve => {
+            this._audioElm.src = url;
+            this._audioElm.load();
+            this._currentTime = 0;
+            WavePlayer._mediator.on('waveplayer:canplay', () => resolve());
+        });
+    }
+
+    /**
+     * Load the waveform data from a given URL to a JSON file or explicitly
+     * provided waveform data.
+     *
+     * @param  {string|Object|Array} data
+     * @returns {Promise}
+     */
+    loadWaveform(data) {
+        if (isString(data)) {
+            // If the data is a URL, fetch the data before drawing
+            return this._getWaveformData(data);
+        }
+
+        // Otherwise just draw the wave using the given data
+        return Promise.resolve(this._waveView.drawWave(
+            isObject(data) ? [...data[Object.keys(data)[0]]] : [...data],
+            0
+        ));
     }
 
     /**
@@ -447,7 +470,7 @@ class WavePlayer {
      */
     _getWaveformData(url) {
         return new Promise((resolve, reject) => {
-            getJSON(`${url.substr(0, url.lastIndexOf('.'))}.json`)
+            getJSON(url)
                 .then(response => {
                     this._waveView.drawWave(
                         typeof response === 'object'
@@ -479,6 +502,17 @@ class WavePlayer {
      */
     _progressToDuration(progress) {
         return progress * this._audioElm.duration;
+    }
+
+    /**
+     * Use the given URL to an audio file to determine the correct URL to the
+     * associated JSON file holding the waveform data.
+     *
+     * @param  {string} url
+     * @returns {string}
+     */
+    _jsonUrl(url) {
+        return `${url.substr(0, url.lastIndexOf('.'))}.json`;
     }
 
 }
