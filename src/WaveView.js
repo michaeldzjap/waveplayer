@@ -399,7 +399,7 @@ class WaveView {
      */
     _removeCanvasHandlers() {
         if (this._mouseClickHandler) {
-            this.canvasContect.canvas
+            this.canvasContext.canvas
                 .removeEventListener('click', this._mouseClickHandler);
         }
     }
