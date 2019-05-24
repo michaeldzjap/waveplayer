@@ -25,7 +25,6 @@ export default [
             }),
             commonjs(),
             resolve({
-                jsnext: true,
                 customResolveOptions: {
                     moduleDirectory: 'node_modules'
                 }
@@ -52,7 +51,6 @@ export default [
             }),
             commonjs(),
             resolve({
-                jsnext: true,
                 customResolveOptions: {
                     moduleDirectory: 'node_modules'
                 }
