@@ -29,8 +29,8 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/register": "^7.4.4",
     "babel-loader": "^8.0.6",
-    "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2"
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.3"
   },
   "dependencies": {
     "@babel/runtime": "^7.4.5",
