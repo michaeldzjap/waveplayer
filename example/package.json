@@ -25,15 +25,15 @@
   },
   "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/register": "^7.5.5",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/register": "^7.6.0",
     "babel-loader": "^8.0.6",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.7"
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8"
   },
   "dependencies": {
-    "@babel/runtime": "^7.5.5",
+    "@babel/runtime": "^7.6.0",
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
     "bulma": "^0.7.5"
   }
