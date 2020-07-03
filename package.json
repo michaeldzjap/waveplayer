@@ -27,15 +27,15 @@
   },
   "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-external-helpers": "^7.8.3",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-external-helpers": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-import": "^2.20.2",
-    "rollup": "^2.3.4",
+    "eslint": "^7.3.1",
+    "eslint-plugin-import": "^2.22.0",
+    "rollup": "^2.18.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-eslint": "^7.0.0",
@@ -43,6 +43,6 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2"
+    "@babel/runtime": "^7.10.4"
   }
 }
