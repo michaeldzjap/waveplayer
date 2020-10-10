@@ -5,7 +5,8 @@
   "main": "dist/playlist.js",
   "scripts": {
     "build": "node -r @babel/register ./node_modules/.bin/webpack --progress --hide-modules",
-    "watch": "node -r @babel/register ./node_modules/.bin/webpack --watch --progress --hide-modules"
+    "watch": "node -r @babel/register ./node_modules/.bin/webpack --watch --progress --hide-modules",
+    "serve": "http-server ./"
   },
   "repository": {
     "type": "git",
@@ -25,16 +26,17 @@
   },
   "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
   "devDependencies": {
-    "@babel/core": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
-    "@babel/register": "^7.10.4",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/register": "^7.11.5",
     "babel-loader": "^8.1.0",
-    "webpack": "^4.43.0",
+    "http-server": "^0.12.3",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@babel/runtime": "^7.10.4",
+    "@babel/runtime": "^7.11.2",
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
-    "bulma": "^0.8.2"
+    "bulma": "^0.9.1"
   }
 }

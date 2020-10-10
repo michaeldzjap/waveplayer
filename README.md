@@ -15,6 +15,15 @@ Author: Michael Dzjaparidze
 
 License: MIT
 
+## Table of Contents
+
+- [Browser Support & Other Requirements](#browser-support-&-other-requirements)
+- [Installation](#installation)
+- [Examples](#examples)
+- [waveplayer.js Options](#waveplayer.js-options)
+- [waveplayer.js Methods](#waveplayer.js-methods)
+- [waveplayer.js Events](#waveplayer.js-events)
+
 ## Browser Support & Other Requirements
 *waveplayer.js* is tested to work on *Chrome*, *Firefox* and *Opera* (no support for *Internet Explorer* yet).
 
