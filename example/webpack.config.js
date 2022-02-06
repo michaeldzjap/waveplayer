@@ -4,12 +4,12 @@ export default {
     mode: 'development',
     entry: {
         playlist: './src/playlist',
-        simple: './src/simple'
+        simple: './src/simple',
     },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
-        devtoolModuleFilenameTemplate: 'webpack:///[absolute-resource-path]'
+        devtoolModuleFilenameTemplate: 'webpack:///[absolute-resource-path]',
     },
     module: {
         rules: [
@@ -18,16 +18,16 @@ export default {
                 exclude: path.resolve(__dirname, 'node_modules'),
                 loader: 'babel-loader',
                 options: {
-                    cacheDirectory: true
-                }
-            }
-        ]
+                    cacheDirectory: true,
+                },
+            },
+        ],
     },
     resolve: {
         extensions: ['.js'],
     },
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-cheap-module-source-map',
     optimization: {
-        noEmitOnErrors: true
-    }
+        emitOnErrors: false,
+    },
 };
