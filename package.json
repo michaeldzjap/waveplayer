@@ -58,6 +58,6 @@
     "@babel/runtime": "^7.11.2"
   },
   "lint-staged": {
-    "*.ts": "eslint --cache --fix"
+    "*.js": "eslint --cache --fix"
   }
 }
