@@ -12,17 +12,16 @@
 import Mediator from './Mediator.js';
 import WaveView from './WaveView.js';
 import Playlist from './Playlist.js';
-import {getJSON, isString, isObject} from './lib/index.js';
+import { getJSON, isString, isObject } from './lib/index.js';
 
 class WavePlayer {
-
     /**
      * The default options for a new instance.
      *
      * @var {Object}
      */
     _defaultOptions = {
-        preload: 'metadata'
+        preload: 'metadata',
     };
 
     /**
@@ -81,18 +80,14 @@ class WavePlayer {
      */
     constructor(options) {
         // Create a new mediator if there does not exist one yet
-        if (!WavePlayer._mediator) WavePlayer._mediator = new Mediator;
+        if (!WavePlayer._mediator) WavePlayer._mediator = new Mediator();
 
-        this._options = {...this._defaultOptions, ...options};
-        this._waveView = new WaveView(null, {...this._options});
+        this._options = { ...this._defaultOptions, ...options };
+        this._waveView = new WaveView(null, { ...this._options });
 
-        Promise.all([
-            this._initializeAudioElm(),
-            this._initializeWaveViewInteraction()
-        ])
-            .then(() => (
-                WavePlayer._mediator.fire('waveplayer:initialized', this)
-            ));
+        Promise.all([this._initializeAudioElm(), this._initializeWaveViewInteraction()]).then(() =>
+            WavePlayer._mediator.fire('waveplayer:initialized', this),
+        );
     }
 
     /************************
@@ -203,10 +198,7 @@ class WavePlayer {
      * @returns {Promise}
      */
     load(url, data = null) {
-        return Promise.all([
-            this.loadAudio(url),
-            this.loadWaveform(data || this._jsonUrl(url)),
-        ]);
+        return Promise.all([this.loadAudio(url), this.loadWaveform(data || this._jsonUrl(url))]);
     }
 
     /**
@@ -216,7 +208,7 @@ class WavePlayer {
      * @returns {Promise}
      */
     loadAudio(url) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this._audioElm.src = url;
             this._audioElm.load();
             this._currentTime = 0;
@@ -238,10 +230,9 @@ class WavePlayer {
         }
 
         // Otherwise just draw the wave using the given data
-        return Promise.resolve(this._waveView.drawWave(
-            isObject(data) ? [...data[Object.keys(data)[0]]] : [...data],
-            0
-        ));
+        return Promise.resolve(
+            this._waveView.drawWave(isObject(data) ? [...data[Object.keys(data)[0]]] : [...data], 0),
+        );
     }
 
     /**
@@ -345,8 +336,7 @@ class WavePlayer {
             if (this._ended) {
                 this._audioElm.removeEventListener('ended', this._ended);
             }
-            this._audioElm.parentNode
-                && this._audioElm.parentNode.removeChild(this._audioElm);
+            this._audioElm.parentNode && this._audioElm.parentNode.removeChild(this._audioElm);
             this._audioElm = null;
         }
         this._waveView.destroy();
@@ -363,28 +353,27 @@ class WavePlayer {
      * @returns {Promise}
      */
     _initializeWaveViewInteraction() {
-        return Promise.resolve((() => {
-            if (this._onClickHandler) {
-                WavePlayer._mediator.un('waveview:clicked', this._onClickHandler);
-            }
-
-            // The 'waveview:clicked' event passes along a number in the range
-            // [0-1] that indicates the position of the click relative to the
-            // starting point of the waveform
-            this._onClickHandler = progress => {
-                if (this.isPlaying()) {
-                    // Skip to new position in audio file if we are currently
-                    // playing something
-                    const time = this._progressToDuration(progress);
-                    this.skipTo(time);
-                    WavePlayer._mediator.fire('waveplayer:skipped', this, time);
+        return Promise.resolve(
+            (() => {
+                if (this._onClickHandler) {
+                    WavePlayer._mediator.un('waveview:clicked', this._onClickHandler);
                 }
-            };
-            WavePlayer._mediator.on(
-                'waveview:clicked',
-                this._onClickHandler.bind(this)
-            );
-        })());
+
+                // The 'waveview:clicked' event passes along a number in the range
+                // [0-1] that indicates the position of the click relative to the
+                // starting point of the waveform
+                this._onClickHandler = (progress) => {
+                    if (this.isPlaying()) {
+                        // Skip to new position in audio file if we are currently
+                        // playing something
+                        const time = this._progressToDuration(progress);
+                        this.skipTo(time);
+                        WavePlayer._mediator.fire('waveplayer:skipped', this, time);
+                    }
+                };
+                WavePlayer._mediator.on('waveview:clicked', this._onClickHandler.bind(this));
+            })(),
+        );
     }
 
     /**
@@ -396,15 +385,9 @@ class WavePlayer {
     _initializeAudioElm() {
         return new Promise((resolve, reject) => {
             if (this._waveView.container.querySelector('audio')) {
-                this._audioElm.removeEventListener(
-                    'canplay',
-                    this._canplayHandler
-                );
+                this._audioElm.removeEventListener('canplay', this._canplayHandler);
                 this._audioElm.removeEventListener('error', this._errorHandler);
-                this._audioElm.removeEventListener(
-                    'timeupdate',
-                    this._timeUpdateHandler
-                );
+                this._audioElm.removeEventListener('timeupdate', this._timeUpdateHandler);
                 this._waveView.container.removeChild(this._audioElm);
             }
 
@@ -416,36 +399,21 @@ class WavePlayer {
                 WavePlayer._mediator.fire('waveplayer:canplay', this);
                 resolve('waveplayer:canplay');
             };
-            this._audioElm.addEventListener(
-                'canplay',
-                this._canplayHandler.bind(this)
-            );
+            this._audioElm.addEventListener('canplay', this._canplayHandler.bind(this));
 
-            this._errorHandler = e => {
+            this._errorHandler = (e) => {
                 switch (e.target.error.code) {
                     case e.target.error.MEDIA_ERR_ABORTED:
                         reject(new Error('Fetching process aborted by user'));
                         break;
                     case e.target.error.MEDIA_ERR_NETWORK:
-                        reject(
-                            new Error(
-                                'There was a problem downloading the audio file'
-                            )
-                        );
+                        reject(new Error('There was a problem downloading the audio file'));
                         break;
                     case e.target.error.MEDIA_ERR_DECODE:
-                        reject(
-                            new Error(
-                                'There was a problem decoding the audio file'
-                            )
-                        );
+                        reject(new Error('There was a problem decoding the audio file'));
                         break;
                     case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                        reject(
-                            new Error(
-                                'Audio is not supported, check the provided URL'
-                            )
-                        );
+                        reject(new Error('Audio is not supported, check the provided URL'));
                         break;
                     default:
                         reject(new Error('An unknown error occurred'));
@@ -453,15 +421,11 @@ class WavePlayer {
             };
             this._audioElm.addEventListener('error', this._errorHandler.bind(this));
 
-            this._timeUpdateHandler = e => {
+            this._timeUpdateHandler = (e) => {
                 this._currentTime = e.target.currentTime;
-                this._waveView
-                    .updateWave(this._durationToProgress(this._currentTime));
+                this._waveView.updateWave(this._durationToProgress(this._currentTime));
             };
-            this._audioElm.addEventListener(
-                'timeupdate',
-                this._timeUpdateHandler.bind(this)
-            );
+            this._audioElm.addEventListener('timeupdate', this._timeUpdateHandler.bind(this));
         });
     }
 
@@ -488,16 +452,11 @@ class WavePlayer {
     _getWaveformData(url) {
         return new Promise((resolve, reject) => {
             getJSON(url)
-                .then(response => {
-                    this._waveView.drawWave(
-                        isObject(response)
-                            ? response[Object.keys(response)[0]]
-                            : response,
-                        0
-                    );
+                .then((response) => {
+                    this._waveView.drawWave(isObject(response) ? response[Object.keys(response)[0]] : response, 0);
                     resolve('waveplayer:json:fetched');
                 })
-                .catch(err => reject(err));
+                .catch((err) => reject(err));
         });
     }
 
@@ -531,7 +490,6 @@ class WavePlayer {
     _jsonUrl(url) {
         return `${url.substr(0, url.lastIndexOf('.'))}.json`;
     }
-
 }
 
 export default WavePlayer;
