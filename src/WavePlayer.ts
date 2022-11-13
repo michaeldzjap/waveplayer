@@ -1,7 +1,8 @@
-import { WaveViewOptions } from './WaveView';
+import WaveView from './WaveView';
 
 interface WavePlayerOptions {
-    preload: string;
+    audioElement?: HTMLAudioElement;
+    preload: '' | 'metadata' | 'none' | 'auto';
 }
 
 /**
@@ -14,25 +15,70 @@ class WavePlayer {
      *
      * @var {WavePlayerOptions}
      */
-    private static defaultOptions: WavePlayerOptions = {
+    private static defaultOptions: Readonly<Omit<WavePlayerOptions, 'audioElement'>> = {
         preload: 'metadata',
     };
 
     /**
+     * The wave view instance associated with this wave player instance.
+     *
+     * @var {WaveView}
+     */
+    private view: WaveView;
+
+    /**
      * The options for this waveplayer instance.
      *
-     * @var {(WavePlayerOptions&WaveViewOptions)}
+     * @var {WavePlayerOptions}
      */
     private options: Readonly<WavePlayerOptions>;
 
     /**
-     * Initialize a new waveplayer instance.
+     * The HTML audio element associated with this waveplayer instance.
      *
+     * @var {HTMLAudioElement}
+     */
+    private audioElement: HTMLAudioElement;
+
+    /**
+     * Initialise a new wave player instance.
+     *
+     * @param {WaveView} view
      * @param {Options} options
      * @returns {void}
      */
-    constructor(options: Readonly<Partial<WavePlayerOptions & WaveViewOptions>> = {}) {
+    constructor(view: WaveView, options: Readonly<Partial<WavePlayerOptions>> = {}) {
+        this.view = view;
         this.options = { ...WavePlayer.defaultOptions, ...options };
+
+        if (this.options.audioElement) {
+            this.audioElement = this.options.audioElement;
+        } else {
+            this.audioElement = this.createAudioElement();
+        }
+    }
+
+    /**
+     * Create a new HTML audio element.
+     *
+     * @returns {HTMLAudioElement}
+     */
+    private createAudioElement(): HTMLAudioElement {
+        const audioElement = document.createElement('audio');
+        audioElement.controls = false;
+        audioElement.autoplay = false;
+        audioElement.preload = this.options.preload;
+
+        return audioElement;
+    }
+
+    /**
+     * Initialise the wave player instance.
+     *
+     * @return {Promise<this>}
+     */
+    async initialise(): Promise<this> {
+        return this;
     }
 }
 

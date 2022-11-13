@@ -1,5 +1,5 @@
 interface WaveViewOptions {
-    container?: HTMLElement;
+    container: HTMLElement;
     width: number;
     height: number;
     waveColor: string;
@@ -22,7 +22,7 @@ class WaveView {
      *
      * @var {WaveViewOptions}
      */
-    private static defaultOptions: Omit<WaveViewOptions, 'container'> = {
+    private static defaultOptions: Readonly<Omit<WaveViewOptions, 'container'>> = {
         width: 512,
         height: 128,
         waveColor: '#428bca',
@@ -43,13 +43,30 @@ class WaveView {
     private options: Readonly<WaveViewOptions>;
 
     /**
+     * The HTML container element for the waveview instance.
+     *
+     * @var {HTMLElement}
+     */
+    private container: HTMLElement;
+
+    /**
      * Initialize a new waveview instance.
      *
      * @param {WaveViewOptions} options
      * @returns {void}
      */
-    constructor(options: Readonly<Partial<WaveViewOptions>> = {}) {
+    constructor(options: Readonly<Partial<Omit<WaveViewOptions, 'container'>> & Pick<WaveViewOptions, 'container'>>) {
         this.options = { ...WaveView.defaultOptions, ...options };
+        this.container = this.options.container;
+    }
+
+    /**
+     * Get the HTML container element for the waveview instance.
+     *
+     * @returns {HTMLElement}
+     */
+    getContainer(): HTMLElement {
+        return this.container;
     }
 }
 
