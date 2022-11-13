@@ -10,8 +10,7 @@ export const hasClass = (node, className) => {
         return node.classList.contains(className);
     }
 
-    return !!node.className
-        .match(new RegExp(`(\\s|^)${className}(\\s|$)`));
+    return !!node.className.match(new RegExp(`(\\s|^)${className}(\\s|$)`));
 };
 
 /**
@@ -42,8 +41,7 @@ export const removeClass = (node, className) => {
     if (node.classList) {
         node.classList.remove(className);
     } else if (hasClass(node, className)) {
-        node.className = node.className
-            .replace(new RegExp(`(\\s|^)${className}(\\s|$)`), ' ');
+        node.className = node.className.replace(new RegExp(`(\\s|^)${className}(\\s|$)`), ' ');
     }
 
     return node;

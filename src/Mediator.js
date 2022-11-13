@@ -1,5 +1,4 @@
 class Mediator {
-
     /**
      * The topics to subscribe to.
      *
@@ -87,7 +86,6 @@ class Mediator {
 
         return true;
     }
-
 }
 
 export default Mediator;

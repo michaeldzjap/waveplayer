@@ -8,12 +8,10 @@
  * @param  {string} hex
  * @returns {Object}
  */
-export const hex2rgb = hex => {
-    const bigint = parseInt(
-        hex.charAt(0) === '#' ? hex.substring(1, 7) : hex, 16
-    );
+export const hex2rgb = (hex) => {
+    const bigint = parseInt(hex.charAt(0) === '#' ? hex.substring(1, 7) : hex, 16);
 
-    return {r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255};
+    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
 };
 
 /**
@@ -22,16 +20,16 @@ export const hex2rgb = hex => {
  * @param  {Object} rgb
  * @returns {Object}
  */
-export const rgb2hsv = rgb => {
+export const rgb2hsv = (rgb) => {
     const r = rgb.r / 255;
     const g = rgb.g / 255;
     const b = rgb.b / 255;
     const v = Math.max(r, g, b);
     const diff = v - Math.min(r, g, b);
-    const diffc = c => (v - c) / 6 / diff + 1 / 2;
+    const diffc = (c) => (v - c) / 6 / diff + 1 / 2;
 
     if (diff === 0) {
-        return {h: 0, s: 0, v: Math.round(v * 100)};
+        return { h: 0, s: 0, v: Math.round(v * 100) };
     }
 
     let h;
@@ -54,7 +52,11 @@ export const rgb2hsv = rgb => {
         h--;
     }
 
-    return {h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100)};
+    return {
+        h: Math.round(h * 360),
+        s: Math.round(s * 100),
+        v: Math.round(v * 100),
+    };
 };
 
 /**
@@ -63,33 +65,29 @@ export const rgb2hsv = rgb => {
  * @param  {Object} hsv
  * @returns {Object}
  */
-export const hsv2rgb = hsv => {
+export const hsv2rgb = (hsv) => {
     if (hsv.s === 0) {
-        return {r: hsv.v, g: hsv.v, b: hsv.v};
+        return { r: hsv.v, g: hsv.v, b: hsv.v };
     }
 
     const h = hsv.h / 60;
     const i = Math.floor(h);
     const s = hsv.s / 100;
-    const v = hsv.v / 100 * 255;
-    const data = [
-        v * (1 - s),
-        v * (1 - s * (h - i)),
-        v * (1 - s * (1 - (h - i)))
-    ];
+    const v = (hsv.v / 100) * 255;
+    const data = [v * (1 - s), v * (1 - s * (h - i)), v * (1 - s * (1 - (h - i)))];
     switch (i) {
         case 0:
-            return {r: v, g: data[2], b: data[0]};
+            return { r: v, g: data[2], b: data[0] };
         case 1:
-            return {r: data[1], g: v, b: data[0]};
+            return { r: data[1], g: v, b: data[0] };
         case 2:
-            return {r: data[0], g: v, b: data[2]};
+            return { r: data[0], g: v, b: data[2] };
         case 3:
-            return {r: data[0], g: data[1], b: v};
+            return { r: data[0], g: data[1], b: v };
         case 4:
-            return {r: data[2], g: data[0], b: v};
+            return { r: data[2], g: data[0], b: v };
         default:
-            return {r: v, g: data[0], b: data[1]};
+            return { r: v, g: data[0], b: data[1] };
     }
 };
 
@@ -99,7 +97,7 @@ export const hsv2rgb = hsv => {
  * @param  {string} url
  * @returns {Promise}
  */
-export const getJSON = url => (
+export const getJSON = (url) =>
     new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', url);
@@ -113,8 +111,7 @@ export const getJSON = url => (
             }
         };
         xhr.send();
-    })
-);
+    });
 
 /**
  * Convert a generator into a promise resolving state machine.
@@ -122,7 +119,7 @@ export const getJSON = url => (
  * @param  {Generator} generatorFunction
  * @returns {Promise}
  */
-export const stateResolver = generatorFunction => (
+export const stateResolver = (generatorFunction) =>
     function () {
         const generator = generatorFunction.apply(this, arguments);
         return new Promise((resolve, reject) => {
@@ -142,8 +139,7 @@ export const stateResolver = generatorFunction => (
             const resumeThrow = resume.bind(null, 'throw');
             resumeNext();
         });
-    }
-);
+    };
 
 /**
  * Set the CSS styles for the given element.
@@ -168,7 +164,7 @@ export const style = (elm, styles) => {
  * @param  {mixed} value
  * @returns {boolean}
  */
-export const isObject = value => {
+export const isObject = (value) => {
     const type = typeof value;
     return value !== null && (type === 'object' || type === 'function');
 };
@@ -179,9 +175,13 @@ export const isObject = value => {
  * @param  {mixed} value
  * @returns {boolean}
  */
-export const isString = value => {
+export const isString = (value) => {
     const type = typeof value;
-    return type === 'string'
-        || (type === 'object' && value !== null && !Array.isArray(value)
-            && Object.prototype.toString.call(value) === '[object String]');
+    return (
+        type === 'string' ||
+        (type === 'object' &&
+            value !== null &&
+            !Array.isArray(value) &&
+            Object.prototype.toString.call(value) === '[object String]')
+    );
 };

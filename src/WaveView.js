@@ -11,10 +11,9 @@
 
 import Mediator from './Mediator.js';
 import WavePlayer from './WavePlayer.js';
-import {style, hex2rgb, rgb2hsv, hsv2rgb} from './lib/index.js';
+import { style, hex2rgb, rgb2hsv, hsv2rgb } from './lib/index.js';
 
 class WaveView {
-
     /**
      * The default options for a new instance.
      *
@@ -93,14 +92,15 @@ class WaveView {
     constructor(data, options) {
         // Create a new mediator if there does not exist one yet
         if (!WavePlayer._mediator) {
-            WavePlayer._mediator = new Mediator;
+            WavePlayer._mediator = new Mediator();
         }
 
         if (data) this.drawWave(data, 0);
-        this._options = {...this._defaultOptions, ...options};
-        this.container = 'string' === typeof this._options.container
-            ? document.querySelector(this._options.container)
-            : this._options.container;
+        this._options = { ...this._defaultOptions, ...options };
+        this.container =
+            'string' === typeof this._options.container
+                ? document.querySelector(this._options.container)
+                : this._options.container;
 
         this._createWaveContainer();
         this._colors = this._createColorVariations();
@@ -217,8 +217,10 @@ class WaveView {
     set width(value) {
         this._options.width = value;
         if (!this._options.responsive) {
-            style(this._waveContainer, {width: `${this._options.width}px`});
-            style(this._canvasContext.canvas, {width: `${this._options.width}px`});
+            style(this._waveContainer, { width: `${this._options.width}px` });
+            style(this._canvasContext.canvas, {
+                width: `${this._options.width}px`,
+            });
             this._canvasContext.canvas.width = this._options.width;
             this._barData = this._calcAvgAmps();
         }
@@ -241,8 +243,10 @@ class WaveView {
      */
     set height(value) {
         this._options.height = value;
-        style(this._waveContainer, {height: `${this._options.height}px`});
-        style(this.canvasContext.canvas, {height: `${this._options.height}px`});
+        style(this._waveContainer, { height: `${this._options.height}px` });
+        style(this.canvasContext.canvas, {
+            height: `${this._options.height}px`,
+        });
         this._canvasContext.canvas.height = this._options.height;
         this._barData = this._calcAvgAmps();
     }
@@ -305,13 +309,7 @@ class WaveView {
      * @returns {void}
      */
     clearWave() {
-        this._canvasContext
-            .clearRect(
-                0,
-                0,
-                this._canvasContext.canvas.width,
-                this._canvasContext.canvas.height
-            );
+        this._canvasContext.clearRect(0, 0, this._canvasContext.canvas.width, this._canvasContext.canvas.height);
     }
 
     /**
@@ -348,7 +346,7 @@ class WaveView {
             position: 'relative',
             width: this._options.responsive ? '100%' : `${this._options.width}px`,
             height: `${this._options.height}px`,
-            overflow: 'hidden'
+            overflow: 'hidden',
         });
         this._createCanvas();
     }
@@ -359,7 +357,7 @@ class WaveView {
      * @returns {void}
      */
     _createCanvas() {
-        const {clientWidth} = this._waveContainer;
+        const { clientWidth } = this._waveContainer;
         const canvas = this._waveContainer.appendChild(
             style(document.createElement('canvas'), {
                 position: 'absolute',
@@ -367,8 +365,8 @@ class WaveView {
                 bottom: 0,
                 zIndex: 1,
                 height: `${this._options.height}px`,
-                width: `${clientWidth}px` // For responsive, enough to set this to 100% ???
-            })
+                width: `${clientWidth}px`, // For responsive, enough to set this to 100% ???
+            }),
         );
         this._canvasContext = canvas.getContext('2d');
         this._canvasContext.canvas.width = clientWidth;
@@ -384,12 +382,8 @@ class WaveView {
      * @returns {void}
      */
     _addCanvasHandlers() {
-        this._mouseClickHandler = e => (
-            WavePlayer._mediator
-                .fire('waveview:clicked', this._coord2Progress(e))
-        );
-        this._canvasContext.canvas
-            .addEventListener('click', this._mouseClickHandler.bind(this));
+        this._mouseClickHandler = (e) => WavePlayer._mediator.fire('waveview:clicked', this._coord2Progress(e));
+        this._canvasContext.canvas.addEventListener('click', this._mouseClickHandler.bind(this));
     }
 
     /**
@@ -399,8 +393,7 @@ class WaveView {
      */
     _removeCanvasHandlers() {
         if (this._mouseClickHandler) {
-            this.canvasContext.canvas
-                .removeEventListener('click', this._mouseClickHandler);
+            this.canvasContext.canvas.removeEventListener('click', this._mouseClickHandler);
         }
     }
 
@@ -411,19 +404,19 @@ class WaveView {
      * @returns {Object}
      */
     _createColorVariations() {
-        const colors = {waveColor: [], progressColor: []};
+        const colors = { waveColor: [], progressColor: [] };
 
         for (const c in colors) {
             let tmp = hex2rgb(this._options[c]);
             colors[c].push(tmp);
             tmp = rgb2hsv(tmp);
-            colors[c].push(hsv2rgb({h: tmp.h, s: tmp.s, v: tmp.v * 1.4}));
+            colors[c].push(hsv2rgb({ h: tmp.h, s: tmp.s, v: tmp.v * 1.4 }));
         }
 
         colors.dc = {
             r: colors.waveColor[0].r - colors.progressColor[0].r,
             g: colors.waveColor[0].g - colors.progressColor[0].g,
-            b: colors.waveColor[0].b - colors.progressColor[0].b
+            b: colors.waveColor[0].b - colors.progressColor[0].b,
         };
 
         return colors;
@@ -442,12 +435,12 @@ class WaveView {
             if (this._resizeHandler) {
                 window.removeEventListener('resize', this._resizeHandler);
             }
-            style(this._waveContainer, {width: this._options.width});
+            style(this._waveContainer, { width: this._options.width });
 
             return;
         }
 
-        style(this._waveContainer, {width: '100%'});
+        style(this._waveContainer, { width: '100%' });
 
         if (this._resizeHandler) {
             window.removeEventListener('resize', this._resizeHandler);
@@ -455,7 +448,7 @@ class WaveView {
 
         this._resizeHandler = () => {
             const width = this._waveContainer.clientWidth;
-            style(this._canvasContext.canvas, {width: `${width}px`});
+            style(this._canvasContext.canvas, { width: `${width}px` });
             this._canvasContext.canvas.width = width;
             this._barData = this._calcAvgAmps();
             this.updateWave(this._progress);
@@ -481,14 +474,12 @@ class WaveView {
         };
 
         const totalWidth = this._waveContainer.clientWidth;
-        const ratio = totalWidth !== this._data.length
-            ? this._data.length / totalWidth
-            : 1;
+        const ratio = totalWidth !== this._data.length ? this._data.length / totalWidth : 1;
         const totalBarWidth = this._options.barWidth + this._options.barGap;
         let rangeR = (totalBarWidth - 1) / 2;
         const rangeL = -~~rangeR;
         const incr = totalBarWidth * ratio;
-        const bd = {amps: [], x: []};
+        const bd = { amps: [], x: [] };
         rangeR = Math.round(rangeR);
 
         bd.amps.push(avgAmp(0, 0, rangeR, totalBarWidth));
@@ -532,23 +523,25 @@ class WaveView {
         for (let i = 0; i < this._barData.x.length; i++) {
             const xpos = this._barData.x[i];
             if (xpos >= progressCoord - totalBarWidth && changeGrad) {
-                if (xpos >= progressCoord) { // gradient rule for bars after currently playing bar
+                if (xpos >= progressCoord) {
+                    // gradient rule for bars after currently playing bar
                     ctx.fillStyle = this._options.useGradient
                         ? this._generateGradient(this._colors.waveColor, h0)
                         : this._generateColor(this._colors.waveColor[0]);
                     changeGrad = false; // more efficient: avoids changing this gradient rule multiple times per single function call
-                } else { // fade between colors when on currently playing bar
+                } else {
+                    // fade between colors when on currently playing bar
                     const incr = (progressCoord - xpos) / totalBarWidth;
                     const c1 = {
                         r: this._colors.waveColor[0].r - this._colors.dc.r * incr,
                         g: this._colors.waveColor[0].g - this._colors.dc.g * incr,
-                        b: this._colors.waveColor[0].b - this._colors.dc.b * incr
+                        b: this._colors.waveColor[0].b - this._colors.dc.b * incr,
                     };
 
                     let c2 = null;
                     if (this._options.useGradient) {
                         c2 = rgb2hsv(c1);
-                        c2 = hsv2rgb({h: c2.h, s: c2.s, v: c2.v * 1.4});
+                        c2 = hsv2rgb({ h: c2.h, s: c2.s, v: c2.v * 1.4 });
                     }
 
                     ctx.fillStyle = this._options.useGradient
@@ -609,7 +602,6 @@ class WaveView {
     _coord2Progress(e) {
         return this._calcMouseCoordX(e) / this._waveContainer.clientWidth;
     }
-
 }
 
 export default WaveView;

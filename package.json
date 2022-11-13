@@ -2,12 +2,19 @@
   "name": "waveplayer",
   "version": "1.2.4",
   "description": "A HTML and JavaScript based audio player with a waveform view",
-  "main": "dist/waveplayer.min.js",
-  "jsnext:main": "src/index.js",
+  "main": "dist/waveplayer.js",
+  "module": "dist/waveplayer.es.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "./node_modules/.bin/rollup --config",
-    "watch": "./node_modules/.bin/rollup --config --watch",
-    "lint": "./node_modules/.bin/eslint ./"
+    "development": "cross-env NODE_ENV=local npx rollup --config rollup.config.js --bundleConfigAsCjs",
+    "dev": "npm run development",
+    "production": "cross-env NODE_ENV=production npx rollup --config rollup.config.js --bundleConfigAsCjs",
+    "prod": "npm run production",
+    "watch": "cross-env NODE_ENV=local npx rollup --config rollup.config.js --watch --bundleConfigAsCjs",
+    "lint": "npx eslint --ext .js ./",
+    "clean": "rm -rf dist"
   },
   "repository": {
     "type": "git",
@@ -27,22 +34,30 @@
   },
   "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.20.2",
+    "@babel/eslint-parser": "^7.19.1",
     "@babel/plugin-external-helpers": "^7.10.4",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.11.0",
+    "@rollup/plugin-babel": "^6.0.2",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-terser": "^0.1.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.22.1",
-    "rollup": "^2.29.0",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-eslint": "^7.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-uglify": "^6.0.4"
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "rollup": "^3.3.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix"
   }
 }
