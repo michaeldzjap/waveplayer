@@ -1,9 +1,9 @@
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import babel from '@rollup/plugin-babel';
+import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 
-import pkg from './package.json';
+import pkg from './package.json' assert { type: 'json' };
 
 const local = process.env.NODE_ENV === 'local';
 
@@ -29,14 +29,8 @@ export default {
         include: 'src/**',
     },
     plugins: [
-        babel({
-            exclude: 'node_modules/**',
-            plugins: [
-                '@babel/plugin-external-helpers',
-                '@babel/plugin-transform-runtime',
-                '@babel/plugin-proposal-class-properties',
-            ],
-            babelHelpers: 'runtime',
+        typescript({
+            sourceMap: local,
         }),
         commonjs(),
         nodeResolve(),
