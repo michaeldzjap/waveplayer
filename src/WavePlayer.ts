@@ -1,7 +1,7 @@
 import WaveView from './WaveView';
 
 interface WavePlayerOptions {
-    audioElement?: HTMLAudioElement;
+    audioElement?: HTMLAudioElement | string;
     preload: '' | 'metadata' | 'none' | 'auto';
 }
 
@@ -52,10 +52,32 @@ class WavePlayer {
         this.options = { ...WavePlayer.defaultOptions, ...options };
 
         if (this.options.audioElement) {
-            this.audioElement = this.options.audioElement;
+            this.audioElement = this.resolveAudioElement();
         } else {
             this.audioElement = this.createAudioElement();
         }
+    }
+
+    /**
+     * Resolve an existing HTML audio element.
+     *
+     * @returns {HTMLAudioElement}
+     */
+    private resolveAudioElement(): HTMLAudioElement {
+        const element =
+            typeof this.options.audioElement === 'string'
+                ? document.querySelector(this.options.audioElement)
+                : this.options.audioElement;
+
+        if (!element) {
+            throw new Error('Audio element could not located.');
+        }
+
+        if (element instanceof HTMLAudioElement) {
+            return element;
+        }
+
+        throw new Error('Audio element is invalid.');
     }
 
     /**

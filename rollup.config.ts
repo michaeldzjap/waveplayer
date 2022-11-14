@@ -8,7 +8,7 @@ import pkg from './package.json' assert { type: 'json' };
 const local = process.env.NODE_ENV === 'local';
 
 export default {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: [
         {
             dir: './',
@@ -24,7 +24,6 @@ export default {
             sourcemap: local,
         },
     ],
-    external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
     watch: {
         include: 'src/**',
     },
