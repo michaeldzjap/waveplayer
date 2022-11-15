@@ -1,3 +1,16 @@
+/**
+ * WaveView.ts
+ *
+ * © Michaël Dzjaparidze 2022
+ * https://github.com/michaeldzjap
+ *
+ * Draws a waveform using the HTML5 canvas object
+ *
+ * This work is licensed under the MIT License (MIT)
+ */
+
+import { style } from './utils';
+
 interface WaveViewOptions {
     container: HTMLDivElement | string;
     width: number;
@@ -22,7 +35,7 @@ class WaveView {
      *
      * @var {WaveViewOptions}
      */
-    private static defaultOptions: Readonly<Omit<WaveViewOptions, 'container'>> = {
+    private static _defaultOptions: Readonly<Omit<WaveViewOptions, 'container'>> = {
         width: 512,
         height: 128,
         waveColor: '#428bca',
@@ -40,14 +53,28 @@ class WaveView {
      *
      * @var {WaveViewOptions}
      */
-    private options: Readonly<WaveViewOptions>;
+    private _options: Readonly<WaveViewOptions>;
 
     /**
-     * The HTML div element acting as a container for the waveview instance.
+     * The HTML div element acting as a container for the wave view.
      *
      * @var {HTMLDivElement}
      */
-    private container: HTMLDivElement;
+    private _container: HTMLDivElement;
+
+    /**
+     * The HTML div element acting as a container for the canvas element.
+     *
+     * @var {HTMLDivElement}
+     */
+    private _waveContainer: HTMLDivElement;
+
+    /**
+     * The HTML canvas element.
+     *
+     * @var {HTMLCanvasElement}
+     */
+    private _canvas: HTMLCanvasElement;
 
     /**
      * Initialize a new waveview instance.
@@ -56,8 +83,13 @@ class WaveView {
      * @returns {void}
      */
     constructor(options: Readonly<Partial<Omit<WaveViewOptions, 'container'>> & Pick<WaveViewOptions, 'container'>>) {
-        this.options = { ...WaveView.defaultOptions, ...options };
-        this.container = this.resolveContainer();
+        this._options = { ...WaveView._defaultOptions, ...options };
+        this._container = this.resolveContainer();
+        this._waveContainer = this.createWaveContainer();
+        this._canvas = this.createCanvas();
+
+        this._container.appendChild(this._waveContainer);
+        this._waveContainer.appendChild(this._canvas);
     }
 
     /**
@@ -67,9 +99,9 @@ class WaveView {
      */
     private resolveContainer(): HTMLDivElement {
         const element =
-            typeof this.options.container === 'string'
-                ? document.querySelector(this.options.container)
-                : this.options.container;
+            typeof this._options.container === 'string'
+                ? document.querySelector(this._options.container)
+                : this._options.container;
 
         if (!element) {
             throw new Error('Container element could not located.');
@@ -87,8 +119,54 @@ class WaveView {
      *
      * @returns {HTMLDivElement}
      */
-    getContainer(): HTMLDivElement {
-        return this.container;
+    public get container(): HTMLDivElement {
+        return this._container;
+    }
+
+    /**
+     * Create the HTML container element for the HTML canvas element in which we
+     * will draw the waveform.
+     *
+     * @returns {HTMLDivElement}
+     */
+    private createWaveContainer(): HTMLDivElement {
+        const container = document.createElement('div');
+
+        container.className = 'waveform-container';
+
+        style(container, {
+            display: 'block',
+            position: 'relative',
+            width: this._options.responsive ? '100%' : `${this._options.width}px`,
+            height: `${this._options.height}px`,
+            overflow: 'hidden',
+        });
+
+        return container;
+    }
+
+    /**
+     * Create the HTML canvas element in which we will draw the waveform.
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    private createCanvas(): HTMLCanvasElement {
+        const canvas = document.createElement('canvas');
+        const { clientWidth } = this._waveContainer;
+
+        style(canvas, {
+            position: 'absolute',
+            top: '0',
+            bottom: '0',
+            zIndex: '1',
+            height: `${this._options.height}px`,
+            width: `${clientWidth}px`,
+        });
+
+        canvas.width = clientWidth;
+        canvas.height = this._options.height;
+
+        return canvas;
     }
 }
 

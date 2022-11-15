@@ -15,7 +15,7 @@ class WavePlayer {
      *
      * @var {WavePlayerOptions}
      */
-    private static defaultOptions: Readonly<Omit<WavePlayerOptions, 'audioElement'>> = {
+    private static _defaultOptions: Readonly<Omit<WavePlayerOptions, 'audioElement'>> = {
         preload: 'metadata',
     };
 
@@ -24,21 +24,21 @@ class WavePlayer {
      *
      * @var {WaveView}
      */
-    private view: WaveView;
+    private _view: WaveView;
 
     /**
      * The options for this waveplayer instance.
      *
      * @var {WavePlayerOptions}
      */
-    private options: Readonly<WavePlayerOptions>;
+    private _options: Readonly<WavePlayerOptions>;
 
     /**
      * The HTML audio element associated with this waveplayer instance.
      *
      * @var {HTMLAudioElement}
      */
-    private audioElement: HTMLAudioElement;
+    private _audioElement: HTMLAudioElement;
 
     /**
      * Initialise a new wave player instance.
@@ -48,13 +48,13 @@ class WavePlayer {
      * @returns {void}
      */
     constructor(view: WaveView, options: Readonly<Partial<WavePlayerOptions>> = {}) {
-        this.view = view;
-        this.options = { ...WavePlayer.defaultOptions, ...options };
+        this._view = view;
+        this._options = { ...WavePlayer._defaultOptions, ...options };
 
-        if (this.options.audioElement) {
-            this.audioElement = this.resolveAudioElement();
+        if (this._options.audioElement) {
+            this._audioElement = this.resolveAudioElement();
         } else {
-            this.audioElement = this.createAudioElement();
+            this._audioElement = this.createAudioElement();
         }
     }
 
@@ -65,9 +65,9 @@ class WavePlayer {
      */
     private resolveAudioElement(): HTMLAudioElement {
         const element =
-            typeof this.options.audioElement === 'string'
-                ? document.querySelector(this.options.audioElement)
-                : this.options.audioElement;
+            typeof this._options.audioElement === 'string'
+                ? document.querySelector(this._options.audioElement)
+                : this._options.audioElement;
 
         if (!element) {
             throw new Error('Audio element could not located.');
@@ -89,7 +89,7 @@ class WavePlayer {
         const audioElement = document.createElement('audio');
         audioElement.controls = false;
         audioElement.autoplay = false;
-        audioElement.preload = this.options.preload;
+        audioElement.preload = this._options.preload;
 
         return audioElement;
     }

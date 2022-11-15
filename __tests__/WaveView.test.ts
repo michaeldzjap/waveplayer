@@ -39,6 +39,6 @@ describe('WaveView', () => {
 
         const view = new WaveView({ container: '#container' });
 
-        expect(view.getContainer()).toBeInstanceOf(HTMLDivElement);
+        expect(view.container).toBeInstanceOf(HTMLDivElement);
     });
 });
