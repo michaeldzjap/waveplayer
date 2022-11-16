@@ -31,7 +31,7 @@ interface WaveViewOptions {
  */
 class WaveView {
     /**
-     * The default options for a new instance.
+     * The default options for a new wave view instance.
      *
      * @var {WaveViewOptions}
      */
@@ -49,7 +49,7 @@ class WaveView {
     };
 
     /**
-     * The options for this waveplayer instance.
+     * The options for this wave view instance.
      *
      * @var {WaveViewOptions}
      */
@@ -77,7 +77,7 @@ class WaveView {
     private _canvas: HTMLCanvasElement;
 
     /**
-     * Initialize a new waveview instance.
+     * Initialize a new wave view instance.
      *
      * @param {WaveViewOptions} options
      * @returns {void}

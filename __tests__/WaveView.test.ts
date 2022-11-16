@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom';
+
 import WaveView from '../src/WaveView';
 
 describe('WaveView', () => {
@@ -40,5 +42,19 @@ describe('WaveView', () => {
         const view = new WaveView({ container: '#container' });
 
         expect(view.container).toBeInstanceOf(HTMLDivElement);
+    });
+
+    [
+        { label: 'responsive', options: { responsive: true }, expected: '100%' },
+        { label: 'fixed', options: { responsive: false }, expected: '512px' },
+    ].forEach(({ label, options, expected }) => {
+        it(`it uses a ${label} width for the wave view container element`, () => {
+            document.body.innerHTML = '<div id="container"></div>';
+
+            const view = new WaveView({ container: '#container', ...options });
+            const waveContainer = view.container.querySelector('.waveform-container');
+
+            expect(waveContainer).toHaveStyle({ width: expected });
+        });
     });
 });
