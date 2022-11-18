@@ -25,6 +25,11 @@ interface WaveViewOptions {
     useGradient: boolean;
 }
 
+interface Point {
+    x: number;
+    y: number;
+}
+
 /**
  * @class
  * @classdesc Wave view class.
@@ -47,6 +52,14 @@ class WaveView {
         progress: 0,
         useGradient: true,
     };
+
+    /**
+     * The amplitude data that will be used to draw the waveform. Assumed to be
+     * in the range [-1.0, 1.0].
+     *
+     * @var {number[]}
+     */
+    private _data: number[];
 
     /**
      * The options for this wave view instance.
@@ -79,10 +92,15 @@ class WaveView {
     /**
      * Initialize a new wave view instance.
      *
+     * @param {number[]} data
      * @param {WaveViewOptions} options
      * @returns {void}
      */
-    constructor(options: Readonly<Partial<Omit<WaveViewOptions, 'container'>> & Pick<WaveViewOptions, 'container'>>) {
+    constructor(
+        data: number[],
+        options: Readonly<Partial<Omit<WaveViewOptions, 'container'>> & Pick<WaveViewOptions, 'container'>>,
+    ) {
+        this._data = data;
         this._options = { ...WaveView._defaultOptions, ...options };
         this._container = this.resolveContainer();
         this._waveContainer = this.createWaveContainer();
@@ -167,6 +185,18 @@ class WaveView {
         canvas.height = this._options.height;
 
         return canvas;
+    }
+
+    /**
+     * Compute the x, y coordinates for the individual bars representing a "unit"
+     * of our waveform.
+     *
+     * @returns {Point[]}
+     */
+    private computeBarCoordinates(): Point[] {
+        const points: Point[] = [];
+
+        return points;
     }
 }
 
