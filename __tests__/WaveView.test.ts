@@ -57,4 +57,35 @@ describe('WaveView', () => {
             expect(waveContainer).toHaveStyle({ width: expected });
         });
     });
+
+    it('gets and sets the waveform amplitude data', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        let data: number[] = [];
+        const view = new WaveView(data, { container: '#container' });
+
+        expect(view.data).toBe(data);
+
+        data = [0, 0.5, 1];
+
+        view.data = data;
+
+        expect(view.data).toBe(data);
+    });
+
+    it('gets and sets the progress', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.progress).toBe(0);
+
+        view.progress = 1.5;
+
+        expect(view.progress).toBe(1);
+
+        view.progress = -0.5;
+
+        expect(view.progress).toBe(0);
+    });
 });
