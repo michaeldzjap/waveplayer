@@ -14,7 +14,10 @@ describe('WaveView', () => {
     it('creates a new instance for an existing container element', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const container = document.querySelector('#container') as HTMLDivElement;
+        const container = document.querySelector<HTMLDivElement>('#container');
+
+        if (!container) return;
+
         const view = new WaveView([], { container });
 
         expect(view).toBeInstanceOf(WaveView);
@@ -23,25 +26,7 @@ describe('WaveView', () => {
     it('throws an error for a non existing container element', () => {
         expect(() => {
             return new WaveView([], { container: 'foo' });
-        }).toThrow('Container element could not located.');
-    });
-
-    it('throws an error for an invalid container element', () => {
-        document.body.innerHTML = '<input id="container">';
-
-        const container = document.querySelector('#container') as HTMLInputElement;
-
-        expect(() => {
-            return new WaveView([], { container });
-        }).toThrow('Container element is invalid.');
-    });
-
-    it('returns the container element', () => {
-        document.body.innerHTML = '<div id="container"></div>';
-
-        const view = new WaveView([], { container: '#container' });
-
-        expect(view.container).toBeInstanceOf(HTMLDivElement);
+        }).toThrow('Container element could not be located.');
     });
 
     [
@@ -52,7 +37,7 @@ describe('WaveView', () => {
             document.body.innerHTML = '<div id="container"></div>';
 
             const view = new WaveView([], { container: '#container', ...options });
-            const waveContainer = view.container.querySelector('.waveform-container');
+            const waveContainer = view.container.querySelector<HTMLDivElement>('.waveform-container');
 
             expect(waveContainer).toHaveStyle({ width: expected });
         });
@@ -87,5 +72,17 @@ describe('WaveView', () => {
         view.progress = -0.5;
 
         expect(view.progress).toBe(0);
+    });
+
+    it('gets and sets the container element', () => {
+        document.body.innerHTML = '<div id="first-container"></div><div id="second-container"></div>';
+
+        const view = new WaveView([], { container: '#first-container' });
+
+        expect(view.container).toHaveAttribute('id', 'first-container');
+
+        view.container = '#second-container';
+
+        expect(view.container).toHaveAttribute('id', 'second-container');
     });
 });

@@ -114,7 +114,7 @@ class WaveView {
     ) {
         this._data = data;
         this._options = { ...WaveView._defaultOptions, ...options };
-        this._container = this.resolveContainer();
+        this._container = this.resolveContainer(this._options.container);
         this._waveContainer = this.createWaveContainer();
         this._canvas = this.createCanvas();
         this._colors = this.createColorVariations();
@@ -171,32 +171,25 @@ class WaveView {
     /**
      * Set the HTML container element for the wave view instance.
      *
-     * @param {HTMLDivElement} element
+     * @param {(HTMLDivElement|string)} element
      */
-    public set container(element: HTMLDivElement) {
-        this._container = element;
+    public set container(element: HTMLDivElement | string) {
+        this._container = this.resolveContainer(element);
     }
 
     /**
      * Resolve an existing container HTML element.
      *
-     * @returns {HTMLDivElement}
+     * @returns {(HTMLDivElement|string)}
      */
-    private resolveContainer(): HTMLDivElement {
-        const element =
-            typeof this._options.container === 'string'
-                ? document.querySelector(this._options.container)
-                : this._options.container;
+    private resolveContainer(container: HTMLDivElement | string): HTMLDivElement {
+        const element = typeof container === 'string' ? document.querySelector<HTMLDivElement>(container) : container;
 
         if (!element) {
-            throw new Error('Container element could not located.');
+            throw new Error('Container element could not be located.');
         }
 
-        if (element instanceof HTMLDivElement) {
-            return element;
-        }
-
-        throw new Error('Container element is invalid.');
+        return element;
     }
 
     /**
