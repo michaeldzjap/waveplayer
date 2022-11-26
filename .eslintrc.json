@@ -2,22 +2,12 @@
   "root": true,
   "env": {
     "browser": true,
-    "es6": true
+    "es2022": true
   },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "@typescript-eslint"
-  ],
   "extends": [
     "eslint:recommended",
     "plugin:import/recommended",
-    "plugin:import/typescript",
     "plugin:eslint-comments/recommended",
-    "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
   ],
   "rules": {
@@ -37,21 +27,32 @@
     "import/no-amd": "error",
     "import/no-webpack-loader-syntax": "error"
   },
-  "settings": {
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts"]
-    },
-    "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true
-      }
-    }
-  },
   "overrides": [
     {
-      "files": ["./jest.config.js"],
+      "files": ["jest.config.js", "example/webpack.config.js"],
       "env": {
         "node": true
+      }
+    },
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": [
+        "@typescript-eslint"
+      ],
+      "extends": [
+        "plugin:import/typescript",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "settings": {
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "alwaysTryTypes": true
+          }
+        }
       }
     }
   ]

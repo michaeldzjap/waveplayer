@@ -289,9 +289,9 @@ class WaveView {
      * Compute the x, y coordinates for the individual bars representing a "unit"
      * of our waveform.
      *
-     * @returns {number[][]}
+     * @returns {[number[], number[], number]}
      */
-    private computeBarCoordinates(): number[][] {
+    private computeBarCoordinates(): [number[], number[], number] {
         const x = [];
         const y = [];
         const waveWidth = this._waveContainer.clientWidth;
@@ -302,14 +302,7 @@ class WaveView {
             y.push(average(this._data, i, i + totalBarWidth));
         }
 
-        const norm = 1 / Math.max(...y);
-        const waveHeight = this._canvas.height;
-
-        for (let i = 0; i < y.length; i++) {
-            y[i] = (waveHeight * (1 - y[i] * norm)) / 2;
-        }
-
-        return [x, y];
+        return [x, y, 1 / Math.max(...y)];
     }
 
     /**
@@ -318,8 +311,49 @@ class WaveView {
      * @returns {void}
      */
     private drawBars(): void {
-        const coordinates = this.computeBarCoordinates();
+        const [x, y, norm] = this.computeBarCoordinates();
         const context = this._canvas.getContext('2d');
+        const waveHeight = this._canvas.height;
+
+        if (!context) return;
+
+        context.fillStyle = this._options.gradient
+            ? this.createGradient(context, this._colors.waveformColor)
+            : this.createColor(this._colors.waveformColor[0]);
+
+        for (let i = 0; i < x.length; i++) {
+            const barHeight = waveHeight * y[i] * norm;
+
+            context.fillRect(x[i], (waveHeight - barHeight) / 2, this._options.barWidth, barHeight);
+        }
+    }
+
+    /**
+     * Create a linear gradient from the provided color variation.
+     *
+     * @param {CanvasRenderingContext2D} context
+     * @param {RgbColor[]} colorVariation
+     * @returns {CanvasGradient}
+     */
+    private createGradient(context: CanvasRenderingContext2D, colorVariation: [RgbColor, RgbColor]): CanvasGradient {
+        const gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
+        const c1 = `rgba(${Object.values(colorVariation[1]).join(', ')}, 1)`;
+
+        gradient.addColorStop(0.0, c1);
+        gradient.addColorStop(0.3, `rgba(${Object.values(colorVariation[0]).join(', ')}, 1)`);
+        gradient.addColorStop(1.0, c1);
+
+        return gradient;
+    }
+
+    /**
+     * Create a CSS color string from a given color object.
+     *
+     * @param {RgbColor} color
+     * @returns {string}
+     */
+    private createColor(color: RgbColor): string {
+        return `rgb(${Object.values(color).join(', ')})`;
     }
 }
 
