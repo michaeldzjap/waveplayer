@@ -2,7 +2,6 @@
   "name": "waveplayer-examples",
   "version": "2.0.0",
   "description": "Waveplayer examples",
-  "main": "dist/bundle.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack --progress",
     "watch": "npm run build -- --watch",

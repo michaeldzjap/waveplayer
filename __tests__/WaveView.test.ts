@@ -37,7 +37,7 @@ describe('WaveView', () => {
             document.body.innerHTML = '<div id="container"></div>';
 
             const view = new WaveView([], { container: '#container', ...options });
-            const waveContainer = view.container.querySelector<HTMLDivElement>('.waveform-container');
+            const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
 
             expect(waveContainer).toHaveStyle({ width: expected });
         });

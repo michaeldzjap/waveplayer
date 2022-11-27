@@ -9,32 +9,14 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import { RgbColor } from './types';
-import { average, hex2rgb, hsv2rgb, rgb2hsv, style } from './utils';
-
-interface WaveViewOptions {
-    container: HTMLDivElement | string;
-    width: number;
-    height: number;
-    waveformColor: string;
-    progressColor: string;
-    barWidth: number;
-    barGap: number;
-    interact: boolean;
-    responsive: boolean;
-    gradient: boolean;
-}
-
-interface WaveViewColors {
-    waveformColor: [RgbColor, RgbColor];
-    progressColor: [RgbColor, RgbColor];
-}
+import { RgbColor, WaveView as WaveViewContract, WaveViewOptions, WaveViewColors } from './types';
+import { average, hex2rgb, hsv2rgb, rgb2hsv, style, throttle } from './utils';
 
 /**
  * @class
  * @classdesc Wave view class.
  */
-class WaveView {
+class WaveView implements WaveViewContract {
     /**
      * The default options for a new wave view instance.
      *
@@ -103,6 +85,13 @@ class WaveView {
     private _colors: WaveViewColors;
 
     /**
+     * The resize logic that should be executed on a "resize" event.
+     *
+     * @var {(Function|undefined)}
+     */
+    private _resizeHandler?: () => void;
+
+    /**
      * Initialize a new wave view instance.
      *
      * @param {number[]} data
@@ -119,8 +108,9 @@ class WaveView {
         this._canvas = this.createCanvas();
         this._colors = this.createColorVariations();
 
-        this._container.appendChild(this._waveContainer);
-        this._waveContainer.appendChild(this._canvas);
+        if (this._options.responsive) {
+            this.addResizeHandler();
+        }
     }
 
     /**
@@ -133,48 +123,54 @@ class WaveView {
     }
 
     /**
-     * Set the waveform amplitude data.
-     *
-     * @param {number[]} data
+     * @inheritdoc
      */
     public set data(data: number[]) {
         this._data = data;
     }
 
     /**
-     * Get the progress of the waveform, assumed to be in the range [0-1].
-     *
-     * @returns {number}
+     * @inheritdoc
      */
     public get progress(): number {
         return this._progress;
     }
 
     /**
-     * Set the progress of the waveform, assumed to be in the range [0-1].
-     *
-     * @param {number} progress
+     * @inheritdoc
      */
     public set progress(progress: number) {
         this._progress = Math.max(Math.min(progress, 1), 0);
     }
 
     /**
-     * Get the HTML container element for the wave view instance.
-     *
-     * @returns {HTMLDivElement}
+     * @inheritdoc
      */
     public get container(): HTMLDivElement {
         return this._container;
     }
 
     /**
-     * Set the HTML container element for the wave view instance.
-     *
-     * @param {(HTMLDivElement|string)} element
+     * @inheritdoc
      */
     public set container(element: HTMLDivElement | string) {
         this._container = this.resolveContainer(element);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get responsive(): boolean {
+        return this._options.responsive;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set responsive(value: boolean) {
+        this._options = { ...this._options, responsive: value };
+
+        value ? this.addResizeHandler() : this.removeResizeHandler();
     }
 
     /**
@@ -201,9 +197,9 @@ class WaveView {
     private createWaveContainer(): HTMLDivElement {
         const container = document.createElement('div');
 
-        container.className = 'waveform-container';
+        container.className = 'waveplayer-waveform-container';
 
-        style(container, {
+        style(this._container.appendChild(container), {
             display: 'block',
             position: 'relative',
             width: this._options.responsive ? '100%' : `${this._options.width}px`,
@@ -223,7 +219,7 @@ class WaveView {
         const canvas = document.createElement('canvas');
         const { clientWidth } = this._waveContainer;
 
-        style(canvas, {
+        style(this._waveContainer.appendChild(canvas), {
             position: 'absolute',
             top: '0',
             bottom: '0',
@@ -259,9 +255,46 @@ class WaveView {
     }
 
     /**
-     * Draw the waveform in the canvas HTML element.
+     * Add a handler for the "resize" event.
      *
-     * @returns {this}
+     * @returns {void}
+     */
+    private addResizeHandler(): void {
+        style(this._waveContainer, { width: '100%' });
+
+        if (this._resizeHandler) {
+            window.removeEventListener('resize', this._resizeHandler);
+        }
+
+        this._resizeHandler = (): void => {
+            throttle(() => {
+                const width = this._waveContainer.clientWidth;
+
+                style(this._canvas, { width: `${width}px` });
+                this._canvas.width = width;
+
+                this.render();
+            }, 250);
+        };
+
+        window.addEventListener('resize', this._resizeHandler);
+    }
+
+    /**
+     * Remove any existing handler for the "resize" event.
+     *
+     * @returns {void}
+     */
+    private removeResizeHandler(): void {
+        if (this._resizeHandler) {
+            window.removeEventListener('resize', this._resizeHandler);
+        }
+
+        style(this._waveContainer, { width: `${this._options.width}px` });
+    }
+
+    /**
+     * @inheritdoc
      */
     public render(): this {
         this.clear();
@@ -271,9 +304,7 @@ class WaveView {
     }
 
     /**
-     * Clear the canvas HTML element where the waveform is drawn in.
-     *
-     * @returns {this}
+     * @inheritdoc
      */
     public clear(): this {
         const context = this._canvas.getContext('2d');
@@ -296,10 +327,11 @@ class WaveView {
         const y = [];
         const waveWidth = this._waveContainer.clientWidth;
         const totalBarWidth = this._options.barWidth + this._options.barGap;
+        const incr = totalBarWidth * (this._data.length / waveWidth);
 
-        for (let i = 0; i < waveWidth; i += totalBarWidth) {
+        for (let i = 0, j = 0; j + totalBarWidth < this._data.length; i += totalBarWidth, j += incr) {
             x.push(i);
-            y.push(average(this._data, i, i + totalBarWidth));
+            y.push(average(this._data, j, j + totalBarWidth));
         }
 
         return [x, y, 1 / Math.max(...y)];
@@ -322,7 +354,7 @@ class WaveView {
             : this.createColor(this._colors.waveformColor[0]);
 
         for (let i = 0; i < x.length; i++) {
-            const barHeight = waveHeight * y[i] * norm;
+            const barHeight = Math.max(waveHeight * y[i] * norm, 0.5);
 
             context.fillRect(x[i], (waveHeight - barHeight) / 2, this._options.barWidth, barHeight);
         }
@@ -358,4 +390,3 @@ class WaveView {
 }
 
 export default WaveView;
-export { WaveViewOptions };

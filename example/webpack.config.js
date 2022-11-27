@@ -2,9 +2,13 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: ['./src/simple', './src/playlist'],
+    entry: {
+        playlist: './src/playlist',
+        simple: './src/simple',
+        view: './src/view',
+    },
     output: {
-        filename: 'bundle.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
         devtoolModuleFilenameTemplate: 'webpack:///[absolute-resource-path]',
     },

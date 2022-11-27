@@ -1,5 +1,26 @@
 import { HsvColor, RgbColor } from './types';
 
+let skip: boolean;
+
+/**
+ * Throttle the given callback.
+ *
+ * @param {Function} callback
+ * @param {number} interval
+ * @returns {void}
+ */
+export const throttle = (callback: () => void, interval = 250): void => {
+    if (skip) return;
+
+    skip = true;
+
+    setTimeout(() => {
+        callback();
+
+        skip = false;
+    }, interval);
+};
+
 /**
  * Set the CSS styles for the given element.
  *
@@ -26,6 +47,9 @@ export const style = (element: HTMLElement, styles: { [name: string]: string }) 
  */
 export const average = (values: number[], start: number, end: number): number => {
     let sum = 0;
+
+    start = Math.floor(start);
+    end = Math.floor(end);
 
     for (let i = Math.min(start, end); i < Math.max(start, end); i++) {
         sum += Math.abs(values[i]);
@@ -110,4 +134,22 @@ export const hsv2rgb = ({ h, s, v }: HsvColor): RgbColor => {
         default:
             return { r: v, g: data[0], b: data[1] };
     }
+};
+
+/**
+ * Extract the amplitude data from an audio file ponted to by the "url" parameter.
+ *
+ * @param {string} url
+ * @param {Object} options
+ * @returns {number[]}
+ */
+export const extractAmplitudes = (
+    url: string,
+    options: { points: number; normalise: boolean; logarithmic: boolean } = {
+        points: 800,
+        normalise: true,
+        logarithmic: false,
+    },
+): number[] => {
+    return [];
 };

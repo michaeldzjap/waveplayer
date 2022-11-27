@@ -9,12 +9,7 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import WaveView from './WaveView';
-
-interface WavePlayerOptions {
-    audioElement?: HTMLAudioElement | string;
-    preload: '' | 'metadata' | 'none' | 'auto';
-}
+import { WavePlayerOptions, WaveView } from './types';
 
 /**
  * @class
@@ -56,7 +51,6 @@ class WavePlayer {
      *
      * @param {WaveView} view
      * @param {Options} options
-     * @returns {void}
      */
     constructor(view: WaveView, options: Readonly<Partial<WavePlayerOptions>> = {}) {
         this._view = view;
@@ -116,4 +110,3 @@ class WavePlayer {
 }
 
 export default WavePlayer;
-export { WavePlayerOptions };
