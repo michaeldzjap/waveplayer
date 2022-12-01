@@ -135,21 +135,3 @@ export const hsv2rgb = ({ h, s, v }: HsvColor): RgbColor => {
             return { r: v, g: data[0], b: data[1] };
     }
 };
-
-/**
- * Extract the amplitude data from an audio file ponted to by the "url" parameter.
- *
- * @param {string} url
- * @param {Object} options
- * @returns {number[]}
- */
-export const extractAmplitudes = (
-    url: string,
-    options: { points: number; normalise: boolean; logarithmic: boolean } = {
-        points: 800,
-        normalise: true,
-        logarithmic: false,
-    },
-): number[] => {
-    return [];
-};
