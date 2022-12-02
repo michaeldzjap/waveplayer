@@ -29,7 +29,7 @@ export const lin2log = (value: number): number => {
 };
 
 /**
- * Extract the amplitude data from an audio file ponted to by the "url" parameter.
+ * Extract the amplitude data from an audio file pointed to by "url".
  *
  * @param {string} url
  * @param {Object} options

@@ -1,5 +1,7 @@
+import { newServer } from 'mock-xmlhttprequest';
 import { AudioContext } from 'standardized-audio-context-mock';
 
+import sine from './stubs/sine';
 import { extractAmplitudes, interpolate, lin2log } from '../src/audio';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,7 +30,19 @@ describe('audio', () => {
 
     describe('extractAmplitudes', () => {
         it('extracts the amplitudes from an audio file', async () => {
-            expect(true).toBeTruthy();
+            const server = newServer({
+                get: ['/sine.wav', { status: 200, body: sine.buffer }],
+            });
+
+            try {
+                server.install();
+
+                const data = await extractAmplitudes('/sine.wav', { points: 256 });
+
+                expect(true).toBeTruthy();
+            } finally {
+                server.remove();
+            }
         });
     });
 });
