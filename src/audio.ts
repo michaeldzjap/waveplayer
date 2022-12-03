@@ -52,10 +52,10 @@ export const extractAmplitudes = (
             let output: number[];
             const buffer = await context.decodeAudioData(request.response);
             const amplitudes: number[][] = Array(buffer.numberOfChannels).fill(new Array(points));
-            const ratio = buffer.getChannelData(0).length / points; // Assume all channels contain the same number of samples
 
             for (let i = 0; i < buffer.numberOfChannels; i++) {
                 const data = buffer.getChannelData(i);
+                const ratio = data.length / points;
 
                 for (let j = 0, incr = 0; j < points; j++, incr += ratio) {
                     const x = Math.floor(incr);
