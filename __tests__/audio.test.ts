@@ -2,8 +2,6 @@ import { readFile } from 'fs';
 import { resolve } from 'path';
 import { promisify } from 'util';
 
-import { newServer } from 'mock-xmlhttprequest';
-
 import { extractAmplitudes, interpolate, lin2log } from '../src/audio';
 import { noise, sine } from './stubs/data';
 
@@ -33,90 +31,87 @@ describe('audio', () => {
             jest.resetModules();
         });
 
-        it(`extracts the amplitudes from a mono audio file`, async () => {
-            const mockGetChannelData = jest.fn(() => {
-                return sine;
-            });
+        /**
+         * Create all XML HTTP request related mocks.
+         *
+         * @param {string} filename
+         * @returns {Promise<Object>}
+         */
+        const mockXHR = async (filename: string) => {
+            const content = await promisify(readFile)(resolve(__dirname, 'stubs', filename));
 
-            const mockDecodeAudioData = jest.fn(() => {
-                return Promise.resolve({ numberOfChannels: 1, getChannelData: mockGetChannelData });
-            });
+            const mockOpen = jest.fn();
+            const mockSend = jest.fn();
 
-            const mockAudioContext = jest.fn(() => {
-                return {
-                    decodeAudioData: mockDecodeAudioData,
-                };
-            });
+            const xhrMock: Partial<XMLHttpRequest> = {
+                open: mockOpen,
+                send: mockSend,
+                responseType: 'arraybuffer',
+                response: content.buffer,
+                status: 200,
+            };
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            window.AudioContext = mockAudioContext;
+            window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
 
-            const content = await promisify(readFile)(resolve(__dirname, 'stubs', 'sine.wav'));
-            const server = newServer({
-                get: [
-                    '/sine.wav',
-                    {
-                        status: 200,
-                        headers: { 'accept-ranges': 'bytes', 'content-type': 'audio/wav' },
-                        body: content.buffer,
-                    },
-                ],
-            });
+            setTimeout(() => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                xhrMock['onload']();
+            }, 0);
 
-            try {
-                server.install();
+            return Promise.resolve({ mockOpen, mockSend });
+        };
 
-                const data = await extractAmplitudes('/sine.wav', { points: 256 });
-
-                expect(data).toHaveLength(256);
-            } finally {
-                server.remove();
-            }
-        });
-
-        it(`extracts the amplitudes from a stereo audio file`, async () => {
+        /**
+         * Create all web audio API related mocks.
+         *
+         * @param {number} numberOfChannels
+         * @param {Float32Array[]} data
+         * @returns {Object}
+         */
+        const mockWebAudio = (numberOfChannels: number, data: Float32Array[]) => {
             const mockGetChannelData = jest.fn();
 
-            for (const channel of noise) {
+            for (const channel of data) {
                 mockGetChannelData.mockReturnValueOnce(channel);
             }
 
-            const mockDecodeAudioData = jest.fn(() => {
-                return Promise.resolve({ numberOfChannels: 2, getChannelData: mockGetChannelData });
-            });
-
-            const mockAudioContext = jest.fn(() => {
-                return {
-                    decodeAudioData: mockDecodeAudioData,
-                };
-            });
+            const mockDecodeAudioData = jest.fn(() =>
+                Promise.resolve({ numberOfChannels, getChannelData: mockGetChannelData }),
+            );
+            const mockAudioContext = jest.fn(() => ({ decodeAudioData: mockDecodeAudioData }));
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             window.AudioContext = mockAudioContext;
 
-            const content = await promisify(readFile)(resolve(__dirname, 'stubs', 'noise.wav'));
-            const server = newServer({
-                get: [
-                    '/noise.wav',
-                    {
-                        status: 200,
-                        headers: { 'accept-ranges': 'bytes', 'content-type': 'audio/wav' },
-                        body: content.buffer,
-                    },
-                ],
-            });
+            return { mockAudioContext, mockDecodeAudioData, mockGetChannelData };
+        };
 
-            try {
-                server.install();
+        it(`extracts the amplitudes from a mono audio file`, async () => {
+            mockWebAudio(1, [sine]);
 
-                const data = await extractAmplitudes('/noise.wav', { points: 256 });
+            const { mockOpen, mockSend } = await mockXHR('sine.wav');
 
-                expect(data).toHaveLength(256);
-            } finally {
-                server.remove();
-            }
+            const data = await extractAmplitudes('/sine.wav', { points: 256 });
+
+            expect(mockOpen).toHaveBeenCalledWith('GET', '/sine.wav');
+            expect(mockSend).toHaveBeenCalled();
+            expect(data).toHaveLength(256);
+        });
+
+        it(`extracts the amplitudes from a stereo audio file`, async () => {
+            mockWebAudio(2, noise);
+
+            const { mockOpen, mockSend } = await mockXHR('noise.wav');
+
+            const data = await extractAmplitudes('/noise.wav', { points: 256 });
+
+            expect(mockOpen).toHaveBeenCalledWith('GET', '/noise.wav');
+            expect(mockSend).toHaveBeenCalled();
+            expect(data).toHaveLength(256);
         });
     });
 });
