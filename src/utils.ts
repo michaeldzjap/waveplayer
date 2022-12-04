@@ -1,6 +1,6 @@
 import { HsvColor, RgbColor } from './types';
 
-let skip: boolean;
+let skip = false;
 
 /**
  * Throttle the given callback.

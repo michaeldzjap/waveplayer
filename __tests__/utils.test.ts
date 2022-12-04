@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import { style, average, hex2rgb, hsv2rgb, rgb2hsv } from '../src/utils';
+import { style, average, hex2rgb, hsv2rgb, rgb2hsv, throttle } from '../src/utils';
 
 describe('utils', () => {
     describe('style', () => {
@@ -61,6 +61,22 @@ describe('utils', () => {
             it(`converts a color with hue ${hsv.h} in HSV format to RGB format`, () => {
                 expect(hsv2rgb(hsv)).toEqual(rgb);
             });
+        });
+    });
+
+    describe('throttle', () => {
+        jest.useFakeTimers();
+
+        it('waits 500 milliseconds before executing the callback', () => {
+            const callback = jest.fn();
+
+            for (let i = 0; i < 2; i++) {
+                throttle(callback, 500);
+            }
+
+            jest.runAllTimers();
+
+            expect(callback).toHaveBeenCalledTimes(1);
         });
     });
 });

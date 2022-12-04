@@ -7,4 +7,5 @@ module.exports = {
         '\\.[jt]sx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
     },
     collectCoverage: true,
+    collectCoverageFrom: ['src/**/*.ts'],
 };

@@ -87,30 +87,32 @@ describe('audio', () => {
             // @ts-ignore
             window.AudioContext = mockAudioContext;
 
-            return { mockAudioContext, mockDecodeAudioData, mockGetChannelData };
+            return { mockDecodeAudioData, mockGetChannelData };
         };
 
-        it(`extracts the amplitudes from a mono audio file`, async () => {
-            mockWebAudio(1, [sine]);
-
+        it('extracts the amplitudes from a mono audio file', async () => {
             const { mockOpen, mockSend } = await mockXHR('sine.wav');
+            const { mockDecodeAudioData, mockGetChannelData } = mockWebAudio(1, [sine]);
 
             const data = await extractAmplitudes('/sine.wav', { points: 256 });
 
             expect(mockOpen).toHaveBeenCalledWith('GET', '/sine.wav');
             expect(mockSend).toHaveBeenCalled();
+            expect(mockDecodeAudioData).toHaveBeenCalled();
+            expect(mockGetChannelData).toHaveBeenCalledTimes(1);
             expect(data).toHaveLength(256);
         });
 
-        it(`extracts the amplitudes from a stereo audio file`, async () => {
-            mockWebAudio(2, noise);
-
+        it('extracts the amplitudes from a stereo audio file', async () => {
             const { mockOpen, mockSend } = await mockXHR('noise.wav');
+            const { mockDecodeAudioData, mockGetChannelData } = mockWebAudio(2, noise);
 
-            const data = await extractAmplitudes('/noise.wav', { points: 256 });
+            const data = await extractAmplitudes('/noise.wav', { points: 256, logarithmic: true });
 
             expect(mockOpen).toHaveBeenCalledWith('GET', '/noise.wav');
             expect(mockSend).toHaveBeenCalled();
+            expect(mockDecodeAudioData).toHaveBeenCalled();
+            expect(mockGetChannelData).toHaveBeenCalledTimes(2);
             expect(data).toHaveLength(256);
         });
     });
