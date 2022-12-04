@@ -160,6 +160,53 @@ class WaveView implements WaveViewContract {
     /**
      * @inheritdoc
      */
+    public get width(): number {
+        return this._options.width;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set width(value: number) {
+        this._options = { ...this._options, width: value };
+
+        if (this._options.responsive) return;
+
+        style(this._waveContainer, { width: `${this._options.width}px` });
+        style(this._canvas, {
+            width: `${this._options.width}px`,
+        });
+
+        this._canvas.width = this._options.width;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    get height(): number {
+        return this._options.height;
+    }
+
+    /**
+     * Set the height of the drawn waveform.
+     *
+     * @param  {number} value
+     * @returns {void}
+     */
+    set height(value: number) {
+        this._options = { ...this._options, height: value };
+
+        style(this._waveContainer, { height: `${this._options.height}px` });
+        style(this._canvas, {
+            height: `${this._options.height}px`,
+        });
+
+        this._canvas.height = this._options.height;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public get responsive(): boolean {
         return this._options.responsive;
     }
@@ -171,6 +218,20 @@ class WaveView implements WaveViewContract {
         this._options = { ...this._options, responsive: value };
 
         value ? this.addResizeHandler() : this.removeResizeHandler();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get gradient(): boolean {
+        return this._options.gradient;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set gradient(value: boolean) {
+        this._options = { ...this._options, gradient: value };
     }
 
     /**

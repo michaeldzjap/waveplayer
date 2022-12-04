@@ -77,6 +77,37 @@ interface WaveView {
     set container(element: HTMLDivElement | string);
 
     /**
+     * Get the width of the drawn waveform.
+     *
+     * @returns {number}
+     */
+    get width(): number;
+
+    /**
+     * Set the width of the drawn waveform. Only has an effect if the wave view
+     * instance is not operating in responsive mode.
+     *
+     * @param {number} value
+     * @returns {void}
+     */
+    set width(value: number);
+
+    /**
+     * Get the height of the drawn waveform.
+     *
+     * @returns {number}
+     */
+    get height(): number;
+
+    /**
+     * Set the height of the drawn waveform.
+     *
+     * @param {number} value
+     * @returns {void}
+     */
+    set height(value: number);
+
+    /**
      * Check if the wave view instance is operating in responsive mode.
      *
      * @returns {boolean}
@@ -84,12 +115,26 @@ interface WaveView {
     get responsive(): boolean;
 
     /**
-     * Make the waveview instance responsive, meaning its width should scale
+     * Make the wave view instance responsive, meaning its width should scale
      * along with the width of its parent container.
      *
      * @param {boolean} value
      */
     set responsive(value: boolean);
+
+    /**
+     * Determines if the waveform should be drawn with a gradient.
+     *
+     * @returns {boolean}
+     */
+    get gradient(): boolean;
+
+    /**
+     * Determine if the waveform should be drawn with a gradient.
+     *
+     * @param {boolean} value
+     */
+    set gradient(value: boolean);
 
     /**
      * Draw the waveform in the canvas HTML element.

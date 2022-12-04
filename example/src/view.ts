@@ -2,7 +2,7 @@ import { WaveView } from '../../src/index';
 import { extractAmplitudes } from '../../src/audio';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Some audio amplitude data
+    // Some sample audio amplitude data
     const data = await extractAmplitudes('/audio/noise.wav');
 
     // Create a new wave view instance
