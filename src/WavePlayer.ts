@@ -9,7 +9,8 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import { WavePlayerOptions, WaveView } from './types';
+import { WavePlayerOptions } from './types/WavePlayer';
+import { WaveView } from './types/WaveView';
 
 /**
  * @class

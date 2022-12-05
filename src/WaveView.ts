@@ -9,7 +9,8 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import { RgbColor, WaveView as WaveViewContract, WaveViewOptions, WaveViewColors } from './types';
+import { WaveView as WaveViewContract, WaveViewOptions, WaveViewColors } from './types/WaveView';
+import { RgbColor } from './types/utils';
 import { average, hex2rgb, hsv2rgb, rgb2hsv, style, throttle } from './utils';
 
 /**
@@ -41,6 +42,13 @@ class WaveView implements WaveViewContract {
      * @var {number[]}
      */
     private _data: number[];
+
+    /**
+     * The cached bar coordinates.
+     *
+     * @var {[number[], number[], number]}
+     */
+    private _barCoordinates?: [number[], number[], number];
 
     /**
      * The progress of the waveform, assumed to be in the range [0-1].
@@ -141,6 +149,9 @@ class WaveView implements WaveViewContract {
      */
     public set progress(progress: number) {
         this._progress = Math.max(Math.min(progress, 1), 0);
+
+        this.clear();
+        this.drawBars(...this.computeBarCoordinates(true));
     }
 
     /**
@@ -178,6 +189,8 @@ class WaveView implements WaveViewContract {
         });
 
         this._canvas.width = this._options.width;
+
+        this.render();
     }
 
     /**
@@ -188,10 +201,7 @@ class WaveView implements WaveViewContract {
     }
 
     /**
-     * Set the height of the drawn waveform.
-     *
-     * @param  {number} value
-     * @returns {void}
+     * @inheritdoc
      */
     set height(value: number) {
         this._options = { ...this._options, height: value };
@@ -202,6 +212,8 @@ class WaveView implements WaveViewContract {
         });
 
         this._canvas.height = this._options.height;
+
+        this.render();
     }
 
     /**
@@ -359,7 +371,7 @@ class WaveView implements WaveViewContract {
      */
     public render(): this {
         this.clear();
-        this.drawBars();
+        this.drawBars(...this.computeBarCoordinates());
 
         return this;
     }
@@ -381,9 +393,14 @@ class WaveView implements WaveViewContract {
      * Compute the x, y coordinates for the individual bars representing a "unit"
      * of our waveform.
      *
+     * @param {boolean} useCache
      * @returns {[number[], number[], number]}
      */
-    private computeBarCoordinates(): [number[], number[], number] {
+    private computeBarCoordinates(useCache = false): [number[], number[], number] {
+        if (useCache && this._barCoordinates) {
+            return this._barCoordinates;
+        }
+
         const x = [];
         const y = [];
         const waveWidth = this._waveContainer.clientWidth;
@@ -395,30 +412,102 @@ class WaveView implements WaveViewContract {
             y.push(average(this._data, j, j + totalBarWidth));
         }
 
-        return [x, y, 1 / Math.max(...y)];
+        this._barCoordinates = [x, y, 1 / Math.max(...y)];
+
+        return this._barCoordinates;
     }
 
     /**
      * Draw the bars representing the waveform from the given coordinates.
      *
+     * @param {number[]} x
+     * @param {number[y]} y
+     * @param {number} norm
      * @returns {void}
      */
-    private drawBars(): void {
-        const [x, y, norm] = this.computeBarCoordinates();
+    private drawBars(x: number[], y: number[], norm: number): void {
         const context = this._canvas.getContext('2d');
-        const waveHeight = this._canvas.height;
 
         if (!context) return;
+
+        const progressCoordinate = this._progress * this._waveContainer.clientWidth;
+        const totalBarWidth = this._options.barWidth + this._options.barGap;
+
+        context.fillStyle = this._options.gradient
+            ? this.createGradient(context, this._colors.progressColor)
+            : this.createColor(this._colors.progressColor[0]);
+
+        let i = 0;
+
+        // Draw the part of the waveform that has been played already
+        while (x[i] < progressCoordinate - totalBarWidth) {
+            this.drawBar(context, x[i], y[i], norm);
+
+            i++;
+        }
+
+        // Fade between colors when on currently playing bar
+        while (x[i] < progressCoordinate) {
+            const incr = (progressCoordinate - x[i]) / totalBarWidth;
+            const progresIndicatorColor = this.createProgressIndicatorColorVariation(incr);
+
+            context.fillStyle = this._options.gradient
+                ? this.createGradient(context, progresIndicatorColor)
+                : this.createColor(progresIndicatorColor[0]);
+
+            this.drawBar(context, x[i], y[i], norm);
+
+            i++;
+        }
 
         context.fillStyle = this._options.gradient
             ? this.createGradient(context, this._colors.waveformColor)
             : this.createColor(this._colors.waveformColor[0]);
 
-        for (let i = 0; i < x.length; i++) {
-            const barHeight = Math.max(waveHeight * y[i] * norm, 0.5);
+        // Draw the part of the waveform that has not been played yet
+        while (i < x.length) {
+            this.drawBar(context, x[i], y[i], norm);
 
-            context.fillRect(x[i], (waveHeight - barHeight) / 2, this._options.barWidth, barHeight);
+            i++;
         }
+    }
+
+    /**
+     * Draw a single bar at a given location.
+     *
+     * @param {CanvasRenderingContext2D} context
+     * @param {number} x
+     * @param {number} y
+     * @param {number} norm
+     * @returns {void}
+     */
+    private drawBar(context: CanvasRenderingContext2D, x: number, y: number, norm: number): void {
+        const barHeight = Math.max(this._canvas.height * y * norm, 0.5);
+
+        context.fillRect(x, (this._canvas.height - barHeight) / 2, this._options.barWidth, barHeight);
+    }
+
+    /**
+     * Create the progress indicator color variation.
+     *
+     * @param {number} incr
+     * @returns {RgbColor[]}
+     */
+    private createProgressIndicatorColorVariation(incr: number): [RgbColor, RgbColor] {
+        const differenceColor = {
+            r: this._colors.waveformColor[0].r - this._colors.progressColor[0].r,
+            g: this._colors.waveformColor[0].g - this._colors.progressColor[0].g,
+            b: this._colors.waveformColor[0].b - this._colors.progressColor[0].b,
+        };
+        const c1 = {
+            r: this._colors.waveformColor[0].r - differenceColor.r * incr,
+            g: this._colors.waveformColor[0].g - differenceColor.g * incr,
+            b: this._colors.waveformColor[0].b - differenceColor.b * incr,
+        };
+
+        const tmp = rgb2hsv(c1);
+
+        return [c1, hsv2rgb({ h: tmp.h, s: tmp.s, v: tmp.v * 1.4 })];
     }
 
     /**

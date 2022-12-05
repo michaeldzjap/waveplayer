@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Create a new wave view instance
     const view = new WaveView(data, { container: '#waveform' });
 
+    view.progress = 0.5;
+
     // Render the wave view
     view.render();
 });

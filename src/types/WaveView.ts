@@ -1,19 +1,4 @@
-interface RgbColor {
-    r: number;
-    g: number;
-    b: number;
-}
-
-interface HsvColor {
-    h: number;
-    s: number;
-    v: number;
-}
-
-interface WavePlayerOptions {
-    audioElement?: HTMLAudioElement | string;
-    preload: '' | 'metadata' | 'none' | 'auto';
-}
+import { RgbColor } from './utils';
 
 interface WaveViewOptions {
     container: HTMLDivElement | string;
@@ -151,4 +136,4 @@ interface WaveView {
     clear(): this;
 }
 
-export { HsvColor, RgbColor, WavePlayerOptions, WaveView, WaveViewColors, WaveViewOptions };
+export { WaveView, WaveViewColors, WaveViewOptions };

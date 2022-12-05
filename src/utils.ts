@@ -1,4 +1,4 @@
-import { HsvColor, RgbColor } from './types';
+import { HsvColor, RgbColor } from './types/utils';
 
 let skip = false;
 
