@@ -118,7 +118,9 @@ export const hsv2rgb = ({ h, s, v }: HsvColor): RgbColor => {
     v = (v / 100) * 255;
 
     const i = Math.floor(h);
-    const data = [v * (1 - s), v * (1 - s * (h - i)), v * (1 - s * (1 - (h - i)))];
+    const data = [v * (1 - s), v * (1 - s * (h - i)), v * (1 - s * (1 - (h - i)))].map((_) => Math.round(_));
+
+    v = Math.round(v);
 
     switch (i) {
         case 0:

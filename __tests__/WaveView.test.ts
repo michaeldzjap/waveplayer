@@ -58,7 +58,7 @@ describe('WaveView', () => {
         expect(view.data).toBe(data);
     });
 
-    it('gets and sets the progress', () => {
+    it('gets and sets the waveform progress', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
         const view = new WaveView([], { container: '#container' });
@@ -84,5 +84,59 @@ describe('WaveView', () => {
         view.container = '#second-container';
 
         expect(view.container).toHaveAttribute('id', 'second-container');
+    });
+
+    it('gets and sets the waveform width', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container', responsive: false });
+        const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
+
+        expect(view.width).toBe(512);
+        expect(waveContainer).toHaveStyle({ width: '512px' });
+
+        view.width = 256;
+
+        expect(view.width).toBe(256);
+        expect(waveContainer).toHaveStyle({ width: '256px' });
+    });
+
+    it('gets and sets the waveform height', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+        const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
+
+        expect(view.height).toBe(128);
+        expect(waveContainer).toHaveStyle({ height: '128px' });
+
+        view.height = 64;
+
+        expect(view.height).toBe(64);
+        expect(waveContainer).toHaveStyle({ height: '64px' });
+    });
+
+    it('gets and sets the waveform responsive flag', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.responsive).toBeTruthy();
+
+        view.responsive = false;
+
+        expect(view.responsive).toBeFalsy();
+    });
+
+    it('gets and sets the waveform gradient', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.gradient).toBeTruthy();
+
+        view.gradient = false;
+
+        expect(view.gradient).toBeFalsy();
     });
 });
