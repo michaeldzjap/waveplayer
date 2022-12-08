@@ -139,4 +139,80 @@ describe('WaveView', () => {
 
         expect(view.gradient).toBeFalsy();
     });
+
+    it('gets and sets the waveform bar width', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.barWidth).toBe(4);
+
+        view.barWidth = 10;
+
+        expect(view.barWidth).toBe(10);
+    });
+
+    it('gets and sets the waveform bar gap', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.barGap).toBe(1);
+
+        view.barGap = 2;
+
+        expect(view.barGap).toBe(2);
+    });
+
+    it('draws the correct number of bars on the canvas', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView(new Array(800).fill(1), { container: '#container' });
+        const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
+
+        if (!waveContainer) return;
+
+        const canvas = waveContainer.firstElementChild;
+
+        if (!canvas) return;
+
+        Object.defineProperty(document.body, 'clientWidth', { value: window.innerWidth });
+        Object.defineProperty(document.body.querySelector<HTMLDivElement>('#container'), 'clientWidth', {
+            value: view.width,
+        });
+        Object.defineProperty(waveContainer, 'clientWidth', { value: view.width });
+        Object.defineProperty(canvas, 'clientWidth', { value: view.width });
+
+        view.progress = 0.5;
+
+        const context = (canvas as HTMLCanvasElement).getContext('2d');
+
+        if (!context) return;
+
+        const spy = jest.spyOn(context, 'fillRect');
+
+        view.render();
+
+        expect(spy).toHaveBeenCalledTimes(Math.floor(view.width / (view.barWidth + view.barGap)));
+
+        spy.mockRestore();
+    });
+
+    jest.useFakeTimers();
+
+    it('redraws the waveform on the canvas when resizing the window', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+        const spy = jest.spyOn(view, 'render');
+
+        window.innerWidth = 512;
+        window.dispatchEvent(new Event('resize'));
+
+        jest.runAllTimers();
+
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
+    });
 });

@@ -1,7 +1,5 @@
 import { HsvColor, RgbColor } from './types/utils';
 
-let skip = false;
-
 /**
  * Throttle the given callback.
  *
@@ -9,16 +7,20 @@ let skip = false;
  * @param {number} interval
  * @returns {void}
  */
-export const throttle = (callback: () => void, interval = 250): void => {
-    if (skip) return;
+export const throttle = (callback: () => void, interval = 250): (() => void) => {
+    let skip = false;
 
-    skip = true;
+    return (): void => {
+        if (skip) return;
 
-    setTimeout(() => {
-        callback();
+        skip = true;
 
-        skip = false;
-    }, interval);
+        setTimeout(() => {
+            callback();
+
+            skip = false;
+        }, interval);
+    };
 };
 
 /**

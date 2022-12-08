@@ -219,6 +219,38 @@ class WaveView implements WaveViewContract {
     /**
      * @inheritdoc
      */
+    public get barWidth(): number {
+        return this._options.barWidth;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set barWidth(value: number) {
+        this._options = { ...this._options, barWidth: value };
+
+        this.render();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get barGap(): number {
+        return this._options.barGap;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set barGap(value: number) {
+        this._options = { ...this._options, barGap: value };
+
+        this.render();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public get responsive(): boolean {
         return this._options.responsive;
     }
@@ -268,11 +300,11 @@ class WaveView implements WaveViewContract {
      * @returns {HTMLDivElement}
      */
     private createWaveContainer(): HTMLDivElement {
-        const container = document.createElement('div');
+        const element = document.createElement('div');
 
-        container.className = 'waveplayer-waveform-container';
+        element.className = 'waveplayer-waveform-container';
 
-        style(this._container.appendChild(container), {
+        style(this._container.appendChild(element), {
             display: 'block',
             position: 'relative',
             width: this._options.responsive ? '100%' : `${this._options.width}px`,
@@ -280,7 +312,7 @@ class WaveView implements WaveViewContract {
             overflow: 'hidden',
         });
 
-        return container;
+        return element;
     }
 
     /**
@@ -347,7 +379,7 @@ class WaveView implements WaveViewContract {
                 this._canvas.width = width;
 
                 this.render();
-            }, 250);
+            }, 250)();
         };
 
         window.addEventListener('resize', this._resizeHandler);

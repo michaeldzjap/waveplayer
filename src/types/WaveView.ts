@@ -73,7 +73,6 @@ interface WaveView {
      * instance is not operating in responsive mode.
      *
      * @param {number} value
-     * @returns {void}
      */
     set width(value: number);
 
@@ -88,9 +87,36 @@ interface WaveView {
      * Set the height of the drawn waveform.
      *
      * @param {number} value
-     * @returns {void}
      */
     set height(value: number);
+
+    /**
+     * Get the width of a bar representing an element of the waveform.
+     *
+     * @returns {number}
+     */
+    get barWidth(): number;
+
+    /**
+     * Set the width of a bar representing an element of the waveform.
+     *
+     * @param {number} value
+     */
+    set barWidth(value: number);
+
+    /**
+     * Get the width of the gap that separates consecutive bars.
+     *
+     * @returns {number}
+     */
+    get barGap(): number;
+
+    /**
+     * Set the width of the gap that separates consecutive bars.
+     *
+     * @param {number} value
+     */
+    set barGap(value: number);
 
     /**
      * Check if the wave view instance is operating in responsive mode.

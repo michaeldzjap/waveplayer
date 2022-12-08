@@ -69,9 +69,10 @@ describe('utils', () => {
 
         it('waits 500 milliseconds before executing the callback', () => {
             const callback = jest.fn();
+            const fn = throttle(callback, 500);
 
             for (let i = 0; i < 2; i++) {
-                throttle(callback, 500);
+                fn();
             }
 
             jest.runAllTimers();
