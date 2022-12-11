@@ -200,7 +200,7 @@ describe('WaveView', () => {
 
     jest.useFakeTimers();
 
-    it('redraws the waveform on the canvas when resizing the window', () => {
+    it('redraws the waveform on the canvas when resizing the viewport', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
         const view = new WaveView([], { container: '#container' });
@@ -210,6 +210,19 @@ describe('WaveView', () => {
         window.dispatchEvent(new Event('resize'));
 
         jest.runAllTimers();
+
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
+    });
+
+    it('removes an existing resize handler before adding a new one', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+        const spy = jest.spyOn(window, 'removeEventListener');
+
+        view.responsive = true;
 
         expect(spy).toHaveBeenCalled();
 

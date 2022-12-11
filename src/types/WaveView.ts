@@ -8,9 +8,10 @@ interface WaveViewOptions {
     progressColor: string;
     barWidth: number;
     barGap: number;
-    interact: boolean;
     responsive: boolean;
     gradient: boolean;
+    interact: boolean;
+    onClick?: (e: MouseEvent) => void;
 }
 
 interface WaveViewColors {
@@ -146,6 +147,39 @@ interface WaveView {
      * @param {boolean} value
      */
     set gradient(value: boolean);
+
+    /**
+     * Check if we can currently interact with the wave view instance.
+     *
+     * @returns {boolean}
+     */
+    get interact(): boolean;
+
+    /**
+     * Set the interaction state of the wave view instance.
+     *
+     * @param {boolean} value
+     */
+    set interact(value: boolean);
+
+    /**
+     * Get the callback that should be evaluated when the user clicks somewhere
+     * on the waveform.
+     *
+     * @returns {(Function|undefined)}
+     */
+    get onClick(): ((e: MouseEvent) => void) | undefined;
+
+    /**
+     * Set the callback that should be evaluated when the user clicks somewhere
+     * on the waveform.
+     *
+     * NOTE: The callback will only be evaluated when the "interact" flag is set
+     * to `true`.
+     *
+     * @param {(Function|undefined)} callback
+     */
+    set onClick(callback: ((e: MouseEvent) => void) | undefined);
 
     /**
      * Draw the waveform in the canvas HTML element.

@@ -30,9 +30,9 @@ class WaveView implements WaveViewContract {
         progressColor: '#31708f',
         barWidth: 4,
         barGap: 1,
-        interact: true,
         responsive: true,
         gradient: true,
+        interact: true,
     };
 
     /**
@@ -93,11 +93,18 @@ class WaveView implements WaveViewContract {
     private _colors: WaveViewColors;
 
     /**
-     * The resize logic that should be executed on a "resize" event.
+     * The logic that should be executed on a "resize" event.
      *
      * @var {(Function|undefined)}
      */
     private _resizeHandler?: () => void;
+
+    /**
+     * The logic that should be executed on a "click" event of the canvas object.
+     *
+     * @var {(Function|undefined)}
+     */
+    private _clickHandler?: (e: MouseEvent) => void;
 
     /**
      * Initialize a new wave view instance.
@@ -118,6 +125,10 @@ class WaveView implements WaveViewContract {
 
         if (this._options.responsive) {
             this.addResizeHandler();
+        }
+
+        if (this._options.interact) {
+            this.addClickHandler();
         }
     }
 
@@ -279,6 +290,36 @@ class WaveView implements WaveViewContract {
     }
 
     /**
+     * @inheritdoc
+     */
+    get interact(): boolean {
+        return this._options.interact;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    set interact(value: boolean) {
+        this._options = { ...this._options, interact: value };
+
+        value ? this.addClickHandler() : this.removeClickHandler();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get onClick(): ((e: MouseEvent) => void) | undefined {
+        return this._options.onClick;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set onClick(callback: ((e: MouseEvent) => void) | undefined) {
+        this._options = { ...this._options, onClick: callback };
+    }
+
+    /**
      * Resolve an existing container HTML element.
      *
      * @returns {(HTMLDivElement|string)}
@@ -396,6 +437,41 @@ class WaveView implements WaveViewContract {
         }
 
         style(this._waveContainer, { width: `${this._options.width}px` });
+    }
+
+    /**
+     * Add a "click" event handler for the canvas object.
+     *
+     * @return {void}
+     */
+    private addClickHandler(): void {
+        if (this._clickHandler) {
+            this._canvas.removeEventListener('click', this._clickHandler);
+        }
+
+        this._clickHandler = (e: MouseEvent) => {
+            this._progress = e.offsetX / this._waveContainer.clientWidth;
+
+            this.clear();
+            this.drawBars(...this.computeBarCoordinates(true));
+
+            if (this._options.onClick) {
+                this._options.onClick(e);
+            }
+        };
+
+        this._canvas.addEventListener('click', this._clickHandler);
+    }
+
+    /**
+     * Remove an existing "click" event handler for the canvas object.
+     *
+     * @return {void}
+     */
+    private removeClickHandler(): void {
+        if (this._clickHandler) {
+            this._canvas.removeEventListener('click', this._clickHandler);
+        }
     }
 
     /**
