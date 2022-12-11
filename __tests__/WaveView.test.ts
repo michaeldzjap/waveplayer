@@ -116,30 +116,6 @@ describe('WaveView', () => {
         expect(waveContainer).toHaveStyle({ height: '64px' });
     });
 
-    it('gets and sets the waveform responsive flag', () => {
-        document.body.innerHTML = '<div id="container"></div>';
-
-        const view = new WaveView([], { container: '#container' });
-
-        expect(view.responsive).toBeTruthy();
-
-        view.responsive = false;
-
-        expect(view.responsive).toBeFalsy();
-    });
-
-    it('gets and sets the waveform gradient', () => {
-        document.body.innerHTML = '<div id="container"></div>';
-
-        const view = new WaveView([], { container: '#container' });
-
-        expect(view.gradient).toBeTruthy();
-
-        view.gradient = false;
-
-        expect(view.gradient).toBeFalsy();
-    });
-
     it('gets and sets the waveform bar width', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
@@ -164,6 +140,59 @@ describe('WaveView', () => {
         expect(view.barGap).toBe(2);
     });
 
+    it('gets and sets the waveform responsive flag', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.responsive).toBeTruthy();
+
+        view.responsive = false;
+
+        expect(view.responsive).toBeFalsy();
+    });
+
+    it('gets and sets the waveform gradient', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.gradient).toBeTruthy();
+
+        view.gradient = false;
+
+        expect(view.gradient).toBeFalsy();
+    });
+
+    it('gets and sets the waveform interact flag', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.interact).toBeTruthy();
+
+        view.interact = false;
+
+        expect(view.interact).toBeFalsy();
+    });
+
+    it('gets and sets the waveform on click handler', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.onClick).toBeUndefined();
+
+        // eslint-disable-next-line require-jsdoc
+        const callback = () => {
+            //
+        };
+
+        view.onClick = callback;
+
+        expect(view.onClick).toBe(callback);
+    });
+
     it('draws the correct number of bars on the canvas', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
@@ -176,12 +205,13 @@ describe('WaveView', () => {
 
         if (!canvas) return;
 
-        Object.defineProperty(document.body, 'clientWidth', { value: window.innerWidth });
+        Object.defineProperty(document.body, 'clientWidth', { value: window.innerWidth, configurable: true });
         Object.defineProperty(document.body.querySelector<HTMLDivElement>('#container'), 'clientWidth', {
             value: view.width,
+            configurable: true,
         });
-        Object.defineProperty(waveContainer, 'clientWidth', { value: view.width });
-        Object.defineProperty(canvas, 'clientWidth', { value: view.width });
+        Object.defineProperty(waveContainer, 'clientWidth', { value: view.width, configurable: true });
+        Object.defineProperty(canvas, 'clientWidth', { value: view.width, configurable: true });
 
         view.progress = 0.5;
 
@@ -227,5 +257,58 @@ describe('WaveView', () => {
         expect(spy).toHaveBeenCalled();
 
         spy.mockRestore();
+    });
+
+    it('removes an existing click handler before adding a new one', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+        const canvas = view.container.querySelector<HTMLCanvasElement>('canvas');
+
+        if (!canvas) return;
+
+        const spy = jest.spyOn(canvas, 'removeEventListener');
+
+        view.interact = true;
+
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
+    });
+
+    it('clears the canvas and redraws the waveform when clicking on the waveform', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView(new Array(800).fill(1), {
+            container: '#container',
+            onClick: () => {
+                //
+            },
+        });
+        const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
+
+        if (!waveContainer) return;
+
+        const canvas = waveContainer.firstElementChild;
+
+        if (!canvas) return;
+
+        Object.defineProperty(document.body, 'clientWidth', { value: window.innerWidth, configurable: true });
+        Object.defineProperty(document.body.querySelector<HTMLDivElement>('#container'), 'clientWidth', {
+            value: view.width,
+            configurable: true,
+        });
+        Object.defineProperty(waveContainer, 'clientWidth', { value: view.width, configurable: true });
+        Object.defineProperty(canvas, 'clientWidth', { value: view.width, configurable: true });
+
+        const spies = [jest.spyOn(view, 'clear'), jest.spyOn(view as any, 'drawBars')];
+
+        canvas.dispatchEvent(new Event('click'));
+
+        spies.forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
     });
 });
