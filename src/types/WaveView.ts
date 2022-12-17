@@ -164,6 +164,22 @@ interface WaveView {
     set interact(value: boolean);
 
     /**
+     * Get the redraw flag. This flag determines whether the waveform should be
+     * redrawn when setting one of the wave view properties that affects the look
+     * of waveform (e.g. width, height, gradient).
+     *
+     * @returns {boolean}
+     */
+    get redraw(): boolean;
+
+    /**
+     * Set the redraw flag.
+     *
+     * @returns {boolean}
+     */
+    set redraw(value: boolean);
+
+    /**
      * Get the callback that should be evaluated when the user clicks somewhere
      * on the waveform.
      *

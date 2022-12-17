@@ -176,6 +176,18 @@ describe('WaveView', () => {
         expect(view.interact).toBeFalsy();
     });
 
+    it('gets and sets the waveform redraw flag', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+
+        expect(view.redraw).toBeTruthy();
+
+        view.redraw = false;
+
+        expect(view.redraw).toBeFalsy();
+    });
+
     it('gets and sets the waveform on click handler', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
@@ -310,5 +322,28 @@ describe('WaveView', () => {
 
             spy.mockRestore();
         });
+    });
+
+    it('removes the event handlers and waveform container when destroying a wave view instance', () => {
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const view = new WaveView([], { container: '#container' });
+        const canvas = view.container.querySelector<HTMLCanvasElement>('canvas');
+
+        if (!canvas) return;
+
+        const spies = [jest.spyOn(window, 'removeEventListener'), jest.spyOn(canvas, 'removeEventListener')];
+
+        view.destroy();
+
+        const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
+
+        spies.forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
+
+        expect(waveContainer).toBe(null);
     });
 });

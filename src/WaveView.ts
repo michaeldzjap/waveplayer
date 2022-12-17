@@ -318,6 +318,20 @@ class WaveView implements WaveViewContract {
     /**
      * @inheritdoc
      */
+    public get redraw(): boolean {
+        return this._options.redraw;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set redraw(value: boolean) {
+        this._options = { ...this._options, redraw: value };
+    }
+
+    /**
+     * @inheritdoc
+     */
     public get onClick(): ((e: MouseEvent) => void) | undefined {
         return this._options.onClick;
     }
