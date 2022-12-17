@@ -178,18 +178,18 @@ class WavePlayer implements WavePlayerContract {
     private resolveAudioElement(): HTMLAudioElement {
         const element =
             typeof this._options.audioElement === 'string'
-                ? document.querySelector(this._options.audioElement)
+                ? document.querySelector<HTMLAudioElement>(this._options.audioElement)
                 : this._options.audioElement;
 
         if (!element) {
             throw new Error('Audio element could not located.');
         }
 
-        if (element instanceof HTMLAudioElement) {
-            return element;
-        }
+        element.controls = false;
+        element.autoplay = false;
+        element.preload = this._options.preload;
 
-        throw new Error('Audio element is invalid.');
+        return element;
     }
 
     /**
@@ -387,7 +387,10 @@ class WavePlayer implements WavePlayerContract {
             this._audioElement.removeEventListener('error', this._errorHandler);
         }
 
-        this._view.container.removeChild(this._audioElement);
+        if (!this._options.audioElement) {
+            this._view.container.removeChild(this._audioElement);
+        }
+
         this._view.destroy();
     }
 }
