@@ -1,6 +1,12 @@
 import '@testing-library/jest-dom';
+import HttpError from '../src/HttpError';
 
-import { style, average, hex2rgb, hsv2rgb, rgb2hsv, throttle } from '../src/utils';
+import { style, average, hex2rgb, hsv2rgb, rgb2hsv, throttle, getJson } from '../src/utils';
+
+beforeEach(() => {
+    jest.resetAllMocks();
+    jest.resetModules();
+});
 
 describe('utils', () => {
     describe('style', () => {
@@ -65,9 +71,9 @@ describe('utils', () => {
     });
 
     describe('throttle', () => {
-        jest.useFakeTimers();
-
         it('waits 500 milliseconds before executing the callback', () => {
+            jest.useFakeTimers();
+
             const callback = jest.fn();
             const fn = throttle(callback, 500);
 
@@ -78,6 +84,59 @@ describe('utils', () => {
             jest.runAllTimers();
 
             expect(callback).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getJson', () => {
+        /**
+         * Create all XML HTTP request related mocks.
+         *
+         * @param {number} status
+         * @returns {Promise<Object>}
+         */
+        const mockXHR = (status: number) => {
+            const mockOpen = jest.fn();
+            const mockSend = jest.fn();
+
+            const xhrMock: Partial<XMLHttpRequest> = {
+                open: mockOpen,
+                send: mockSend,
+                responseType: 'json',
+                response: [1, 2, 3],
+                status,
+            };
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
+
+            setTimeout(() => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                xhrMock['onload']();
+            }, 0);
+
+            return Promise.resolve({ mockOpen, mockSend });
+        };
+
+        it('successfully fetches and parses a JSON file', async () => {
+            jest.useRealTimers();
+
+            const { mockOpen, mockSend } = await mockXHR(200);
+
+            await expect(getJson<number[]>('/sample.json')).resolves.toEqual([1, 2, 3]);
+            expect(mockOpen).toHaveBeenCalledWith('GET', '/sample.json');
+            expect(mockSend).toHaveBeenCalled();
+        });
+
+        it('fails to fetch and parses a JSON file', async () => {
+            jest.useRealTimers();
+
+            const { mockOpen, mockSend } = await mockXHR(404);
+
+            await expect(getJson<number[]>('/sample.json')).rejects.toBeInstanceOf(HttpError);
+            expect(mockOpen).toHaveBeenCalledWith('GET', '/sample.json');
+            expect(mockSend).toHaveBeenCalled();
         });
     });
 });

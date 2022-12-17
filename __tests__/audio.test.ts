@@ -5,6 +5,11 @@ import { promisify } from 'util';
 import { extractAmplitudes, interpolate, lin2log } from '../src/audio';
 import { noise, sine } from './stubs/data';
 
+beforeEach(() => {
+    jest.resetAllMocks();
+    jest.resetModules();
+});
+
 describe('audio', () => {
     describe('interpolate', () => {
         it('linearly interpolates a value between two numbers', () => {
@@ -26,11 +31,6 @@ describe('audio', () => {
     });
 
     describe('extractAmplitudes', () => {
-        beforeEach(() => {
-            jest.resetAllMocks();
-            jest.resetModules();
-        });
-
         /**
          * Create all XML HTTP request related mocks.
          *
