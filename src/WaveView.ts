@@ -212,14 +212,14 @@ class WaveView implements WaveViewContract {
     /**
      * @inheritdoc
      */
-    get height(): number {
+    public get height(): number {
         return this._options.height;
     }
 
     /**
      * @inheritdoc
      */
-    set height(value: number) {
+    public set height(value: number) {
         this._options = { ...this._options, height: value };
 
         style(this._waveContainer, { height: `${this._options.height}px` });
@@ -302,14 +302,14 @@ class WaveView implements WaveViewContract {
     /**
      * @inheritdoc
      */
-    get interact(): boolean {
+    public get interact(): boolean {
         return this._options.interact;
     }
 
     /**
      * @inheritdoc
      */
-    set interact(value: boolean) {
+    public set interact(value: boolean) {
         this._options = { ...this._options, interact: value };
 
         value ? this.addClickHandler() : this.removeClickHandler();
@@ -654,6 +654,15 @@ class WaveView implements WaveViewContract {
      */
     private createColor(color: RgbColor): string {
         return `rgb(${Object.values(color).join(', ')})`;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public destroy(): void {
+        this.removeClickHandler();
+        this.removeResizeHandler();
+        this._container.removeChild(this._waveContainer);
     }
 }
 

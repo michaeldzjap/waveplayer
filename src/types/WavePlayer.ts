@@ -79,12 +79,40 @@ interface WavePlayer {
     load(url: string, strategy: Strategy): Promise<Awaited<this>[]>;
 
     /**
+     * Start audio playback.
+     *
+     * @returns {Promise<void>}
+     */
+    play(): Promise<void>;
+
+    /**
+     * Pause audio playback.
+     *
+     * @returns {void}
+     */
+    pause(): void;
+
+    /**
      * Move the playback header to a specific time in the audio file.
      *
      * @param {number} seconds
      * @returns {this}
      */
     skipTo(seconds: number): this;
+
+    /**
+     * Check if audio is currently playing.
+     *
+     * @returns {boolean}
+     */
+    paused(): boolean;
+
+    /**
+     * Destroy the wave player instance and do the appropriate clean up.
+     *
+     * @returns {void}
+     */
+    destroy(): void;
 }
 
 export { DataStrategy, JsonStrategy, WavePlayer, WavePlayerOptions, WebAudioStrategy, Strategy };

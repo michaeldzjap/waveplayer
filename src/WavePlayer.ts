@@ -131,42 +131,42 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    get volume(): number {
+    public get volume(): number {
         return this._audioElement.volume;
     }
 
     /**
      * @inheritdoc
      */
-    set volume(value: number) {
+    public set volume(value: number) {
         this._audioElement.volume = value;
     }
 
     /**
      * @inheritdoc
      */
-    get currentTime(): number {
+    public get currentTime(): number {
         return this._audioElement.currentTime;
     }
 
     /**
      * @inheritdoc
      */
-    set currentTime(value: number) {
+    public set currentTime(value: number) {
         this._audioElement.currentTime = value;
     }
 
     /**
      * @inheritdoc
      */
-    get duration(): number {
+    public get duration(): number {
         return this._audioElement.duration;
     }
 
     /**
      * @inheritdoc
      */
-    get waveView(): WaveView {
+    public get waveView(): WaveView {
         return this._view;
     }
 
@@ -234,7 +234,7 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    async load(url: string, strategy: Strategy): Promise<Awaited<this>[]> {
+    public async load(url: string, strategy: Strategy): Promise<Awaited<this>[]> {
         return Promise.all<this>([this.loadAudio(url), this.loadWaveform(url, strategy)]);
     }
 
@@ -244,7 +244,7 @@ class WavePlayer implements WavePlayerContract {
      * @param {string} url
      * @returns {Promise<this>}
      */
-    loadAudio(url: string): Promise<this> {
+    private loadAudio(url: string): Promise<this> {
         this._audioElement.src = url;
         this._audioElement.load();
 
@@ -342,10 +342,53 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    skipTo(seconds: number): this {
+    public play(): Promise<void> {
+        return this._audioElement.play();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public pause(): void {
+        return this._audioElement.pause();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public skipTo(seconds: number): this {
         this._audioElement.currentTime = seconds;
 
         return this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public paused(): boolean {
+        return this._audioElement.paused;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public destroy(): void {
+        this.pause();
+
+        if (this._timeUpdateHandler) {
+            this._audioElement.removeEventListener('timeupdate', this._timeUpdateHandler);
+        }
+
+        if (this._canPlayHandler) {
+            this._audioElement.removeEventListener('canplay', this._canPlayHandler);
+        }
+
+        if (this._errorHandler) {
+            this._audioElement.removeEventListener('error', this._errorHandler);
+        }
+
+        this._view.container.removeChild(this._audioElement);
+        this._view.destroy();
     }
 }
 

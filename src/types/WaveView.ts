@@ -195,6 +195,13 @@ interface WaveView {
      * @returns {this}
      */
     clear(): this;
+
+    /**
+     * Destroy the wave player instance and do the appropriate clean up.
+     *
+     * @returns {void}
+     */
+    destroy(): void;
 }
 
 export { WaveView, WaveViewColors, WaveViewOptions };
