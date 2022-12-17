@@ -1,3 +1,4 @@
+import HttpError from './HttpError';
 import { HsvColor, RgbColor } from './types/utils';
 
 /**
@@ -138,4 +139,29 @@ export const hsv2rgb = ({ h, s, v }: HsvColor): RgbColor => {
         default:
             return { r: v, g: data[0], b: data[1] };
     }
+};
+
+/**
+ * Fetch a JSON file from the given URL.
+ *
+ * @param {string} url
+ * @returns {Promise}
+ */
+export const getJson = <T>(url: string): Promise<T> => {
+    return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+
+        request.open('GET', url);
+        request.responseType = 'json';
+
+        request.onload = () => {
+            if (request.status === 200) {
+                resolve(request.response);
+            } else {
+                reject(new HttpError(request.status, request.statusText));
+            }
+        };
+
+        request.send();
+    });
 };

@@ -11,6 +11,7 @@ interface WaveViewOptions {
     responsive: boolean;
     gradient: boolean;
     interact: boolean;
+    redraw: boolean;
     onClick?: (e: MouseEvent) => void;
 }
 
@@ -186,7 +187,7 @@ interface WaveView {
      *
      * @returns {this}
      */
-    render(): this;
+    draw(): this;
 
     /**
      * Clear the canvas HTML element where the waveform is drawn in.

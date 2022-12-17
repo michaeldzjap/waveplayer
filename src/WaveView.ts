@@ -33,6 +33,7 @@ class WaveView implements WaveViewContract {
         responsive: true,
         gradient: true,
         interact: true,
+        redraw: true,
     };
 
     /**
@@ -146,6 +147,8 @@ class WaveView implements WaveViewContract {
      */
     public set data(data: number[]) {
         this._data = data;
+
+        if (this._options.redraw) this.draw();
     }
 
     /**
@@ -161,8 +164,10 @@ class WaveView implements WaveViewContract {
     public set progress(progress: number) {
         this._progress = Math.max(Math.min(progress, 1), 0);
 
-        this.clear();
-        this.drawBars(...this.computeBarCoordinates(true));
+        if (this._options.redraw) {
+            this.clear();
+            this.drawBars(...this.computeBarCoordinates(true));
+        }
     }
 
     /**
@@ -201,7 +206,7 @@ class WaveView implements WaveViewContract {
 
         this._canvas.width = this._options.width;
 
-        this.render();
+        if (this._options.redraw) this.draw();
     }
 
     /**
@@ -224,7 +229,7 @@ class WaveView implements WaveViewContract {
 
         this._canvas.height = this._options.height;
 
-        this.render();
+        if (this._options.redraw) this.draw();
     }
 
     /**
@@ -240,7 +245,7 @@ class WaveView implements WaveViewContract {
     public set barWidth(value: number) {
         this._options = { ...this._options, barWidth: value };
 
-        this.render();
+        if (this._options.redraw) this.draw();
     }
 
     /**
@@ -256,7 +261,7 @@ class WaveView implements WaveViewContract {
     public set barGap(value: number) {
         this._options = { ...this._options, barGap: value };
 
-        this.render();
+        if (this._options.redraw) this.draw();
     }
 
     /**
@@ -287,6 +292,11 @@ class WaveView implements WaveViewContract {
      */
     public set gradient(value: boolean) {
         this._options = { ...this._options, gradient: value };
+
+        if (this._options.redraw) {
+            this.clear();
+            this.drawBars(...this.computeBarCoordinates(true));
+        }
     }
 
     /**
@@ -419,7 +429,7 @@ class WaveView implements WaveViewContract {
                 style(this._canvas, { width: `${width}px` });
                 this._canvas.width = width;
 
-                this.render();
+                this.draw();
             }, 250)();
         };
 
@@ -477,7 +487,7 @@ class WaveView implements WaveViewContract {
     /**
      * @inheritdoc
      */
-    public render(): this {
+    public draw(): this {
         this.clear();
         this.drawBars(...this.computeBarCoordinates());
 

@@ -10,6 +10,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     view.progress = 0.5;
 
-    // Render the wave view
-    view.render();
+    // Draw the wave view
+    view.draw();
 });

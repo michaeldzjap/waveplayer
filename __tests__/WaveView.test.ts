@@ -221,7 +221,7 @@ describe('WaveView', () => {
 
         const spy = jest.spyOn(context, 'fillRect');
 
-        view.render();
+        view.draw();
 
         expect(spy).toHaveBeenCalledTimes(Math.floor(view.width / (view.barWidth + view.barGap)));
 
@@ -234,7 +234,7 @@ describe('WaveView', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
         const view = new WaveView([], { container: '#container' });
-        const spy = jest.spyOn(view, 'render');
+        const spy = jest.spyOn(view, 'draw');
 
         window.innerWidth = 512;
         window.dispatchEvent(new Event('resize'));
