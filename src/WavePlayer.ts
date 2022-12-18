@@ -182,7 +182,7 @@ class WavePlayer implements WavePlayerContract {
                 : this._options.audioElement;
 
         if (!element) {
-            throw new Error('Audio element could not located.');
+            throw new Error('Audio element could not be located.');
         }
 
         element.controls = false;
@@ -199,6 +199,7 @@ class WavePlayer implements WavePlayerContract {
      */
     private createAudioElement(): HTMLAudioElement {
         const audioElement = document.createElement('audio');
+
         audioElement.controls = false;
         audioElement.autoplay = false;
         audioElement.preload = this._options.preload;
