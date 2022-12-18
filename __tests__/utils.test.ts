@@ -8,6 +8,37 @@ beforeEach(() => {
     jest.resetModules();
 });
 
+/**
+ * Create all XML HTTP request related mocks.
+ *
+ * @param {number} status
+ * @returns {Promise<Object>}
+ */
+const mockXHR = (status: number) => {
+    const mockOpen = jest.fn();
+    const mockSend = jest.fn();
+
+    const xhrMock: Partial<XMLHttpRequest> = {
+        open: mockOpen,
+        send: mockSend,
+        responseType: 'json',
+        response: [1, 2, 3],
+        status,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
+
+    setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        xhrMock['onload']();
+    }, 0);
+
+    return Promise.resolve({ mockOpen, mockSend });
+};
+
 describe('utils', () => {
     describe('style', () => {
         it('sets the CSS style properties for a given HTML element', () => {
@@ -88,37 +119,6 @@ describe('utils', () => {
     });
 
     describe('getJson', () => {
-        /**
-         * Create all XML HTTP request related mocks.
-         *
-         * @param {number} status
-         * @returns {Promise<Object>}
-         */
-        const mockXHR = (status: number) => {
-            const mockOpen = jest.fn();
-            const mockSend = jest.fn();
-
-            const xhrMock: Partial<XMLHttpRequest> = {
-                open: mockOpen,
-                send: mockSend,
-                responseType: 'json',
-                response: [1, 2, 3],
-                status,
-            };
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
-
-            setTimeout(() => {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                xhrMock['onload']();
-            }, 0);
-
-            return Promise.resolve({ mockOpen, mockSend });
-        };
-
         it('successfully fetches and parses a JSON file', async () => {
             jest.useRealTimers();
 

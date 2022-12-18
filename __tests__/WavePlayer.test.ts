@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 
 import WavePlayer from '../src/WavePlayer';
 import WaveView from '../src/WaveView';
+import sine from './stubs/sine';
 
 jest.mock('../src/WaveView');
 
@@ -12,8 +13,31 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
+    jest.resetModules();
 });
+
+/**
+ * Create all HTML audio element related mocks.
+ *
+ * @returns {Object}
+ */
+const mockAudioElement = () => {
+    const mockLoad = jest.fn();
+    const mockPlay = jest.fn(() => Promise.resolve());
+    const mockPause = jest.fn();
+
+    const audioMock: Partial<HTMLAudioElement> = {
+        play: mockPlay,
+        pause: mockPause,
+    };
+
+    window.Audio = jest.fn().mockImplementation(() => audioMock);
+
+    HTMLMediaElement.prototype.load = mockLoad;
+
+    return { mockLoad, mockPlay, mockPause };
+};
 
 describe('WavePlayer', () => {
     it('creates a new instance when referencing an existing audio element', () => {
@@ -153,5 +177,23 @@ describe('WavePlayer', () => {
         }
 
         expect(spy).toHaveBeenCalled();
+    });
+
+    it('successfuly loads an audio file using the data strategy', async () => {
+        const { mockLoad } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', { type: 'data', data: sine })).resolves.toBe(player);
+        expect(mockLoad).toHaveBeenCalled();
     });
 });

@@ -76,7 +76,7 @@ interface WavePlayer {
      * @param {Strategy} strategy
      * @returns {Promise<this>}
      */
-    load(url: string, strategy: Strategy): Promise<Awaited<this>[]>;
+    load(url: string, strategy: Strategy): Promise<this>;
 
     /**
      * Start audio playback.

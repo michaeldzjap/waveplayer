@@ -3,12 +3,71 @@ import { resolve } from 'path';
 import { promisify } from 'util';
 
 import { extractAmplitudes, interpolate, lin2log } from '../src/audio';
-import { noise, sine } from './stubs/data';
+import { noise, sine } from './stubs/audio';
 
 beforeEach(() => {
     jest.resetAllMocks();
     jest.resetModules();
 });
+
+/**
+ * Create all XML HTTP request related mocks.
+ *
+ * @param {string} filename
+ * @returns {Promise<Object>}
+ */
+const mockXHR = async (filename: string) => {
+    const content = await promisify(readFile)(resolve(__dirname, 'stubs', filename));
+
+    const mockOpen = jest.fn();
+    const mockSend = jest.fn();
+
+    const xhrMock: Partial<XMLHttpRequest> = {
+        open: mockOpen,
+        send: mockSend,
+        responseType: 'arraybuffer',
+        response: content.buffer,
+        status: 200,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
+
+    setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        xhrMock['onload']();
+    }, 0);
+
+    return Promise.resolve({ mockOpen, mockSend });
+};
+
+/**
+ * Create all web audio API related mocks.
+ *
+ * @param {number} numberOfChannels
+ * @param {Float32Array[]} data
+ * @returns {Object}
+ */
+const mockWebAudio = (numberOfChannels: number, data: Float32Array[]) => {
+    const mockGetChannelData = jest.fn();
+
+    for (const channel of data) {
+        mockGetChannelData.mockReturnValueOnce(channel);
+    }
+
+    const mockDecodeAudioData = jest.fn(() =>
+        Promise.resolve({ numberOfChannels, getChannelData: mockGetChannelData }),
+    );
+    const mockAudioContext = jest.fn(() => ({ decodeAudioData: mockDecodeAudioData }));
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window.AudioContext = mockAudioContext;
+
+    return { mockDecodeAudioData, mockGetChannelData };
+};
 
 describe('audio', () => {
     describe('interpolate', () => {
@@ -31,65 +90,6 @@ describe('audio', () => {
     });
 
     describe('extractAmplitudes', () => {
-        /**
-         * Create all XML HTTP request related mocks.
-         *
-         * @param {string} filename
-         * @returns {Promise<Object>}
-         */
-        const mockXHR = async (filename: string) => {
-            const content = await promisify(readFile)(resolve(__dirname, 'stubs', filename));
-
-            const mockOpen = jest.fn();
-            const mockSend = jest.fn();
-
-            const xhrMock: Partial<XMLHttpRequest> = {
-                open: mockOpen,
-                send: mockSend,
-                responseType: 'arraybuffer',
-                response: content.buffer,
-                status: 200,
-            };
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
-
-            setTimeout(() => {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                xhrMock['onload']();
-            }, 0);
-
-            return Promise.resolve({ mockOpen, mockSend });
-        };
-
-        /**
-         * Create all web audio API related mocks.
-         *
-         * @param {number} numberOfChannels
-         * @param {Float32Array[]} data
-         * @returns {Object}
-         */
-        const mockWebAudio = (numberOfChannels: number, data: Float32Array[]) => {
-            const mockGetChannelData = jest.fn();
-
-            for (const channel of data) {
-                mockGetChannelData.mockReturnValueOnce(channel);
-            }
-
-            const mockDecodeAudioData = jest.fn(() =>
-                Promise.resolve({ numberOfChannels, getChannelData: mockGetChannelData }),
-            );
-            const mockAudioContext = jest.fn(() => ({ decodeAudioData: mockDecodeAudioData }));
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            window.AudioContext = mockAudioContext;
-
-            return { mockDecodeAudioData, mockGetChannelData };
-        };
-
         it('extracts the amplitudes from a mono audio file', async () => {
             const { mockOpen, mockSend } = await mockXHR('sine.wav');
             const { mockDecodeAudioData, mockGetChannelData } = mockWebAudio(1, [sine]);

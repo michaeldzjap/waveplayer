@@ -235,8 +235,10 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    public async load(url: string, strategy: Strategy): Promise<Awaited<this>[]> {
-        return Promise.all<this>([this.loadAudio(url), this.loadWaveform(url, strategy)]);
+    public async load<T extends Strategy>(url: string, strategy: T): Promise<this> {
+        await Promise.all<this>([this.loadAudio(url), this.loadWaveform(url, strategy)]);
+
+        return this;
     }
 
     /**
@@ -290,7 +292,7 @@ class WavePlayer implements WavePlayerContract {
      * @param {Strategy} strategy
      * @returns {Promise<this>}
      */
-    private async loadWaveform(url: string, strategy: Strategy): Promise<this> {
+    private async loadWaveform<T extends Strategy>(url: string, strategy: T): Promise<this> {
         if (isDataStrategy(strategy)) {
             this.applyDataStrategy(strategy);
         } else if (isJsonStrategy(strategy)) {
