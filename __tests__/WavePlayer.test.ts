@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom';
 
-import WavePlayer, { DataStrategy, JsonStrategy } from '../src/WavePlayer';
+import * as audio from '../src/audio';
+import * as utils from '../src/utils';
+import WavePlayer, { DataStrategy, JsonStrategy, WebAudioStrategy } from '../src/WavePlayer';
 import WaveView from '../src/WaveView';
 import sine from './stubs/sine';
 
@@ -179,28 +181,73 @@ describe('WavePlayer', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    [
-        { type: 'data', strategy: new DataStrategy(sine) },
-        { type: 'json', strategy: new JsonStrategy('/stubs/sine.json') },
-    ].forEach(({ type, strategy }) => {
-        it(`successfuly loads an audio file using the ${type} strategy`, async () => {
-            const { mockLoad } = mockAudioElement();
+    it(`successfuly loads an audio file using the data strategy`, async () => {
+        const { mockLoad } = mockAudioElement();
 
-            document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-            const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
-                audioElement: '#audio',
-            });
-            const audioElement = document.querySelector<HTMLAudioElement>('#audio');
-
-            if (!audioElement) return;
-
-            setTimeout(() => {
-                audioElement.dispatchEvent(new Event('canplay'));
-            }, 0);
-
-            await expect(player.load('/stubs/sine.wav', strategy)).resolves.toBe(player);
-            expect(mockLoad).toHaveBeenCalled();
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
         });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+        expect(mockLoad).toHaveBeenCalled();
+    });
+
+    it(`successfuly loads an audio file using the JSON strategy`, async () => {
+        const { mockLoad } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        const spy = jest.spyOn(utils, 'getJson').mockResolvedValue(sine);
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json'))).resolves.toBe(player);
+        expect(mockLoad).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalledWith('/stubs/sine.json');
+
+        spy.mockRestore();
+    });
+
+    it(`successfuly loads an audio file using the Web Audio strategy`, async () => {
+        const { mockLoad } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        const spy = jest.spyOn(audio, 'extractAmplitudes').mockResolvedValue(sine);
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', new WebAudioStrategy())).resolves.toBe(player);
+        expect(mockLoad).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: false });
+
+        spy.mockRestore();
     });
 });
