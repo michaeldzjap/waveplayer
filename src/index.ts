@@ -1,7 +1,7 @@
 import WavePlayer from './WavePlayer';
 import WaveView from './WaveView';
 import { WavePlayerOptions } from './types/WavePlayer';
-import { WaveView as WaveViewContract, WaveViewOptions } from './types/WaveView';
+import { WaveViewOptions } from './types/WaveView';
 
 type Options = Readonly<Partial<WavePlayerOptions>> &
     Readonly<Partial<Omit<WaveViewOptions, 'container'>> & Pick<WaveViewOptions, 'container'>>;
