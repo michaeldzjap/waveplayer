@@ -4,23 +4,6 @@ interface Strategy {
     type: string;
 }
 
-interface DataStrategy extends Strategy {
-    type: 'data';
-    data: number[] | { [key: string]: number[] };
-}
-
-interface JsonStrategy extends Strategy {
-    type: 'json';
-    url: string;
-}
-
-interface WebAudioStrategy extends Strategy {
-    type: 'webAudio';
-    points?: number;
-    normalise?: boolean;
-    logarithmic?: boolean;
-}
-
 interface WavePlayerOptions {
     audioElement?: HTMLAudioElement | string;
     preload: '' | 'metadata' | 'none' | 'auto';
@@ -115,4 +98,4 @@ interface WavePlayer {
     destroy(): void;
 }
 
-export { DataStrategy, JsonStrategy, WavePlayer, WavePlayerOptions, WebAudioStrategy, Strategy };
+export { WavePlayer, WavePlayerOptions, Strategy };

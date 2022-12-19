@@ -10,14 +10,7 @@
  */
 
 import { extractAmplitudes } from './audio';
-import {
-    WavePlayer as WavePlayerContract,
-    WavePlayerOptions,
-    Strategy,
-    DataStrategy,
-    JsonStrategy,
-    WebAudioStrategy,
-} from './types/WavePlayer';
+import { Strategy, WavePlayer as WavePlayerContract, WavePlayerOptions } from './types/WavePlayer';
 import { WaveView } from './types/WaveView';
 import { getJson } from './utils';
 
@@ -50,6 +43,74 @@ const isJsonStrategy = (strategy: Strategy): strategy is JsonStrategy => {
 const isWebAudioStrategy = (strategy: Strategy): strategy is WebAudioStrategy => {
     return strategy.type === 'webAudio';
 };
+
+/**
+ * @class
+ * @classdesc Data strategy class.
+ */
+class DataStrategy implements Strategy {
+    /**
+     * The strategy type identifier.
+     *
+     * @var {string}
+     */
+    public readonly type: string;
+
+    /**
+     * Create a new data strategy instance.
+     *
+     * @param {(number[]|Object)} data
+     */
+    constructor(public readonly data: number[] | { [key: string]: number[] }) {
+        this.type = 'data';
+    }
+}
+
+/**
+ * @class
+ * @classdesc JSON strategy class.
+ */
+class JsonStrategy implements Strategy {
+    /**
+     * The strategy type identifier.
+     *
+     * @var {string}
+     */
+    public readonly type: string;
+
+    /**
+     * Create a new data strategy instance.
+     *
+     * @param {string} url
+     */
+    constructor(public readonly url: string) {
+        this.type = 'json';
+    }
+}
+
+/**
+ * @class
+ * @classdesc Web Audio strategy class.
+ */
+class WebAudioStrategy implements Strategy {
+    /**
+     * The strategy type identifier.
+     *
+     * @var {string}
+     */
+    public readonly type: string;
+
+    /**
+     * Create a new data strategy instance.
+     *
+     * @param {number} points
+     * @param {boolean} normalise
+     * @param {boolean} logarithmic
+     */
+    constructor(public readonly points = 800, public readonly normalise = true, public readonly logarithmic = false) {
+        this.type = 'webAudio';
+    }
+}
 
 /**
  * @class
@@ -235,7 +296,7 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    public async load<T extends Strategy>(url: string, strategy: T): Promise<this> {
+    public async load(url: string, strategy: Strategy): Promise<this> {
         await Promise.all<this>([this.loadAudio(url), this.loadWaveform(url, strategy)]);
 
         return this;
@@ -292,7 +353,7 @@ class WavePlayer implements WavePlayerContract {
      * @param {Strategy} strategy
      * @returns {Promise<this>}
      */
-    private async loadWaveform<T extends Strategy>(url: string, strategy: T): Promise<this> {
+    private async loadWaveform(url: string, strategy: Strategy): Promise<this> {
         if (isDataStrategy(strategy)) {
             this.applyDataStrategy(strategy);
         } else if (isJsonStrategy(strategy)) {
@@ -399,3 +460,4 @@ class WavePlayer implements WavePlayerContract {
 }
 
 export default WavePlayer;
+export { DataStrategy, JsonStrategy, WebAudioStrategy };

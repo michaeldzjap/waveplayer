@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import WavePlayer from '../src/WavePlayer';
+import WavePlayer, { DataStrategy, JsonStrategy } from '../src/WavePlayer';
 import WaveView from '../src/WaveView';
 import sine from './stubs/sine';
 
@@ -179,21 +179,28 @@ describe('WavePlayer', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('successfuly loads an audio file using the data strategy', async () => {
-        const { mockLoad } = mockAudioElement();
+    [
+        { type: 'data', strategy: new DataStrategy(sine) },
+        { type: 'json', strategy: new JsonStrategy('/stubs/sine.json') },
+    ].forEach(({ type, strategy }) => {
+        it(`successfuly loads an audio file using the ${type} strategy`, async () => {
+            const { mockLoad } = mockAudioElement();
 
-        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+            document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
-        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+            const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+                audioElement: '#audio',
+            });
+            const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
-        if (!audioElement) return;
+            if (!audioElement) return;
 
-        setTimeout(() => {
-            audioElement.dispatchEvent(new Event('canplay'));
-        }, 0);
+            setTimeout(() => {
+                audioElement.dispatchEvent(new Event('canplay'));
+            }, 0);
 
-        await expect(player.load('/stubs/sine.wav', { type: 'data', data: sine })).resolves.toBe(player);
-        expect(mockLoad).toHaveBeenCalled();
+            await expect(player.load('/stubs/sine.wav', strategy)).resolves.toBe(player);
+            expect(mockLoad).toHaveBeenCalled();
+        });
     });
 });
