@@ -15,13 +15,12 @@ class Factory {
      * Create a new wave player instance.
      *
      * @param {(WavePlayerOptions&WaveViewOptions)} options
-     * @param {(WaveView|undefined)} view
      * @return {WavePlayer}
      */
-    public static create(options: Options, view?: WaveViewContract): WavePlayer {
+    public static create(options: Options): WavePlayer {
         const { audioElement, preload, ...waveViewOptions } = options;
 
-        return new WavePlayer(view ?? new WaveView([], waveViewOptions), { audioElement, preload });
+        return new WavePlayer(new WaveView([], waveViewOptions), { audioElement, preload });
     }
 }
 
