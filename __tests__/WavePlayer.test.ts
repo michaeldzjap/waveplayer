@@ -29,14 +29,9 @@ const mockAudioElement = () => {
     const mockPlay = jest.fn(() => Promise.resolve());
     const mockPause = jest.fn();
 
-    const audioMock: Partial<HTMLAudioElement> = {
-        play: mockPlay,
-        pause: mockPause,
-    };
-
-    window.Audio = jest.fn().mockImplementation(() => audioMock);
-
     HTMLMediaElement.prototype.load = mockLoad;
+    HTMLMediaElement.prototype.play = mockPlay;
+    HTMLMediaElement.prototype.pause = mockPause;
 
     return { mockLoad, mockPlay, mockPause };
 };
@@ -181,7 +176,7 @@ describe('WavePlayer', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it(`successfuly loads an audio file using the data strategy`, async () => {
+    it('successfuly loads an audio file using the data strategy', async () => {
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
@@ -201,7 +196,7 @@ describe('WavePlayer', () => {
         expect(mockLoad).toHaveBeenCalled();
     });
 
-    it(`successfuly loads an audio file using the JSON strategy`, async () => {
+    it('successfuly loads an audio file using the JSON strategy', async () => {
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
@@ -226,7 +221,7 @@ describe('WavePlayer', () => {
         spy.mockRestore();
     });
 
-    it(`successfuly loads an audio file using the Web Audio strategy`, async () => {
+    it('successfuly loads an audio file using the Web Audio strategy', async () => {
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
@@ -249,5 +244,39 @@ describe('WavePlayer', () => {
         expect(spy).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: false });
 
         spy.mockRestore();
+    });
+
+    it('plays an audio file', async () => {
+        const { mockPlay } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        player.play();
+
+        expect(mockPlay).toHaveBeenCalled();
+    });
+
+    it('pauses an audio file', async () => {
+        const { mockPause } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        player.pause();
+
+        expect(mockPause).toHaveBeenCalled();
     });
 });

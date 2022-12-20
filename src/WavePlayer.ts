@@ -82,8 +82,9 @@ class JsonStrategy implements Strategy {
      * Create a new data strategy instance.
      *
      * @param {string} url
+     * @param {boolean} cache
      */
-    constructor(public readonly url: string) {
+    constructor(public readonly url: string, public readonly cache = true) {
         this.type = 'json';
     }
 }
@@ -106,8 +107,14 @@ class WebAudioStrategy implements Strategy {
      * @param {number} points
      * @param {boolean} normalise
      * @param {boolean} logarithmic
+     * @param {boolean} cache
      */
-    constructor(public readonly points = 800, public readonly normalise = true, public readonly logarithmic = false) {
+    constructor(
+        public readonly points = 800,
+        public readonly normalise = true,
+        public readonly logarithmic = false,
+        public readonly cache = true,
+    ) {
         this.type = 'webAudio';
     }
 }
@@ -381,8 +388,10 @@ class WavePlayer implements WavePlayerContract {
      * @param {JsonStrategy} strategy
      * @returns {Promise<void>}
      */
-    private async applyJsonStrategy({ url }: { url: string }): Promise<void> {
-        const data = await getJson<number[] | { [key: string]: number[] }>(url);
+    private async applyJsonStrategy({ url, cache }: { url: string; cache: boolean }): Promise<void> {
+        const data = await this.resolveData(url, cache, () => {
+            return getJson<number[] | { [key: string]: number[] }>(url);
+        });
 
         this.applyDataStrategy({ data });
     }
@@ -396,11 +405,76 @@ class WavePlayer implements WavePlayerContract {
      */
     private async applyWebAudioStrategy(
         url: string,
-        { points, normalise, logarithmic }: Partial<{ points: number; normalise: boolean; logarithmic: boolean }>,
+        {
+            points,
+            normalise,
+            logarithmic,
+            cache,
+        }: { points?: number; normalise?: boolean; logarithmic?: boolean; cache: boolean },
     ): Promise<void> {
-        const data = await extractAmplitudes(url, { points, normalise, logarithmic });
+        const data = await this.resolveData(url, cache, () => {
+            return extractAmplitudes(url, { points, normalise, logarithmic });
+        });
 
         this.applyDataStrategy({ data });
+    }
+
+    /**
+     * Resolve amplitude data based on if it should be cached.
+     *
+     * @param {string} url
+     * @param {boolean} cache
+     * @param {Function} callback
+     * @returns {Promise<number[]|Object>}
+     */
+    private async resolveData(
+        url: string,
+        cache: boolean,
+        callback: () => Promise<number[] | { [key: string]: number[] }>,
+    ): Promise<number[] | { [key: string]: number[] }> {
+        const key = this.cacheKey(url);
+        const data = cache && this.cachedDataExists(key) ? this.parseCachedData(key) : await callback();
+
+        if (cache) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        return data;
+    }
+
+    /**
+     * Build the cache key for local storage.
+     *
+     * @param {string} key
+     * @returns {string}
+     */
+    private cacheKey(key: string): string {
+        return `waveplayer:${key}`;
+    }
+
+    /**
+     * Determine whether cached data exists for the given key.
+     *
+     * @param {string} key
+     * @returns {boolean}
+     */
+    private cachedDataExists(key: string): boolean {
+        return localStorage.getItem(key) !== null;
+    }
+
+    /**
+     * Parse existing cached amplitude data for a given key.
+     *
+     * @param {string} key
+     * @returns {(number[]|Object)}
+     */
+    private parseCachedData(key: string): number[] | { [key: string]: number[] } {
+        // eslint-disable-next-line require-jsdoc
+        const guard = (data: unknown): data is number[] | { [key: string]: number[] } =>
+            Array.isArray(data) || data !== null;
+        const data = JSON.parse(localStorage.getItem(key) || '');
+
+        return guard(data) ? data : [];
     }
 
     /**
