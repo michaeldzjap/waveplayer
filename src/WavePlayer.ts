@@ -336,15 +336,15 @@ class WavePlayer implements WavePlayerContract {
 
                 switch (error.code) {
                     case error.MEDIA_ERR_ABORTED:
-                        return reject(new Error('Fetching process aborted by user'));
+                        return reject(new Error('Fetching process aborted by user.'));
                     case error.MEDIA_ERR_NETWORK:
-                        return reject(new Error('There was a problem downloading the audio file'));
+                        return reject(new Error('There was a problem downloading the audio file.'));
                     case error.MEDIA_ERR_DECODE:
-                        return reject(new Error('There was a problem decoding the audio file'));
+                        return reject(new Error('There was a problem decoding the audio file.'));
                     case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                        return reject(new Error('Audio is not supported, check the provided URL'));
+                        return reject(new Error('The audio file is not supported.'));
                     default:
-                        reject(new Error('An unknown error occurred'));
+                        reject(new Error('An unknown error occurred.'));
                 }
             };
 

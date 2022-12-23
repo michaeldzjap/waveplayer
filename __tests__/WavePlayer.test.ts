@@ -4,6 +4,7 @@ import * as audio from '../src/audio';
 import * as utils from '../src/utils';
 import WavePlayer, { DataStrategy, JsonStrategy, WebAudioStrategy } from '../src/WavePlayer';
 import WaveView from '../src/WaveView';
+import noise from './stubs/noise';
 import sine from './stubs/sine';
 
 jest.mock('../src/WaveView');
@@ -279,4 +280,88 @@ describe('WavePlayer', () => {
 
         expect(mockPause).toHaveBeenCalled();
     });
+
+    it('attaches play and error event handlers once', async () => {
+        const { mockLoad } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        const spy = jest.spyOn(audioElement, 'addEventListener');
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+        await expect(player.load('/stubs/noise.wav', new DataStrategy(noise))).resolves.toBe(player);
+        expect(mockLoad).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(2);
+
+        spy.mockRestore();
+    });
+
+    for (const { label, code, constant, error } of [
+        {
+            label: 'the fetching process was aborted by the user',
+            code: 1,
+            constant: 'MEDIA_ERR_ABORTED',
+            error: 'Fetching process aborted by user.',
+        },
+        {
+            label: 'there was a problem downloading the audio file',
+            code: 2,
+            constant: 'MEDIA_ERR_NETWORK',
+            error: 'There was a problem downloading the audio file.',
+        },
+        {
+            label: 'there was a problem decoding the audio file',
+            code: 3,
+            constant: 'MEDIA_ERR_DECODE',
+            error: 'There was a problem decoding the audio file.',
+        },
+        {
+            label: 'the audio file is not supported',
+            code: 4,
+            constant: 'MEDIA_ERR_SRC_NOT_SUPPORTED',
+            error: 'The audio file is not supported.',
+        },
+        {
+            label: 'an unknown error occurred',
+            code: 999,
+            constant: 'MEDIA_ERR_UNKNOWN',
+            error: 'An unknown error occurred.',
+        },
+    ]) {
+        it(`throws if ${label}`, async () => {
+            const { mockLoad } = mockAudioElement();
+
+            document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+            const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+                audioElement: '#audio',
+            });
+            const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+            if (!audioElement) return;
+
+            Object.defineProperty(audioElement, 'error', {
+                value: { code, [constant]: code },
+                configurable: true,
+            });
+
+            setTimeout(() => {
+                audioElement.dispatchEvent(new Event('error'));
+            }, 0);
+
+            await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).rejects.toEqual(new Error(error));
+            expect(mockLoad).toHaveBeenCalled();
+        });
+    }
 });
