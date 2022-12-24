@@ -247,6 +247,32 @@ describe('WavePlayer', () => {
         spy.mockRestore();
     });
 
+    it('uses the cached data when it exists', async () => {
+        const { mockLoad } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
+
+        if (!audioElement) return;
+
+        const spy = jest.spyOn(Storage.prototype, 'getItem');
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(player);
+        await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(player);
+        expect(mockLoad).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalledWith('waveplayer:/stubs/sine.json');
+
+        spy.mockRestore();
+    });
+
     it('plays an audio file', async () => {
         const { mockPlay } = mockAudioElement();
 
