@@ -1,5 +1,5 @@
 import { Factory } from '../../src/index';
-import { JsonStrategy, WebAudioStrategy } from '../../src/WavePlayer';
+import { JsonStrategy } from '../../src/WavePlayer';
 import { toggleClass } from './utils';
 
 document.addEventListener('DOMContentLoaded', async () => {
