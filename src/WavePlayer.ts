@@ -112,7 +112,7 @@ class WebAudioStrategy implements Strategy {
     constructor(
         public readonly points = 800,
         public readonly normalise = true,
-        public readonly logarithmic = false,
+        public readonly logarithmic = true,
         public readonly cache = true,
     ) {
         this.type = 'webAudio';

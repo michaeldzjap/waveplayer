@@ -242,7 +242,7 @@ describe('WavePlayer', () => {
 
         await expect(player.load('/stubs/sine.wav', new WebAudioStrategy())).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: false });
+        expect(spy).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: true });
 
         spy.mockRestore();
     });

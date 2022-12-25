@@ -39,7 +39,7 @@ export const extractAmplitudes = (
     url: string,
     options: Readonly<Partial<{ points: number; normalise: boolean; logarithmic: boolean }>> = {},
 ): Promise<number[]> => {
-    const { points, normalise, logarithmic } = { ...{ points: 800, normalise: true, logarithmic: false }, ...options };
+    const { points, normalise, logarithmic } = { ...{ points: 800, normalise: true, logarithmic: true }, ...options };
 
     return new Promise((resolve): void => {
         const context = new AudioContext();
