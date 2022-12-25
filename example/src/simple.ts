@@ -4,7 +4,7 @@ import { toggleClass } from './utils';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Create and initialise a new wave player instance
-    const player = await Factory.create({ container: '#waveform' });
+    const player = Factory.create({ container: '#waveform' });
 
     const button = document.getElementById('playback-button') as HTMLButtonElement | null;
 
