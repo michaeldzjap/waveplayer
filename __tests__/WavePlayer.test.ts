@@ -281,12 +281,8 @@ describe('WavePlayer', () => {
         const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
-        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
-        if (!audioElement) return;
-
-        player.play();
-
+        await expect(player.play()).resolves.toBe(player);
         expect(mockPlay).toHaveBeenCalled();
     });
 
@@ -298,13 +294,29 @@ describe('WavePlayer', () => {
         const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
-        const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
-        if (!audioElement) return;
-
-        player.pause();
-
+        expect(player.pause()).toBe(player);
         expect(mockPause).toHaveBeenCalled();
+    });
+
+    it('skips to a specific position in an audio file', () => {
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+
+        expect(player.skipTo(1)).toBe(player);
+    });
+
+    it('checks if audio playback is paused', () => {
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            audioElement: '#audio',
+        });
+
+        expect(player.paused()).toBeTruthy();
     });
 
     it('attaches play and error event handlers once', async () => {
@@ -390,4 +402,47 @@ describe('WavePlayer', () => {
             expect(mockLoad).toHaveBeenCalled();
         });
     }
+
+    it('removes the event handlers and destroys the wave view instance when destroying a wave player instance', async () => {
+        const { mockLoad, mockPause } = mockAudioElement();
+
+        document.body.innerHTML = '<div id="container"></div>';
+
+        const viewMock = new WaveViewMock([], { container: '#container' });
+
+        // Necessary because of https://github.com/facebook/jest/issues/9675
+        Object.defineProperty(viewMock, 'container', {
+            // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
+            get() {},
+            configurable: true,
+        });
+
+        const container = document.querySelector<HTMLDivElement>('#container');
+
+        if (!container) return;
+
+        const spies = [
+            jest.spyOn(viewMock, 'container', 'get').mockReturnValue(container),
+            jest.spyOn(viewMock, 'destroy'),
+        ];
+        const player = new WavePlayer(viewMock);
+        const audioElement = document.querySelector<HTMLAudioElement>('audio');
+
+        if (!audioElement) return;
+
+        setTimeout(() => {
+            audioElement.dispatchEvent(new Event('canplay'));
+        }, 0);
+
+        await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+        expect(player.destroy()).toBeUndefined();
+        expect(mockLoad).toHaveBeenCalled();
+        expect(mockPause).toHaveBeenCalled();
+
+        spies.forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
+    });
 });

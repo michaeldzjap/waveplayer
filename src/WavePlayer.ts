@@ -480,15 +480,19 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    public play(): Promise<void> {
-        return this._audioElement.play();
+    public async play(): Promise<this> {
+        await this._audioElement.play();
+
+        return this;
     }
 
     /**
      * @inheritdoc
      */
-    public pause(): void {
-        return this._audioElement.pause();
+    public pause(): this {
+        this._audioElement.pause();
+
+        return this;
     }
 
     /**

@@ -64,16 +64,16 @@ interface WavePlayer {
     /**
      * Start audio playback.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<this>}
      */
-    play(): Promise<void>;
+    play(): Promise<this>;
 
     /**
      * Pause audio playback.
      *
-     * @returns {void}
+     * @returns {this}
      */
-    pause(): void;
+    pause(): this;
 
     /**
      * Move the playback header to a specific time in the audio file.
