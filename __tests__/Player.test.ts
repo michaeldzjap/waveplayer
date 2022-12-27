@@ -37,27 +37,71 @@ const mockAudioElement = () => {
     return { mockLoad, mockPlay, mockPause };
 };
 
+/**
+ * Explicitly define a getter on the view mock prototype.
+ *
+ * Necessary because of Necessary because of https://github.com/facebook/jest/issues/9675
+ *
+ * @param {string} property
+ * @returns {void}
+ */
+const defineGetter = (property: string) => {
+    Object.defineProperty(ViewMock.prototype, property, {
+        // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
+        get() {},
+        configurable: true,
+    });
+};
+
+/**
+ * Explicitly define a setter on the view mock prototype.
+ *
+ * Necessary because of Necessary because of https://github.com/facebook/jest/issues/9675
+ *
+ * @param {string} property
+ * @returns {void}
+ */
+const defineSetter = (property: string) => {
+    Object.defineProperty(ViewMock.prototype, property, {
+        // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
+        set() {},
+        configurable: true,
+    });
+};
+
 describe('Player', () => {
     it('creates a new instance when referencing an existing audio element', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player).toBeInstanceOf(Player);
         expect(ViewMock).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('creates a new instance for an existing audio element', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
         if (!audioElement) return;
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement });
 
         expect(player).toBeInstanceOf(Player);
         expect(ViewMock).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('throws an error for a non existing audio element', () => {
@@ -69,24 +113,20 @@ describe('Player', () => {
     });
 
     it('creates a new audio element when one is not provided explicitly', () => {
+        ['container', 'canvas'].forEach((property: string) => defineGetter(property));
+
         document.body.innerHTML = '<div id="container"></div>';
-
-        const viewMock = new ViewMock([], { container: '#container' });
-
-        // Necessary because of https://github.com/facebook/jest/issues/9675
-        Object.defineProperty(viewMock, 'container', {
-            // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
-            get() {},
-            configurable: true,
-        });
 
         const container = document.querySelector<HTMLDivElement>('#container');
 
         if (!container) return;
 
-        const spy = jest.spyOn(viewMock, 'container', 'get').mockReturnValue(container);
+        const spies = [
+            jest.spyOn(ViewMock.prototype, 'container', 'get').mockReturnValue(container),
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas')),
+        ];
 
-        const player = new Player(viewMock);
+        const player = new Player(new ViewMock([], { container: '#container' }));
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
         if (!audioElement) return;
@@ -94,12 +134,20 @@ describe('Player', () => {
         expect(player).toBeInstanceOf(Player);
         expect(audioElement).toBeInstanceOf(HTMLAudioElement);
         expect(ViewMock).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalled();
+
+        spies.forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
     });
 
     it('gets and sets the audio volume', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.volume).toBe(1);
@@ -107,11 +155,17 @@ describe('Player', () => {
         player.volume = 0.5;
 
         expect(player.volume).toBe(0.5);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('gets and sets the current time of the audio', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.currentTime).toBe(0);
@@ -119,39 +173,51 @@ describe('Player', () => {
         player.currentTime = 1;
 
         expect(player.currentTime).toBe(1);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('gets the duration of the audio', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.duration).toBe(NaN);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('gets the view instance', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.view).toBeInstanceOf(ViewMock);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('updates the view progress when the timeupdate event is fired', () => {
+        defineGetter('canvas');
+        defineSetter('progress');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const viewMock = new ViewMock([], { container: '#container' });
+        const spies = [
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas')),
+            jest.spyOn(ViewMock.prototype, 'progress', 'set'),
+        ];
 
-        // Necessary because of https://github.com/facebook/jest/issues/9675
-        Object.defineProperty(viewMock, 'progress', {
-            // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
-            set() {},
-            configurable: true,
-        });
-
-        const spy = jest.spyOn(viewMock, 'progress', 'set');
-
-        new Player(viewMock, { audioElement: '#audio' });
+        new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
@@ -159,29 +225,43 @@ describe('Player', () => {
 
         audioElement.dispatchEvent(new Event('timeupdate'));
 
-        expect(spy).toHaveBeenCalled();
+        spies.forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
     });
 
     it('skips to a new playback position when evaluating the on click handler', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const viewMock = new ViewMock([], { container: '#container' });
-        const player = new Player(viewMock, { audioElement: '#audio' });
+        const canvas = document.createElement('canvas');
+        const spies = [
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(canvas),
+            jest.spyOn(canvas, 'addEventListener'),
+        ];
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const spy = jest.spyOn(player, 'skipTo').mockImplementationOnce(() => player);
 
-        const spy = jest.spyOn(player, 'skipTo').mockImplementationOnce((seconds: number) => player);
+        canvas.dispatchEvent(new MouseEvent('click'));
 
-        if (viewMock.onClick) {
-            viewMock.onClick(new MouseEvent('click'));
-        }
+        [...spies, spy].forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
 
-        expect(spy).toHaveBeenCalled();
+            spy.mockRestore();
+        });
     });
 
     it('successfuly loads an audio file using the data strategy', async () => {
+        defineGetter('canvas');
+
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
@@ -195,21 +275,28 @@ describe('Player', () => {
 
         await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('successfuly loads an audio file using the JSON strategy', async () => {
+        defineGetter('canvas');
+
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spies = [
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas')),
+            jest.spyOn(utils, 'getJson').mockResolvedValue(sine),
+        ];
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
         if (!audioElement) return;
-
-        const spy = jest.spyOn(utils, 'getJson').mockResolvedValue(sine);
 
         setTimeout(() => {
             audioElement.dispatchEvent(new Event('canplay'));
@@ -217,24 +304,29 @@ describe('Player', () => {
 
         await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json'))).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledWith('/stubs/sine.json');
+        expect(spies[0]).toHaveBeenCalled();
+        expect(spies[1]).toHaveBeenCalledWith('/stubs/sine.json');
 
-        spy.mockRestore();
+        spies.forEach((spy) => spy.mockRestore());
     });
 
     it('successfuly loads an audio file using the Web Audio strategy', async () => {
+        defineGetter('canvas');
+
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spies = [
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas')),
+            jest.spyOn(audio, 'extractAmplitudes').mockResolvedValue(sine),
+        ];
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
         if (!audioElement) return;
-
-        const spy = jest.spyOn(audio, 'extractAmplitudes').mockResolvedValue(sine);
 
         setTimeout(() => {
             audioElement.dispatchEvent(new Event('canplay'));
@@ -242,15 +334,23 @@ describe('Player', () => {
 
         await expect(player.load('/stubs/sine.wav', new WebAudioStrategy())).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: true });
+        expect(spies[0]).toHaveBeenCalled();
+        expect(spies[1]).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: true });
 
-        spy.mockRestore();
+        spies.forEach((spy) => spy.mockRestore());
     });
 
     it('uses the cached data when it exists', async () => {
+        defineGetter('canvas');
+
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const spies = [
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas')),
+            jest.spyOn(Storage.prototype, 'getItem'),
+        ];
 
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
@@ -258,8 +358,6 @@ describe('Player', () => {
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
         if (!audioElement) return;
-
-        const spy = jest.spyOn(Storage.prototype, 'getItem');
 
         setTimeout(() => {
             audioElement.dispatchEvent(new Event('canplay'));
@@ -268,62 +366,92 @@ describe('Player', () => {
         await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(player);
         await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledWith('waveplayer:/stubs/sine.json');
+        expect(spies[0]).toHaveBeenCalled();
+        expect(spies[1]).toHaveBeenCalledWith('waveplayer:/stubs/sine.json');
 
-        spy.mockRestore();
+        spies.forEach((spy) => spy.mockRestore());
     });
 
     it('plays an audio file', async () => {
+        defineGetter('canvas');
+
         const { mockPlay } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
         await expect(player.play()).resolves.toBe(player);
         expect(mockPlay).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('pauses an audio file', async () => {
+        defineGetter('canvas');
+
         const { mockPause } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
         expect(player.pause()).toBe(player);
         expect(mockPause).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('skips to a specific position in an audio file', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
         expect(player.skipTo(1)).toBe(player);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('checks if audio playback is paused', () => {
+        defineGetter('canvas');
+
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
         expect(player.paused()).toBeTruthy();
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
     });
 
     it('attaches play and error event handlers once', async () => {
+        defineGetter('canvas');
+
         const { mockLoad } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+        const viewSpy = jest
+            .spyOn(ViewMock.prototype, 'canvas', 'get')
+            .mockReturnValue(document.createElement('canvas'));
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
@@ -331,7 +459,7 @@ describe('Player', () => {
 
         if (!audioElement) return;
 
-        const spy = jest.spyOn(audioElement, 'addEventListener');
+        const audioSpy = jest.spyOn(audioElement, 'addEventListener');
 
         setTimeout(() => {
             audioElement.dispatchEvent(new Event('canplay'));
@@ -340,9 +468,10 @@ describe('Player', () => {
         await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
         await expect(player.load('/stubs/noise.wav', new DataStrategy(noise))).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(audioSpy).toHaveBeenCalledTimes(2);
+        expect(viewSpy).toHaveBeenCalled();
 
-        spy.mockRestore();
+        [audioSpy, viewSpy].forEach((spy) => spy.mockRestore());
     });
 
     for (const { label, code, constant, error } of [
@@ -378,10 +507,15 @@ describe('Player', () => {
         },
     ]) {
         it(`throws if ${label}`, async () => {
+            defineGetter('canvas');
+
             const { mockLoad } = mockAudioElement();
 
             document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
+            const spy = jest
+                .spyOn(ViewMock.prototype, 'canvas', 'get')
+                .mockReturnValue(document.createElement('canvas'));
             const player = new Player(new ViewMock([], { container: '#container' }), {
                 audioElement: '#audio',
             });
@@ -400,32 +534,30 @@ describe('Player', () => {
 
             await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).rejects.toEqual(new Error(error));
             expect(mockLoad).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
         });
     }
 
     it('removes the event handlers and destroys the view instance when destroying a player instance', async () => {
+        defineGetter('canvas');
+        defineGetter('container');
+
         const { mockLoad, mockPause } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"></div>';
-
-        const viewMock = new ViewMock([], { container: '#container' });
-
-        // Necessary because of https://github.com/facebook/jest/issues/9675
-        Object.defineProperty(viewMock, 'container', {
-            // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
-            get() {},
-            configurable: true,
-        });
 
         const container = document.querySelector<HTMLDivElement>('#container');
 
         if (!container) return;
 
         const spies = [
-            jest.spyOn(viewMock, 'container', 'get').mockReturnValue(container),
-            jest.spyOn(viewMock, 'destroy'),
+            jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas')),
+            jest.spyOn(ViewMock.prototype, 'container', 'get').mockReturnValue(container),
+            jest.spyOn(ViewMock.prototype, 'destroy'),
         ];
-        const player = new Player(viewMock);
+        const player = new Player(new ViewMock([], { container: '#container' }));
         const audioElement = document.querySelector<HTMLAudioElement>('audio');
 
         if (!audioElement) return;

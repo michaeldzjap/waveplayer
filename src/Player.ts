@@ -176,6 +176,13 @@ class Player implements PlayerContract {
     private _errorHandler?: (e: Event) => void;
 
     /**
+     * The handler function for the "click" event of the HTML canvas element.
+     *
+     * @var {Function}
+     */
+    private _clickHandler?: (e: Event) => void;
+
+    /**
      * Create a new player instance.
      *
      * @param {View} view
@@ -281,7 +288,7 @@ class Player implements PlayerContract {
      * @return {this}
      */
     private initialise(): this {
-        if (this._timeUpdateHandler && this._view.onClick) return this;
+        if (this._timeUpdateHandler && this._clickHandler) return this;
 
         this._timeUpdateHandler = (e: Event): void => {
             const element = e.currentTarget;
@@ -291,11 +298,12 @@ class Player implements PlayerContract {
             this._view.progress = element.currentTime / this._audioElement.duration;
         };
 
-        this._audioElement.addEventListener('timeupdate', this._timeUpdateHandler.bind(this));
-
-        this._view.onClick = () => {
+        this._clickHandler = (): void => {
             this.skipTo(this._view.progress * this._audioElement.duration);
         };
+
+        this._audioElement.addEventListener('timeupdate', this._timeUpdateHandler.bind(this));
+        this._view.canvas.addEventListener('click', this._clickHandler.bind(this));
 
         return this;
     }
@@ -527,6 +535,10 @@ class Player implements PlayerContract {
 
         if (this._errorHandler) {
             this._audioElement.removeEventListener('error', this._errorHandler);
+        }
+
+        if (this._clickHandler) {
+            this._view.canvas.removeEventListener('click', this._clickHandler);
         }
 
         if (!this._options.audioElement) {

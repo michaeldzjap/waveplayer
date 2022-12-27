@@ -188,23 +188,6 @@ describe('View', () => {
         expect(view.redraw).toBeFalsy();
     });
 
-    it('gets and sets the waveform on click handler', () => {
-        document.body.innerHTML = '<div id="container"></div>';
-
-        const view = new View([], { container: '#container' });
-
-        expect(view.onClick).toBeUndefined();
-
-        // eslint-disable-next-line require-jsdoc
-        const callback = () => {
-            //
-        };
-
-        view.onClick = callback;
-
-        expect(view.onClick).toBe(callback);
-    });
-
     it('draws the correct number of bars on the canvas', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
@@ -293,9 +276,6 @@ describe('View', () => {
 
         const view = new View(new Array(800).fill(1), {
             container: '#container',
-            onClick: () => {
-                //
-            },
         });
         const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
 

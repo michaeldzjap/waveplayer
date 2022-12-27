@@ -187,6 +187,13 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
+    public get canvas(): HTMLCanvasElement {
+        return this._canvas;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public get width(): number {
         return this._options.width;
     }
@@ -330,20 +337,6 @@ class View implements ViewContract {
     }
 
     /**
-     * @inheritdoc
-     */
-    public get onClick(): ((e: MouseEvent) => void) | undefined {
-        return this._options.onClick;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public set onClick(callback: ((e: MouseEvent) => void) | undefined) {
-        this._options = { ...this._options, onClick: callback };
-    }
-
-    /**
      * Resolve an existing container HTML element.
      *
      * @returns {(HTMLDivElement|string)}
@@ -478,10 +471,6 @@ class View implements ViewContract {
 
             this.clear();
             this.drawBars(...this.computeBarCoordinates(true));
-
-            if (this._options.onClick) {
-                this._options.onClick(e);
-            }
         };
 
         this._canvas.addEventListener('click', this._clickHandler);

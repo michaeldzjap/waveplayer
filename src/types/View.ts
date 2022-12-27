@@ -12,7 +12,6 @@ interface ViewOptions {
     gradient: boolean;
     interact: boolean;
     redraw: boolean;
-    onClick?: (e: MouseEvent) => void;
 }
 
 interface ViewColors {
@@ -62,6 +61,13 @@ interface View {
      * @param {(HTMLDivElement|string)} element
      */
     set container(element: HTMLDivElement | string);
+
+    /**
+     * Get the HTML canvas element that is used for drawing the waveform.
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    get canvas(): HTMLCanvasElement;
 
     /**
      * Get the width of the drawn waveform.
@@ -178,25 +184,6 @@ interface View {
      * @returns {boolean}
      */
     set redraw(value: boolean);
-
-    /**
-     * Get the callback that should be evaluated when the user clicks somewhere
-     * on the waveform.
-     *
-     * @returns {(Function|undefined)}
-     */
-    get onClick(): ((e: MouseEvent) => void) | undefined;
-
-    /**
-     * Set the callback that should be evaluated when the user clicks somewhere
-     * on the waveform.
-     *
-     * NOTE: The callback will only be evaluated when the "interact" flag is set
-     * to `true`.
-     *
-     * @param {(Function|undefined)} callback
-     */
-    set onClick(callback: ((e: MouseEvent) => void) | undefined);
 
     /**
      * Draw the waveform in the canvas HTML element.
