@@ -1,15 +1,15 @@
-import { WaveView } from './WaveView';
+import { View } from './View';
 
 interface Strategy {
     type: string;
 }
 
-interface WavePlayerOptions {
+interface PlayerOptions {
     audioElement?: HTMLAudioElement | string;
     preload: '' | 'metadata' | 'none' | 'auto';
 }
 
-interface WavePlayer {
+interface Player {
     /**
      * Get the volume of the currently loaded / playing track.
      *
@@ -46,11 +46,11 @@ interface WavePlayer {
     get duration(): number;
 
     /**
-     * Get the associated wave view instance.
+     * Get the associated view instance.
      *
-     * @returns {WaveView}
+     * @returns {View}
      */
-    get waveView(): WaveView;
+    get view(): View;
 
     /**
      * Load an audio file from a given URL.
@@ -91,11 +91,11 @@ interface WavePlayer {
     paused(): boolean;
 
     /**
-     * Destroy the wave player instance and do the appropriate clean up.
+     * Destroy the player instance and do the appropriate clean up.
      *
      * @returns {void}
      */
     destroy(): void;
 }
 
-export { WavePlayer, WavePlayerOptions, Strategy };
+export { Player, PlayerOptions, Strategy };

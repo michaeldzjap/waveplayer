@@ -1,14 +1,14 @@
 import '@testing-library/jest-dom';
 
-import WaveView from '../src/WaveView';
+import View from '../src/View';
 
-describe('WaveView', () => {
+describe('View', () => {
     it('creates a new instance when referencing an existing container element', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
-        expect(view).toBeInstanceOf(WaveView);
+        expect(view).toBeInstanceOf(View);
     });
 
     it('creates a new instance for an existing container element', () => {
@@ -18,14 +18,14 @@ describe('WaveView', () => {
 
         if (!container) return;
 
-        const view = new WaveView([], { container });
+        const view = new View([], { container });
 
-        expect(view).toBeInstanceOf(WaveView);
+        expect(view).toBeInstanceOf(View);
     });
 
     it('throws an error for a non existing container element', () => {
         expect(() => {
-            return new WaveView([], { container: 'foo' });
+            return new View([], { container: 'foo' });
         }).toThrow('Container element could not be located.');
     });
 
@@ -33,10 +33,10 @@ describe('WaveView', () => {
         { label: 'responsive', options: { responsive: true }, expected: '100%' },
         { label: 'fixed', options: { responsive: false }, expected: '512px' },
     ].forEach(({ label, options, expected }) => {
-        it(`it uses a ${label} width for the wave view container element`, () => {
+        it(`it uses a ${label} width for the view container element`, () => {
             document.body.innerHTML = '<div id="container"></div>';
 
-            const view = new WaveView([], { container: '#container', ...options });
+            const view = new View([], { container: '#container', ...options });
             const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
 
             expect(waveContainer).toHaveStyle({ width: expected });
@@ -47,7 +47,7 @@ describe('WaveView', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
         let data: number[] = [];
-        const view = new WaveView(data, { container: '#container' });
+        const view = new View(data, { container: '#container' });
 
         expect(view.data).toBe(data);
 
@@ -61,7 +61,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform progress', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.progress).toBe(0);
 
@@ -77,7 +77,7 @@ describe('WaveView', () => {
     it('gets and sets the container element', () => {
         document.body.innerHTML = '<div id="first-container"></div><div id="second-container"></div>';
 
-        const view = new WaveView([], { container: '#first-container' });
+        const view = new View([], { container: '#first-container' });
 
         expect(view.container).toHaveAttribute('id', 'first-container');
 
@@ -89,7 +89,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform width', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container', responsive: false });
+        const view = new View([], { container: '#container', responsive: false });
         const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
 
         expect(view.width).toBe(512);
@@ -104,7 +104,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform height', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
         const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
 
         expect(view.height).toBe(128);
@@ -119,7 +119,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform bar width', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.barWidth).toBe(4);
 
@@ -131,7 +131,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform bar gap', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.barGap).toBe(1);
 
@@ -143,7 +143,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform responsive flag', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.responsive).toBeTruthy();
 
@@ -155,7 +155,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform gradient', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.gradient).toBeTruthy();
 
@@ -167,7 +167,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform interact flag', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.interact).toBeTruthy();
 
@@ -179,7 +179,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform redraw flag', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.redraw).toBeTruthy();
 
@@ -191,7 +191,7 @@ describe('WaveView', () => {
     it('gets and sets the waveform on click handler', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
 
         expect(view.onClick).toBeUndefined();
 
@@ -208,7 +208,7 @@ describe('WaveView', () => {
     it('draws the correct number of bars on the canvas', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView(new Array(800).fill(1), { container: '#container' });
+        const view = new View(new Array(800).fill(1), { container: '#container' });
         const waveContainer = view.container.querySelector<HTMLDivElement>('.waveplayer-waveform-container');
 
         if (!waveContainer) return;
@@ -245,7 +245,7 @@ describe('WaveView', () => {
     it('redraws the waveform on the canvas when resizing the viewport', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
         const spy = jest.spyOn(view, 'draw');
 
         window.innerWidth = 512;
@@ -261,7 +261,7 @@ describe('WaveView', () => {
     it('removes an existing resize handler before adding a new one', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
         const spy = jest.spyOn(window, 'removeEventListener');
 
         view.responsive = true;
@@ -274,7 +274,7 @@ describe('WaveView', () => {
     it('removes an existing click handler before adding a new one', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
         const canvas = view.container.querySelector<HTMLCanvasElement>('canvas');
 
         if (!canvas) return;
@@ -291,7 +291,7 @@ describe('WaveView', () => {
     it('clears the canvas and redraws the waveform when clicking on the waveform', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView(new Array(800).fill(1), {
+        const view = new View(new Array(800).fill(1), {
             container: '#container',
             onClick: () => {
                 //
@@ -324,10 +324,10 @@ describe('WaveView', () => {
         });
     });
 
-    it('removes the event handlers and waveform container when destroying a wave view instance', () => {
+    it('removes the event handlers and waveform container when destroying a view instance', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const view = new WaveView([], { container: '#container' });
+        const view = new View([], { container: '#container' });
         const canvas = view.container.querySelector<HTMLCanvasElement>('canvas');
 
         if (!canvas) return;

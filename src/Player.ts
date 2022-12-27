@@ -1,5 +1,5 @@
 /**
- * WavePlayer.ts
+ * Player.ts
  *
  * © Michaël Dzjaparidze 2022
  * https://github.com/michaeldzjap
@@ -10,8 +10,8 @@
  */
 
 import { extractAmplitudes } from './audio';
-import { Strategy, WavePlayer as WavePlayerContract, WavePlayerOptions } from './types/WavePlayer';
-import { WaveView } from './types/WaveView';
+import { Strategy, Player as PlayerContract, PlayerOptions } from './types/Player';
+import { View } from './types/View';
 import { getJson } from './utils';
 
 /**
@@ -121,34 +121,34 @@ class WebAudioStrategy implements Strategy {
 
 /**
  * @class
- * @classdesc Wave player class.
+ * @classdesc Player class.
  */
-class WavePlayer implements WavePlayerContract {
+class Player implements PlayerContract {
     /**
      * The default options for a new instance.
      *
-     * @var {WavePlayerOptions}
+     * @var {PlayerOptions}
      */
-    private static _defaultOptions: Readonly<Omit<WavePlayerOptions, 'audioElement'>> = {
+    private static _defaultOptions: Readonly<Omit<PlayerOptions, 'audioElement'>> = {
         preload: 'metadata',
     };
 
     /**
-     * The wave view instance associated with this wave player instance.
+     * The view instance associated with this player instance.
      *
-     * @var {WaveView}
+     * @var {View}
      */
-    private _view: WaveView;
+    private _view: View;
 
     /**
-     * The options for this waveplayer instance.
+     * The options for this player instance.
      *
-     * @var {WavePlayerOptions}
+     * @var {PlayerOptions}
      */
-    private _options: Readonly<WavePlayerOptions>;
+    private _options: Readonly<PlayerOptions>;
 
     /**
-     * The HTML audio element associated with this waveplayer instance.
+     * The HTML audio element associated with this player instance.
      *
      * @var {HTMLAudioElement}
      */
@@ -176,14 +176,14 @@ class WavePlayer implements WavePlayerContract {
     private _errorHandler?: (e: Event) => void;
 
     /**
-     * Initialise a new wave player instance.
+     * Create a new player instance.
      *
-     * @param {WaveView} view
-     * @param {Options} options
+     * @param {View} view
+     * @param {PlayerOptions} options
      */
-    constructor(view: WaveView, options: Readonly<Partial<WavePlayerOptions>> = {}) {
+    constructor(view: View, options: Readonly<Partial<PlayerOptions>> = {}) {
         this._view = view;
-        this._options = { ...WavePlayer._defaultOptions, ...options };
+        this._options = { ...Player._defaultOptions, ...options };
 
         if (this._options.audioElement) {
             this._audioElement = this.resolveAudioElement();
@@ -234,7 +234,7 @@ class WavePlayer implements WavePlayerContract {
     /**
      * @inheritdoc
      */
-    public get waveView(): WaveView {
+    public get view(): View {
         return this._view;
     }
 
@@ -276,7 +276,7 @@ class WavePlayer implements WavePlayerContract {
     }
 
     /**
-     * Initialise the wave player instance.
+     * Initialise the player instance.
      *
      * @return {this}
      */
@@ -537,5 +537,5 @@ class WavePlayer implements WavePlayerContract {
     }
 }
 
-export default WavePlayer;
+export default Player;
 export { DataStrategy, JsonStrategy, WebAudioStrategy };

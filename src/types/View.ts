@@ -1,6 +1,6 @@
 import { RgbColor } from './utils';
 
-interface WaveViewOptions {
+interface ViewOptions {
     container: HTMLDivElement | string;
     width: number;
     height: number;
@@ -15,12 +15,12 @@ interface WaveViewOptions {
     onClick?: (e: MouseEvent) => void;
 }
 
-interface WaveViewColors {
+interface ViewColors {
     waveformColor: [RgbColor, RgbColor];
     progressColor: [RgbColor, RgbColor];
 }
 
-interface WaveView {
+interface View {
     /**
      * Get the waveform amplitude data.
      *
@@ -50,14 +50,14 @@ interface WaveView {
     set progress(progress: number);
 
     /**
-     * Get the HTML container element for the wave view instance.
+     * Get the HTML container element for the view instance.
      *
      * @returns {HTMLDivElement}
      */
     get container(): HTMLDivElement;
 
     /**
-     * Set the HTML container element for the wave view instance.
+     * Set the HTML container element for the view instance.
      *
      * @param {(HTMLDivElement|string)} element
      */
@@ -71,8 +71,8 @@ interface WaveView {
     get width(): number;
 
     /**
-     * Set the width of the drawn waveform. Only has an effect if the wave view
-     * instance is not operating in responsive mode.
+     * Set the width of the drawn waveform. Only has an effect if the view instance
+     * is not operating in responsive mode.
      *
      * @param {number} value
      */
@@ -121,15 +121,15 @@ interface WaveView {
     set barGap(value: number);
 
     /**
-     * Check if the wave view instance is operating in responsive mode.
+     * Check if the view instance is operating in responsive mode.
      *
      * @returns {boolean}
      */
     get responsive(): boolean;
 
     /**
-     * Make the wave view instance responsive, meaning its width should scale
-     * along with the width of its parent container.
+     * Make the view instance responsive, meaning its width should scale along
+     * with the width of its parent container.
      *
      * @param {boolean} value
      */
@@ -150,14 +150,14 @@ interface WaveView {
     set gradient(value: boolean);
 
     /**
-     * Check if we can currently interact with the wave view instance.
+     * Check if we can currently interact with the view instance.
      *
      * @returns {boolean}
      */
     get interact(): boolean;
 
     /**
-     * Set the interaction state of the wave view instance.
+     * Set the interaction state of the view instance.
      *
      * @param {boolean} value
      */
@@ -165,8 +165,8 @@ interface WaveView {
 
     /**
      * Get the redraw flag. This flag determines whether the waveform should be
-     * redrawn when setting one of the wave view properties that affects the look
-     * of waveform (e.g. width, height, gradient).
+     * redrawn when setting one of the view properties that affects the look of
+     * the waveform (e.g. width, height, gradient).
      *
      * @returns {boolean}
      */
@@ -213,11 +213,11 @@ interface WaveView {
     clear(): this;
 
     /**
-     * Destroy the wave player instance and do the appropriate clean up.
+     * Destroy the view instance and do the appropriate clean up.
      *
      * @returns {void}
      */
     destroy(): void;
 }
 
-export { WaveView, WaveViewColors, WaveViewOptions };
+export { View, ViewColors, ViewOptions };

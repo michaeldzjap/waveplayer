@@ -1,5 +1,5 @@
 /**
- * WaveView.ts
+ * View.ts
  *
  * © Michaël Dzjaparidze 2022
  * https://github.com/michaeldzjap
@@ -9,21 +9,21 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import { WaveView as WaveViewContract, WaveViewOptions, WaveViewColors } from './types/WaveView';
+import { View as ViewContract, ViewOptions, ViewColors } from './types/View';
 import { RgbColor } from './types/utils';
 import { average, hex2rgb, hsv2rgb, rgb2hsv, style, throttle } from './utils';
 
 /**
  * @class
- * @classdesc Wave view class.
+ * @classdesc View class.
  */
-class WaveView implements WaveViewContract {
+class View implements ViewContract {
     /**
-     * The default options for a new wave view instance.
+     * The default options for a new view instance.
      *
-     * @var {WaveViewOptions}
+     * @var {ViewOptions}
      */
-    private static _defaultOptions: Readonly<Omit<WaveViewOptions, 'container'>> = {
+    private static _defaultOptions: Readonly<Omit<ViewOptions, 'container'>> = {
         width: 512,
         height: 128,
         waveformColor: '#428bca',
@@ -59,14 +59,14 @@ class WaveView implements WaveViewContract {
     private _progress = 0;
 
     /**
-     * The options for this wave view instance.
+     * The options for this view instance.
      *
-     * @var {WaveViewOptions}
+     * @var {ViewOptions}
      */
-    private _options: Readonly<WaveViewOptions>;
+    private _options: Readonly<ViewOptions>;
 
     /**
-     * The HTML div element acting as a container for the wave view.
+     * The HTML div element acting as a container for the view.
      *
      * @var {HTMLDivElement}
      */
@@ -89,9 +89,9 @@ class WaveView implements WaveViewContract {
     /**
      * The colors that will be used for drawing the waveform.
      *
-     * @var {WaveViewColors}
+     * @var {ViewColors}
      */
-    private _colors: WaveViewColors;
+    private _colors: ViewColors;
 
     /**
      * The logic that should be executed on a "resize" event.
@@ -108,17 +108,17 @@ class WaveView implements WaveViewContract {
     private _clickHandler?: (e: MouseEvent) => void;
 
     /**
-     * Initialize a new wave view instance.
+     * Create a new view instance.
      *
      * @param {number[]} data
-     * @param {WaveViewOptions} options
+     * @param {ViewOptions} options
      */
     constructor(
         data: number[],
-        options: Readonly<Partial<Omit<WaveViewOptions, 'container'>> & Pick<WaveViewOptions, 'container'>>,
+        options: Readonly<Partial<Omit<ViewOptions, 'container'>> & Pick<ViewOptions, 'container'>>,
     ) {
         this._data = data;
-        this._options = { ...WaveView._defaultOptions, ...options };
+        this._options = { ...View._defaultOptions, ...options };
         this._container = this.resolveContainer(this._options.container);
         this._waveContainer = this.createWaveContainer();
         this._canvas = this.createCanvas();
@@ -407,9 +407,9 @@ class WaveView implements WaveViewContract {
     /**
      * Create the waveform and progress color variations.
      *
-     * @returns {WaveViewColors}
+     * @returns {ViewColors}
      */
-    private createColorVariations(): WaveViewColors {
+    private createColorVariations(): ViewColors {
         // eslint-disable-next-line require-jsdoc
         const createColorVariation = (color: string): [RgbColor, RgbColor] => {
             const rgb = hex2rgb(color);
@@ -680,4 +680,4 @@ class WaveView implements WaveViewContract {
     }
 }
 
-export default WaveView;
+export default View;

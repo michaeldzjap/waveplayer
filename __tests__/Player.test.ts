@@ -2,17 +2,17 @@ import '@testing-library/jest-dom';
 
 import * as audio from '../src/audio';
 import * as utils from '../src/utils';
-import WavePlayer, { DataStrategy, JsonStrategy, WebAudioStrategy } from '../src/WavePlayer';
-import WaveView from '../src/WaveView';
+import Player, { DataStrategy, JsonStrategy, WebAudioStrategy } from '../src/Player';
+import View from '../src/View';
 import noise from './stubs/noise';
 import sine from './stubs/sine';
 
-jest.mock('../src/WaveView');
+jest.mock('../src/View');
 
-const WaveViewMock = WaveView as unknown as jest.Mock<WaveView>;
+const ViewMock = View as unknown as jest.Mock<View>;
 
 beforeEach(() => {
-    WaveViewMock.mockClear();
+    ViewMock.mockClear();
 });
 
 afterEach(() => {
@@ -37,14 +37,14 @@ const mockAudioElement = () => {
     return { mockLoad, mockPlay, mockPause };
 };
 
-describe('WavePlayer', () => {
+describe('Player', () => {
     it('creates a new instance when referencing an existing audio element', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
-        expect(player).toBeInstanceOf(WavePlayer);
-        expect(WaveViewMock).toHaveBeenCalled();
+        expect(player).toBeInstanceOf(Player);
+        expect(ViewMock).toHaveBeenCalled();
     });
 
     it('creates a new instance for an existing audio element', () => {
@@ -54,24 +54,24 @@ describe('WavePlayer', () => {
 
         if (!audioElement) return;
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement });
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement });
 
-        expect(player).toBeInstanceOf(WavePlayer);
-        expect(WaveViewMock).toHaveBeenCalled();
+        expect(player).toBeInstanceOf(Player);
+        expect(ViewMock).toHaveBeenCalled();
     });
 
     it('throws an error for a non existing audio element', () => {
         expect(() => {
             document.body.innerHTML = '<div id="container"></div>';
 
-            return new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: 'foo' });
+            return new Player(new ViewMock([], { container: '#container' }), { audioElement: 'foo' });
         }).toThrow('Audio element could not be located.');
     });
 
     it('creates a new audio element when one is not provided explicitly', () => {
         document.body.innerHTML = '<div id="container"></div>';
 
-        const viewMock = new WaveViewMock([], { container: '#container' });
+        const viewMock = new ViewMock([], { container: '#container' });
 
         // Necessary because of https://github.com/facebook/jest/issues/9675
         Object.defineProperty(viewMock, 'container', {
@@ -86,21 +86,21 @@ describe('WavePlayer', () => {
 
         const spy = jest.spyOn(viewMock, 'container', 'get').mockReturnValue(container);
 
-        const player = new WavePlayer(viewMock);
+        const player = new Player(viewMock);
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
         if (!audioElement) return;
 
-        expect(player).toBeInstanceOf(WavePlayer);
+        expect(player).toBeInstanceOf(Player);
         expect(audioElement).toBeInstanceOf(HTMLAudioElement);
-        expect(WaveViewMock).toHaveBeenCalled();
+        expect(ViewMock).toHaveBeenCalled();
         expect(spy).toHaveBeenCalled();
     });
 
     it('gets and sets the audio volume', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.volume).toBe(1);
 
@@ -112,7 +112,7 @@ describe('WavePlayer', () => {
     it('gets and sets the current time of the audio', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.currentTime).toBe(0);
 
@@ -124,23 +124,23 @@ describe('WavePlayer', () => {
     it('gets the duration of the audio', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
         expect(player.duration).toBe(NaN);
     });
 
-    it('gets the wave view instance', () => {
+    it('gets the view instance', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), { audioElement: '#audio' });
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
 
-        expect(player.waveView).toBeInstanceOf(WaveViewMock);
+        expect(player.view).toBeInstanceOf(ViewMock);
     });
 
-    it('updates the wave view progress when the timeupdate event is fired', () => {
+    it('updates the view progress when the timeupdate event is fired', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const viewMock = new WaveViewMock([], { container: '#container' });
+        const viewMock = new ViewMock([], { container: '#container' });
 
         // Necessary because of https://github.com/facebook/jest/issues/9675
         Object.defineProperty(viewMock, 'progress', {
@@ -151,7 +151,7 @@ describe('WavePlayer', () => {
 
         const spy = jest.spyOn(viewMock, 'progress', 'set');
 
-        new WavePlayer(viewMock, { audioElement: '#audio' });
+        new Player(viewMock, { audioElement: '#audio' });
 
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
 
@@ -165,8 +165,8 @@ describe('WavePlayer', () => {
     it('skips to a new playback position when evaluating the on click handler', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const viewMock = new WaveViewMock([], { container: '#container' });
-        const player = new WavePlayer(viewMock, { audioElement: '#audio' });
+        const viewMock = new ViewMock([], { container: '#container' });
+        const player = new Player(viewMock, { audioElement: '#audio' });
 
         const spy = jest.spyOn(player, 'skipTo').mockImplementationOnce((seconds: number) => player);
 
@@ -182,7 +182,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -202,7 +202,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -227,7 +227,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -252,7 +252,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -278,7 +278,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
@@ -291,7 +291,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
@@ -302,7 +302,7 @@ describe('WavePlayer', () => {
     it('skips to a specific position in an audio file', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
@@ -312,7 +312,7 @@ describe('WavePlayer', () => {
     it('checks if audio playback is paused', () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
 
@@ -324,7 +324,7 @@ describe('WavePlayer', () => {
 
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-        const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+        const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -382,7 +382,7 @@ describe('WavePlayer', () => {
 
             document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
-            const player = new WavePlayer(new WaveViewMock([], { container: '#container' }), {
+            const player = new Player(new ViewMock([], { container: '#container' }), {
                 audioElement: '#audio',
             });
             const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -403,12 +403,12 @@ describe('WavePlayer', () => {
         });
     }
 
-    it('removes the event handlers and destroys the wave view instance when destroying a wave player instance', async () => {
+    it('removes the event handlers and destroys the view instance when destroying a player instance', async () => {
         const { mockLoad, mockPause } = mockAudioElement();
 
         document.body.innerHTML = '<div id="container"></div>';
 
-        const viewMock = new WaveViewMock([], { container: '#container' });
+        const viewMock = new ViewMock([], { container: '#container' });
 
         // Necessary because of https://github.com/facebook/jest/issues/9675
         Object.defineProperty(viewMock, 'container', {
@@ -425,7 +425,7 @@ describe('WavePlayer', () => {
             jest.spyOn(viewMock, 'container', 'get').mockReturnValue(container),
             jest.spyOn(viewMock, 'destroy'),
         ];
-        const player = new WavePlayer(viewMock);
+        const player = new Player(viewMock);
         const audioElement = document.querySelector<HTMLAudioElement>('audio');
 
         if (!audioElement) return;

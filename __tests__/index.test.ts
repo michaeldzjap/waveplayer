@@ -1,13 +1,13 @@
-import { Factory, WavePlayer } from '../src/index';
+import { Factory, Player } from '../src/index';
 
 describe('index', () => {
     describe('Factory', () => {
-        it('creates a new wave player instance', () => {
+        it('creates a new player instance', () => {
             document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
             const player = Factory.create({ container: '#container', audioElement: '#audio' });
 
-            expect(player).toBeInstanceOf(WavePlayer);
+            expect(player).toBeInstanceOf(Player);
         });
     });
 });
