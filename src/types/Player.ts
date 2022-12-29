@@ -53,6 +53,13 @@ interface Player {
     get view(): View;
 
     /**
+     * Get the HTML audio element..
+     *
+     * @returns {HTMLAudioElement}
+     */
+    get audioElement(): HTMLAudioElement;
+
+    /**
      * Load an audio file from a given URL.
      *
      * @param {string} url

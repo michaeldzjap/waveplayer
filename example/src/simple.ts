@@ -3,7 +3,7 @@ import { JsonStrategy } from '../../src/Player';
 import { toggleClass } from './utils';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Create and initialise a new player instance
+    // Create a new player instance
     const player = Factory.create({ container: '#waveform' });
     const button = document.getElementById('playback-button') as HTMLButtonElement | null;
 

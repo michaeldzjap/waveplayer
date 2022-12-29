@@ -246,6 +246,13 @@ class Player implements PlayerContract {
     }
 
     /**
+     * @inheritdoc
+     */
+    public get audioElement(): HTMLAudioElement {
+        return this._audioElement;
+    }
+
+    /**
      * Resolve an existing HTML audio element.
      *
      * @returns {HTMLAudioElement}

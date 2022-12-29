@@ -10,8 +10,10 @@
  */
 
 import Player from './Player';
+import Playlist from './Playlist';
 import View from './View';
-import { PlayerOptions } from './types/Player';
+import { PlayerOptions, Strategy } from './types/Player';
+import { PlaylistOptions } from './types/Playlist';
 import { ViewOptions } from './types/View';
 
 type Options = Readonly<Partial<PlayerOptions>> &
@@ -37,10 +39,17 @@ class Factory {
     /**
      * Create a new playlist instance.
      *
+     * @param {Object[]} tracks
      * @param {(PlayerOptions&ViewOptions)} options
      */
-    public static createPlaylist(options: Options) {
-        const { audioElement, preload, ...viewOptions } = options;
+    public static createPlaylist(
+        tracks: Readonly<{ url: string; strategy: Strategy }[]>,
+        options: Options & Readonly<Partial<PlaylistOptions>>,
+    ) {
+        const { audioElement, preload, onEnded, ...viewOptions } = options;
+        const player = new Player(new View([], viewOptions), { audioElement, preload });
+
+        return new Playlist(player, tracks, { onEnded });
     }
 }
 

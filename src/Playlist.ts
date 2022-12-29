@@ -10,7 +10,7 @@
  */
 
 import { Player, Strategy } from './types/Player';
-import { Playlist as PlaylistContract } from './types/Playlist';
+import { Playlist as PlaylistContract, PlaylistOptions } from './types/Playlist';
 
 /**
  * @class
@@ -32,11 +32,25 @@ class Playlist implements PlaylistContract {
     private _tracks: Readonly<{ url: string; strategy: Strategy }[]>;
 
     /**
+     * The options for this playlist instance.
+     *
+     * @var {PlaylistOptions}
+     */
+    private _options: Readonly<PlaylistOptions>;
+
+    /**
      * The index of the currently playing track.
      *
      * @var {number}
      */
-    private _currentTrack = 0;
+    private _current = 0;
+
+    /**
+     * Indicates whether the last track in the playlist has finished playing.
+     *
+     * @var {boolean}
+     */
+    private _ended = false;
 
     /**
      * The handler function for the "ended" event of the HTML audio element.
@@ -50,10 +64,20 @@ class Playlist implements PlaylistContract {
      *
      * @param {Player} player
      * @param {Object[]} tracks
+     * @param {PlaylistOptions} options
      */
-    constructor(player: Player, tracks: Readonly<{ url: string; strategy: Strategy }[]>) {
+    constructor(
+        player: Player,
+        tracks: Readonly<{ url: string; strategy: Strategy }[]>,
+        options: Readonly<Partial<PlaylistOptions>> = {},
+    ) {
+        if (!tracks.length) {
+            throw new Error('A playlist needs to contain at least one track.');
+        }
+
         this._player = player;
         this._tracks = tracks;
+        this._options = options;
 
         this.initialise();
     }
@@ -66,25 +90,95 @@ class Playlist implements PlaylistContract {
     private initialise(): this {
         if (this._endedHandler) return this;
 
-        this._endedHandler = (): void => {
-            if (this._currentTrack > this._tracks.length - 1) return;
+        this._endedHandler = async (): Promise<void> => {
+            await this.next();
 
-            this._currentTrack++;
-
-            this.loadAndPlayCurrentTrack();
+            if (this._ended && this._options.onEnded) {
+                this._options.onEnded(this);
+            }
         };
 
+        this._player.audioElement.addEventListener('ended', this._endedHandler.bind(this));
+
         return this;
     }
 
     /**
      * @inheritdoc
      */
-    public async next(): Promise<this> {
-        if (this._currentTrack < this._tracks.length - 1) {
-            this._currentTrack++;
+    public get player(): Player {
+        return this._player;
+    }
 
-            await this.loadAndPlayCurrentTrack();
+    /**
+     * @inheritdoc
+     */
+    public get current(): number {
+        return this._current;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    get onEnded(): ((playlist: PlaylistContract) => void) | undefined {
+        return this._options.onEnded;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    set onEnded(callback: ((playlist: PlaylistContract) => void) | undefined) {
+        this._options = { ...this._options, onEnded: callback };
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public async play(): Promise<this> {
+        if (!this._player.paused()) return this;
+
+        await this.handleCurrentTrack(false);
+        await this._player.play();
+
+        return this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public pause(): this {
+        if (this._player.paused()) return this;
+
+        this._player.pause();
+
+        return this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public reset(): this {
+        this.pause();
+
+        this._current = 0;
+        this._ended = false;
+
+        this.handleCurrentTrack(false);
+
+        return this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public async next(forcePlay = true): Promise<this> {
+        if (this._current < this._tracks.length - 1) {
+            this._current++;
+            this._ended = false;
+
+            await this.handleCurrentTrack(forcePlay);
+        } else {
+            this._ended = true;
         }
 
         return this;
@@ -93,11 +187,12 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    public async previous(): Promise<this> {
-        if (this._currentTrack > 0) {
-            this._currentTrack--;
+    public async previous(forcePlay = true): Promise<this> {
+        if (this._current > 0) {
+            this._current--;
+            this._ended = false;
 
-            await this.loadAndPlayCurrentTrack();
+            await this.handleCurrentTrack(forcePlay);
         }
 
         return this;
@@ -106,11 +201,12 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    public async skipTo(track: number): Promise<this> {
+    public async select(track: number, forcePlay = true): Promise<this> {
         if (track >= 0 && track < this._tracks.length) {
-            this._currentTrack = track;
+            this._current = track;
+            this._ended = false;
 
-            await this.loadAndPlayCurrentTrack();
+            await this.handleCurrentTrack(forcePlay);
         }
 
         return this;
@@ -119,22 +215,31 @@ class Playlist implements PlaylistContract {
     /**
      * Load and play the current track.
      *
-     * @return {Promise<Player>}
+     * @param {boolean} forcePlay
+     * @return {Promise<void>}
      */
-    private async loadAndPlayCurrentTrack(): Promise<Player> {
+    private async handleCurrentTrack(forcePlay: boolean): Promise<void> {
+        const isPaused = this._player.paused();
+
         this._player.pause();
 
-        const { url, strategy } = this._tracks[this._currentTrack];
+        const { url, strategy } = this._tracks[this._current];
 
         await this._player.load(url, strategy);
 
-        return this._player.play();
+        if (forcePlay || !isPaused) {
+            this._player.play();
+        }
     }
 
     /**
      * @inheritdoc
      */
     public destroy(): void {
+        if (this._endedHandler) {
+            this._player.audioElement.removeEventListener('ended', this._endedHandler);
+        }
+
         this._player.destroy();
     }
 }

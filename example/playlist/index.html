@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>WavePlayer | Playlist Example</title>
+
+    <link rel="stylesheet" type="text/css" href="../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../node_modules/@fortawesome/fontawesome-free/css/solid.min.css">
+    <link rel="stylesheet" type="text/css" href="../node_modules/bulma/css/bulma.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title is-2">waveplayer.js</h1>
+        <h2 class="subtitle">Playlist Example</h2>
+        <div class="columns" style="margin-top:60px;">
+            <div class="column is-three-fifths is-offset-one-fifth">
+                <div id="waveform"></div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+                <nav class="panel">
+                    <p class="panel-heading">Select a track:</p>
+                    <a class="panel-block" data-path="../audio/extase_1">
+                        <span class="panel-icon"><i class="fas fa-play" aria-hidden="true"></i></span> Extase 1
+                        <span class="tag is-rounded" style="margin-left:auto;">08:40</span>
+                    </a>
+                    <a class="panel-block" data-path="../audio/extase_2_3_4">
+                        <span class="panel-icon"><i class="fas fa-play" aria-hidden="true"></i></span> Extase 2, 3 & 4
+                        <span class="tag is-rounded" style="margin-left:auto;">19:33</span>
+                    </a>
+                    <a class="panel-block" data-path="../audio/extase_3_version">
+                        <span class="panel-icon"><i class="fas fa-play" aria-hidden="true"></i></span> Extase 3 (Version)
+                        <span class="tag is-rounded" style="margin-left:auto;">05:15</span>
+                    </a>
+                    <a class="panel-block" data-path="../audio/extase_4_version">
+                        <span class="panel-icon"><i class="fas fa-play" aria-hidden="true"></i></span> Extase 4 (Version)
+                        <span class="tag is-rounded" style="margin-left:auto;">13:51</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../dist/playlist.js"></script>
+</body>
+</html>
