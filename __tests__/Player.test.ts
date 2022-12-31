@@ -206,6 +206,19 @@ describe('Player', () => {
         spy.mockRestore();
     });
 
+    it('gets the audio element', () => {
+        defineGetter('canvas');
+
+        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
+
+        const spy = jest.spyOn(ViewMock.prototype, 'canvas', 'get').mockReturnValue(document.createElement('canvas'));
+        const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
+
+        expect(player.audioElement).toBeInstanceOf(HTMLAudioElement);
+
+        spy.mockRestore();
+    });
+
     it('updates the view progress when the timeupdate event is fired', () => {
         defineGetter('canvas');
         defineSetter('progress');

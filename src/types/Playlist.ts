@@ -1,9 +1,5 @@
 import { Player } from './Player';
 
-interface PlaylistOptions {
-    onEnded?: (playlist: Playlist) => void;
-}
-
 interface Playlist {
     /**
      * Get the associated player instance.
@@ -13,25 +9,18 @@ interface Playlist {
     get player(): Player;
 
     /**
-     * Get the details of the currently playing track.
+     * Get the index of the currently playing track.
      *
      * @returns {number}
      */
     get current(): number;
 
     /**
-     * Get the "onEnded" callback.
+     * Get the flag that indicates whether the playlist has finished playback.
      *
-     * @returns {(Function|undefined)}
+     * @returns {boolean}
      */
-    get onEnded(): ((playlist: Playlist) => void) | undefined;
-
-    /**
-     * Set the "onEnded" callback.
-     *
-     * @param {(Function|undefined)} callback
-     */
-    set onEnded(callback: ((playlist: Playlist) => void) | undefined);
+    get ended(): boolean;
 
     /**
      * Start playback of the playlist from the currently selected track.
@@ -48,11 +37,18 @@ interface Playlist {
     pause(): this;
 
     /**
+     * Prepare the playlist (alias for reset).
+     *
+     * @returns {Promise<this>}
+     */
+    prepare(): Promise<this>;
+
+    /**
      * Pause playback and reset the playlist.
      *
-     * @returns {this}
+     * @returns {Promise<this>}
      */
-    reset(): this;
+    reset(): Promise<this>;
 
     /**
      * Go to the next track in the playlist.
@@ -87,4 +83,4 @@ interface Playlist {
     destroy(): void;
 }
 
-export { Playlist, PlaylistOptions };
+export { Playlist };

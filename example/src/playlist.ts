@@ -1,44 +1,26 @@
 import { Factory } from '../../src/index';
-import Player, { JsonStrategy } from '../../src/Player';
+import { JsonStrategy } from '../../src/Player';
 import Playlist from '../../src/Playlist';
-import { Playlist as PlaylistContract } from '../../src/types/Playlist';
-import { addClass, removeClass, toggleClass } from './utils';
+import { addClass, removeClass } from './utils';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const anchors = [...document.querySelectorAll<HTMLAnchorElement>('.panel-block')];
 
-    // Create a new playlist instance
-    const playlist = Factory.createPlaylist(
+    // Create a new playlist instance and prepare it for playback
+    const playlist = await Factory.createPlaylist(
         anchors.map((anchor) => ({
             url: `${anchor.dataset.path}.mp3`,
             strategy: new JsonStrategy(`${anchor.dataset.path}.json`),
         })),
         { container: '#waveform' },
-    ).reset();
-
-    playlist.onEnded = (playlist: PlaylistContract): void => handleEnded(playlist, anchors);
+    ).prepare();
 
     anchors.forEach((anchor) => anchor.addEventListener('click', handleClick.bind(null, playlist, anchor, anchors)));
 
     playlist.player.audioElement.addEventListener('play', handlePlay.bind(null, playlist, anchors));
     playlist.player.audioElement.addEventListener('pause', handlePause.bind(null, playlist, anchors));
+    playlist.player.audioElement.addEventListener('ended', handleEnded.bind(null, playlist, anchors));
 });
-
-/**
- * Update the UI when the end of the playlist has been reached.
- *
- * @param {Playlist} playlist
- * @param {HTMLAnchorElement[]} anchors
- * @returns {void}
- */
-const handleEnded = (playlist: PlaylistContract, anchors: HTMLAnchorElement[]): void => {
-    const icon = resolveIcon(anchors[playlist.current]);
-
-    if (!icon) return;
-
-    addClass(removeClass(icon, 'fa-pause'), 'fa-play');
-    removeClass(anchors[playlist.current], 'is-active');
-};
 
 /**
  * Initiate playback of the selected track.
@@ -96,6 +78,24 @@ const handlePause = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => 
     if (!icon) return;
 
     addClass(removeClass(icon, 'fa-pause'), 'fa-play');
+};
+
+/**
+ * Update the UI when the end of the playlist has been reached.
+ *
+ * @param {Playlist} playlist
+ * @param {HTMLAnchorElement[]} anchors
+ * @returns {void}
+ */
+const handleEnded = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => {
+    if (!playlist.ended) return;
+
+    const icon = resolveIcon(anchors[playlist.current]);
+
+    if (!icon) return;
+
+    addClass(removeClass(icon, 'fa-pause'), 'fa-play');
+    removeClass(anchors[playlist.current], 'is-active');
 };
 
 /**

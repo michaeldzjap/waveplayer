@@ -10,7 +10,7 @@
  */
 
 import { Player, Strategy } from './types/Player';
-import { Playlist as PlaylistContract, PlaylistOptions } from './types/Playlist';
+import { Playlist as PlaylistContract } from './types/Playlist';
 
 /**
  * @class
@@ -30,13 +30,6 @@ class Playlist implements PlaylistContract {
      * @var {Object}
      */
     private _tracks: Readonly<{ url: string; strategy: Strategy }[]>;
-
-    /**
-     * The options for this playlist instance.
-     *
-     * @var {PlaylistOptions}
-     */
-    private _options: Readonly<PlaylistOptions>;
 
     /**
      * The index of the currently playing track.
@@ -66,18 +59,13 @@ class Playlist implements PlaylistContract {
      * @param {Object[]} tracks
      * @param {PlaylistOptions} options
      */
-    constructor(
-        player: Player,
-        tracks: Readonly<{ url: string; strategy: Strategy }[]>,
-        options: Readonly<Partial<PlaylistOptions>> = {},
-    ) {
+    constructor(player: Player, tracks: Readonly<{ url: string; strategy: Strategy }[]>) {
         if (!tracks.length) {
             throw new Error('A playlist needs to contain at least one track.');
         }
 
         this._player = player;
         this._tracks = tracks;
-        this._options = options;
 
         this.initialise();
     }
@@ -92,10 +80,6 @@ class Playlist implements PlaylistContract {
 
         this._endedHandler = async (): Promise<void> => {
             await this.next();
-
-            if (this._ended && this._options.onEnded) {
-                this._options.onEnded(this);
-            }
         };
 
         this._player.audioElement.addEventListener('ended', this._endedHandler.bind(this));
@@ -120,15 +104,8 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    get onEnded(): ((playlist: PlaylistContract) => void) | undefined {
-        return this._options.onEnded;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    set onEnded(callback: ((playlist: PlaylistContract) => void) | undefined) {
-        this._options = { ...this._options, onEnded: callback };
+    public get ended(): boolean {
+        return this._ended;
     }
 
     /**
@@ -157,15 +134,22 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    public reset(): this {
+    public prepare(): Promise<this> {
+        return this.reset();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public async reset(): Promise<this> {
         this.pause();
 
         this._current = 0;
         this._ended = false;
 
-        this.handleCurrentTrack(false);
+        await this.handleCurrentTrack(false);
 
-        return this;
+        return Promise.resolve(this);
     }
 
     /**
@@ -213,7 +197,7 @@ class Playlist implements PlaylistContract {
     }
 
     /**
-     * Load and play the current track.
+     * Load the current track and optionally start playback.
      *
      * @param {boolean} forcePlay
      * @return {Promise<void>}
