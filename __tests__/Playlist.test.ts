@@ -15,39 +15,85 @@ afterEach(() => {
 });
 
 /**
- * Explicitly define a getter on the player mock prototype.
+ * Explicitly mock the getter for the audio element on the player mock prototype.
  *
  * Necessary because of Necessary because of https://github.com/facebook/jest/issues/9675
  *
- * @param {string} property
- * @returns {void}
+ * @returns {HTMLAudioElement}
  */
-const defineGetter = (property: string) => {
-    Object.defineProperty(PlayerMock.prototype, property, {
-        // eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
-        get() {},
+const mockAudioElement = (): HTMLAudioElement => {
+    const audioElement = document.createElement('audio');
+
+    Object.defineProperty(Player.prototype, 'audioElement', {
+        get: jest.fn(() => audioElement),
         configurable: true,
     });
+
+    return audioElement;
 };
 
 describe('Playlist', () => {
     it('creates a new instance', () => {
-        defineGetter('audioElement');
+        mockAudioElement();
 
-        const spy = jest
-            .spyOn(PlayerMock.prototype, 'audioElement', 'get')
-            .mockReturnValue(document.createElement('audio'));
-        const player = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
 
-        expect(player).toBeInstanceOf(Playlist);
-        expect(spy).toHaveBeenCalled();
-
-        spy.mockRestore();
+        expect(playlist).toBeInstanceOf(Playlist);
     });
 
     it('throws if the playlist is empty', () => {
         expect(() => {
             new Playlist(new PlayerMock(), []);
         }).toThrow('A playlist needs to contain at least one track.');
+    });
+
+    it('starts playback of the next track when the current track ends', () => {
+        const audioElement = mockAudioElement();
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+        const spy = jest.spyOn(playlist, 'next');
+
+        audioElement.dispatchEvent(new Event('ended'));
+
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
+    });
+
+    it('gets the player instance', () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        expect(playlist.player).toBeInstanceOf(PlayerMock);
+    });
+
+    it('gets the index of the currently selected track', () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        expect(playlist.current).toBe(0);
+    });
+
+    it('gets the flag that indicates whether the playlist has finished.', () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        expect(playlist.ended).toBeFalsy();
+    });
+
+    it('starts playback of the playlist', async () => {
+        mockAudioElement();
+
+        PlayerMock.prototype.paused.mockReturnValue(true);
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        await expect(playlist.play()).resolves.toBe(playlist);
+        expect(PlayerMock.mock.instances[0].paused).toHaveBeenCalled();
+        expect(PlayerMock.mock.instances[0].pause).toHaveBeenCalled();
+        expect(PlayerMock.mock.instances[0].load).toHaveBeenCalled();
+        expect(PlayerMock.mock.instances[0].play).toHaveBeenCalled();
     });
 });
