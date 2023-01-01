@@ -2,11 +2,13 @@
 ![downloads](https://img.shields.io/npm/dt/waveplayer.svg)
 [![Build Status](https://travis-ci.org/michaeldzjap/waveplayer.js.svg?branch=master)](https://travis-ci.org/michaeldzjap/waveplayer.js)
 ![dependencies](https://img.shields.io/librariesio/release/npm/waveplayer)
+[![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+[![codecov](https://codecov.io/gh/michaeldzjap/waveplayer/branch/master/graph/badge.svg)](https://codecov.io/gh/michaeldzjap/waveplayer)
 [![License](https://img.shields.io/npm/l/waveplayer.svg)](https://github.com/michaeldzjap/waveplayer.js/blob/master/LICENSE)
 
-# waveplayer.js
+# waveplayer
 
-An HTML5 based audio player with a waveform view. Inspired by [wavesurfer.js](http://wavesurfer-js.org/) and [waveform.js](http://www.waveformjs.org/), but different.
+An HTML5 based audio player with a waveform view.
 
 ![Screenshot](waveform.png?raw=true "Example")
 
