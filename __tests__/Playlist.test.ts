@@ -96,4 +96,80 @@ describe('Playlist', () => {
         expect(PlayerMock.mock.instances[0].load).toHaveBeenCalled();
         expect(PlayerMock.mock.instances[0].play).toHaveBeenCalled();
     });
+
+    it('pauses playback of the playlist', () => {
+        mockAudioElement();
+
+        PlayerMock.prototype.paused.mockReturnValue(false);
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        expect(playlist.pause()).toBe(playlist);
+    });
+
+    it('resets the playlist', async () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        await expect(playlist.reset()).resolves.toBe(playlist);
+    });
+
+    it('prepares the playlist', async () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        await expect(playlist.prepare()).resolves.toBe(playlist);
+    });
+
+    it('selects the next track in the playlist', async () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [
+            { url: '/stubs/sine.wav', strategy: new DataStrategy([]) },
+            { url: '/stubs/noise.wav', strategy: new DataStrategy([]) },
+        ]);
+
+        await expect(playlist.next()).resolves.toBe(playlist);
+    });
+
+    it('selects the previous track in the playlist', async () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [
+            { url: '/stubs/sine.wav', strategy: new DataStrategy([]) },
+            { url: '/stubs/noise.wav', strategy: new DataStrategy([]) },
+        ]);
+
+        await playlist.next();
+
+        await expect(playlist.previous()).resolves.toBe(playlist);
+    });
+
+    it('selects a track in the playlist', async () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [
+            { url: '/stubs/sine.wav', strategy: new DataStrategy([]) },
+            { url: '/stubs/noise.wav', strategy: new DataStrategy([]) },
+        ]);
+
+        await expect(playlist.select(1)).resolves.toBe(playlist);
+    });
+
+    it('removes the event handlers and destroys the player instance when destroying a playlist instance', async () => {
+        const audioElement = mockAudioElement();
+
+        const spies = [jest.spyOn(PlayerMock.prototype, 'destroy'), jest.spyOn(audioElement, 'removeEventListener')];
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        expect(playlist.destroy()).toBeUndefined();
+
+        spies.forEach((spy) => {
+            expect(spy).toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
+    });
 });
