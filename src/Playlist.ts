@@ -112,7 +112,7 @@ class Playlist implements PlaylistContract {
      * @inheritdoc
      */
     public async play(): Promise<this> {
-        if (!this._player.paused()) return this;
+        if (!this._player.paused) return this;
 
         await this.handleCurrentTrack(false);
         await this._player.play();
@@ -124,7 +124,7 @@ class Playlist implements PlaylistContract {
      * @inheritdoc
      */
     public pause(): this {
-        if (this._player.paused()) return this;
+        if (this._player.paused) return this;
 
         this._player.pause();
 
@@ -203,7 +203,7 @@ class Playlist implements PlaylistContract {
      * @return {Promise<void>}
      */
     private async handleCurrentTrack(forcePlay: boolean): Promise<void> {
-        const isPaused = this._player.paused();
+        const isPaused = this._player.paused;
 
         this._player.pause();
 

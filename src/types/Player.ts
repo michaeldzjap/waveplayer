@@ -46,6 +46,13 @@ interface Player {
     get duration(): number;
 
     /**
+     * Check if audio playback is currently paused.
+     *
+     * @returns {boolean}
+     */
+    get paused(): boolean;
+
+    /**
      * Get the associated view instance.
      *
      * @returns {View}
@@ -89,13 +96,6 @@ interface Player {
      * @returns {this}
      */
     skipTo(seconds: number): this;
-
-    /**
-     * Check if audio is currently playing.
-     *
-     * @returns {boolean}
-     */
-    paused(): boolean;
 
     /**
      * Destroy the player instance and do the appropriate clean up.

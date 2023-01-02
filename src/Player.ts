@@ -241,6 +241,13 @@ class Player implements PlayerContract {
     /**
      * @inheritdoc
      */
+    public get paused(): boolean {
+        return this._audioElement.paused;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public get view(): View {
         return this._view;
     }
@@ -518,13 +525,6 @@ class Player implements PlayerContract {
         this._audioElement.currentTime = seconds;
 
         return this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public paused(): boolean {
-        return this._audioElement.paused;
     }
 
     /**

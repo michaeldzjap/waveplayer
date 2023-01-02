@@ -378,7 +378,7 @@ describe('Player', () => {
             audioElement: '#audio',
         });
 
-        expect(player.paused()).toBeTruthy();
+        expect(player.paused).toBeTruthy();
     });
 
     it('attaches play and error event handlers on every load', async () => {

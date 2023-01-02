@@ -32,6 +32,19 @@ const mockAudioElement = (): HTMLAudioElement => {
     return audioElement;
 };
 
+/**
+ * Explicitly mock the getter for the paused attribute on the player mock prototype.
+ *
+ * @param {boolean} paused
+ * @returns {void}
+ */
+const mockPaused = (paused: boolean): void => {
+    Object.defineProperty(Player.prototype, 'paused', {
+        get: jest.fn(() => paused),
+        configurable: true,
+    });
+};
+
 describe('Playlist', () => {
     it('creates a new instance', () => {
         mockAudioElement();
@@ -85,13 +98,12 @@ describe('Playlist', () => {
 
     it('starts playback of the playlist', async () => {
         mockAudioElement();
-
-        PlayerMock.prototype.paused.mockReturnValue(true);
+        mockPaused(true);
 
         const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
 
         await expect(playlist.play()).resolves.toBe(playlist);
-        expect(PlayerMock.mock.instances[0].paused).toHaveBeenCalled();
+        expect(PlayerMock.mock.instances[0].paused).toBeTruthy();
         expect(PlayerMock.mock.instances[0].pause).toHaveBeenCalled();
         expect(PlayerMock.mock.instances[0].load).toHaveBeenCalled();
         expect(PlayerMock.mock.instances[0].play).toHaveBeenCalled();
@@ -99,8 +111,7 @@ describe('Playlist', () => {
 
     it('pauses playback of the playlist', () => {
         mockAudioElement();
-
-        PlayerMock.prototype.paused.mockReturnValue(false);
+        mockPaused(false);
 
         const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
 

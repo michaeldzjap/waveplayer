@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 const handleClick = (playlist: Playlist, anchor: HTMLAnchorElement, anchors: HTMLAnchorElement[]): void => {
     if (anchors[playlist.current] === anchor) {
-        playlist.player.paused() ? playlist.player.play() : playlist.player.pause();
+        playlist.player.paused ? playlist.player.play() : playlist.player.pause();
     } else {
         playlist.select(anchors.indexOf(anchor));
     }

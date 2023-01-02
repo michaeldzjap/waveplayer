@@ -23,6 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         toggleClass(icon, 'fa-pause', 'fa-play');
 
-        player.paused() ? player.play() : player.pause();
+        player.paused ? player.play() : player.pause();
     };
 });
