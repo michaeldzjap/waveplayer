@@ -9,7 +9,7 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import Player from './Player';
+import Player, { DataStrategy, JsonStrategy, WebAudioStrategy } from './Player';
 import Playlist from './Playlist';
 import View from './View';
 import { PlayerOptions, Strategy } from './types/Player';
@@ -49,4 +49,4 @@ class Factory {
     }
 }
 
-export { Factory, Player, Playlist, View };
+export { DataStrategy, Factory, JsonStrategy, Player, Playlist, View, WebAudioStrategy };
