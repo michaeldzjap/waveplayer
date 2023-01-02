@@ -331,12 +331,13 @@ class Player implements PlayerContract {
      * @returns {Promise<this>}
      */
     private loadAudio(url: string): Promise<this> {
+        if (this._canPlayHandler && this._errorHandler) {
+            this._audioElement.removeEventListener('canplay', this._canPlayHandler);
+            this._audioElement.removeEventListener('error', this._errorHandler);
+        }
+
         this._audioElement.src = url;
         this._audioElement.load();
-
-        if (this._canPlayHandler && this._errorHandler) {
-            return Promise.resolve(this);
-        }
 
         return new Promise((resolve, reject) => {
             this._canPlayHandler = (): void => resolve(this);

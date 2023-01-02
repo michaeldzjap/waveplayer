@@ -4,7 +4,6 @@ import * as audio from '../src/audio';
 import * as utils from '../src/utils';
 import Player, { DataStrategy, JsonStrategy, WebAudioStrategy } from '../src/Player';
 import View from '../src/View';
-import noise from './stubs/noise';
 import sine from './stubs/sine';
 
 jest.mock('../src/View');
@@ -314,12 +313,16 @@ describe('Player', () => {
             audioElement: '#audio',
         });
 
-        setTimeout(() => {
-            audioElement.dispatchEvent(new Event('canplay'));
-        }, 0);
+        for (let i = 0; i < 2; i++) {
+            setTimeout(() => {
+                audioElement.dispatchEvent(new Event('canplay'));
+            }, 0);
 
-        await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(player);
-        await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(player);
+            await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(
+                player,
+            );
+        }
+
         expect(mockLoad).toHaveBeenCalled();
         expect(spy).toHaveBeenCalledWith('waveplayer:/stubs/sine.json');
 
@@ -378,7 +381,7 @@ describe('Player', () => {
         expect(player.paused()).toBeTruthy();
     });
 
-    it('attaches play and error event handlers once', async () => {
+    it('attaches play and error event handlers on every load', async () => {
         document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
 
         const audioElement = document.querySelector<HTMLAudioElement>('#audio');
@@ -391,18 +394,21 @@ describe('Player', () => {
         const player = new Player(new ViewMock([], { container: '#container' }), {
             audioElement: '#audio',
         });
-        const spy = jest.spyOn(audioElement, 'addEventListener');
+        const spies = [jest.spyOn(audioElement, 'addEventListener'), jest.spyOn(audioElement, 'removeEventListener')];
 
-        setTimeout(() => {
-            audioElement.dispatchEvent(new Event('canplay'));
-        }, 0);
+        for (let i = 0; i < 2; i++) {
+            setTimeout(() => {
+                audioElement.dispatchEvent(new Event('canplay'));
+            }, 0);
 
-        await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
-        await expect(player.load('/stubs/noise.wav', new DataStrategy(noise))).resolves.toBe(player);
+            await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+        }
+
         expect(mockLoad).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spies[0]).toHaveBeenCalledTimes(4);
+        expect(spies[1]).toHaveBeenCalledTimes(2);
 
-        spy.mockRestore();
+        spies.forEach((spy) => spy.mockRestore());
     });
 
     for (const { label, code, constant, error } of [
