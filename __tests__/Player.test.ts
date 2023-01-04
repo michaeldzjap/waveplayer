@@ -215,7 +215,7 @@ describe('Player', () => {
 
         const canvas = mockCanvas();
         const player = new Player(new ViewMock([], { container: '#container' }), { audioElement: '#audio' });
-        const spy = jest.spyOn(player, 'skipTo').mockImplementationOnce(() => player);
+        const spy = jest.spyOn(player, 'currentTime', 'set').mockImplementationOnce(() => undefined);
 
         canvas.dispatchEvent(new MouseEvent('click'));
 
@@ -355,18 +355,6 @@ describe('Player', () => {
 
         expect(player.pause()).toBe(player);
         expect(mockPause).toHaveBeenCalled();
-    });
-
-    it('skips to a specific position in an audio file', () => {
-        document.body.innerHTML = '<div id="container"><audio id="audio"></audio></div>';
-
-        mockCanvas();
-
-        const player = new Player(new ViewMock([], { container: '#container' }), {
-            audioElement: '#audio',
-        });
-
-        expect(player.skipTo(1)).toBe(player);
     });
 
     it('checks if audio playback is paused', () => {

@@ -72,6 +72,18 @@ describe('Playlist', () => {
         spy.mockRestore();
     });
 
+    it('gets and sets the force play flag of the playlist', () => {
+        mockAudioElement();
+
+        const playlist = new Playlist(new PlayerMock(), [{ url: '/stubs/sine.wav', strategy: new DataStrategy([]) }]);
+
+        expect(playlist.forcePlay).toBeTruthy();
+
+        playlist.forcePlay = false;
+
+        expect(playlist.forcePlay).toBeFalsy();
+    });
+
     it('gets the player instance', () => {
         mockAudioElement();
 

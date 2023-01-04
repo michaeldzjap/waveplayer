@@ -10,13 +10,29 @@
  */
 
 import { Player, Strategy } from './types/Player';
-import { Playlist as PlaylistContract } from './types/Playlist';
+import { Playlist as PlaylistContract, PlaylistOptions } from './types/Playlist';
 
 /**
  * @class
  * @classdesc Playlist class.
  */
 class Playlist implements PlaylistContract {
+    /**
+     * The default options for a new instance.
+     *
+     * @var {PlaylistOptions}
+     */
+    private static _defaultOptions: Readonly<PlaylistOptions> = {
+        forcePlay: true,
+    };
+
+    /**
+     * The options for this playlist instance.
+     *
+     * @var {PlaylistOptions}
+     */
+    private _options: Readonly<PlaylistOptions>;
+
     /**
      * The player instance associated with this playlist instance.
      *
@@ -59,13 +75,18 @@ class Playlist implements PlaylistContract {
      * @param {Object[]} tracks
      * @param {PlaylistOptions} options
      */
-    constructor(player: Player, tracks: Readonly<{ url: string; strategy: Strategy }[]>) {
+    constructor(
+        player: Player,
+        tracks: Readonly<{ url: string; strategy: Strategy }[]>,
+        options: Readonly<Partial<PlaylistOptions>> = {},
+    ) {
         if (!tracks.length) {
             throw new Error('A playlist needs to contain at least one track.');
         }
 
         this._player = player;
         this._tracks = tracks;
+        this._options = { ...Playlist._defaultOptions, ...options };
 
         this.initialise();
     }
@@ -85,6 +106,20 @@ class Playlist implements PlaylistContract {
         this._player.audioElement.addEventListener('ended', this._endedHandler.bind(this));
 
         return this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public get forcePlay(): boolean {
+        return this._options.forcePlay;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public set forcePlay(forcePlay: boolean) {
+        this._options = { ...this._options, forcePlay };
     }
 
     /**
@@ -155,12 +190,12 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    public async next(forcePlay = true): Promise<this> {
+    public async next(): Promise<this> {
         if (this._current < this._tracks.length - 1) {
             this._current++;
             this._ended = false;
 
-            await this.handleCurrentTrack(forcePlay);
+            await this.handleCurrentTrack(this._options.forcePlay);
         } else {
             this._ended = true;
         }
@@ -171,12 +206,12 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    public async previous(forcePlay = true): Promise<this> {
+    public async previous(): Promise<this> {
         if (this._current > 0) {
             this._current--;
             this._ended = false;
 
-            await this.handleCurrentTrack(forcePlay);
+            await this.handleCurrentTrack(this._options.forcePlay);
         }
 
         return this;
@@ -185,12 +220,12 @@ class Playlist implements PlaylistContract {
     /**
      * @inheritdoc
      */
-    public async select(track: number, forcePlay = true): Promise<this> {
+    public async select(track: number): Promise<this> {
         if (track >= 0 && track < this._tracks.length) {
             this._current = track;
             this._ended = false;
 
-            await this.handleCurrentTrack(forcePlay);
+            await this.handleCurrentTrack(this._options.forcePlay);
         }
 
         return this;

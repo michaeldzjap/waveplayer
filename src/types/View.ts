@@ -63,13 +63,6 @@ interface View {
     set container(element: HTMLDivElement | string);
 
     /**
-     * Get the HTML canvas element that is used for drawing the waveform.
-     *
-     * @returns {HTMLCanvasElement}
-     */
-    get canvas(): HTMLCanvasElement;
-
-    /**
      * Get the width of the drawn waveform.
      *
      * @returns {number}
@@ -80,9 +73,9 @@ interface View {
      * Set the width of the drawn waveform. Only has an effect if the view instance
      * is not operating in responsive mode.
      *
-     * @param {number} value
+     * @param {number} width
      */
-    set width(value: number);
+    set width(width: number);
 
     /**
      * Get the height of the drawn waveform.
@@ -94,9 +87,9 @@ interface View {
     /**
      * Set the height of the drawn waveform.
      *
-     * @param {number} value
+     * @param {number} height
      */
-    set height(value: number);
+    set height(height: number);
 
     /**
      * Get the width of a bar representing an element of the waveform.
@@ -108,9 +101,9 @@ interface View {
     /**
      * Set the width of a bar representing an element of the waveform.
      *
-     * @param {number} value
+     * @param {number} barWidth
      */
-    set barWidth(value: number);
+    set barWidth(barWidth: number);
 
     /**
      * Get the width of the gap that separates consecutive bars.
@@ -122,12 +115,12 @@ interface View {
     /**
      * Set the width of the gap that separates consecutive bars.
      *
-     * @param {number} value
+     * @param {number} barGap
      */
-    set barGap(value: number);
+    set barGap(barGap: number);
 
     /**
-     * Check if the view instance is operating in responsive mode.
+     * Get the flag that determines if the view instance is operating in responsive mode.
      *
      * @returns {boolean}
      */
@@ -137,26 +130,26 @@ interface View {
      * Make the view instance responsive, meaning its width should scale along
      * with the width of its parent container.
      *
-     * @param {boolean} value
+     * @param {boolean} responsive
      */
-    set responsive(value: boolean);
+    set responsive(responsive: boolean);
 
     /**
-     * Determines if the waveform should be drawn with a gradient.
+     * Get the flag that determines if the waveform should be drawn with a gradient.
      *
      * @returns {boolean}
      */
     get gradient(): boolean;
 
     /**
-     * Determine if the waveform should be drawn with a gradient.
+     * Set the flag that determines if the waveform should be drawn with a gradient.
      *
-     * @param {boolean} value
+     * @param {boolean} gradient
      */
-    set gradient(value: boolean);
+    set gradient(gradient: boolean);
 
     /**
-     * Check if we can currently interact with the view instance.
+     * Get the interaction state of the view instance.
      *
      * @returns {boolean}
      */
@@ -165,9 +158,9 @@ interface View {
     /**
      * Set the interaction state of the view instance.
      *
-     * @param {boolean} value
+     * @param {boolean} interact
      */
-    set interact(value: boolean);
+    set interact(interact: boolean);
 
     /**
      * Get the redraw flag. This flag determines whether the waveform should be
@@ -181,19 +174,26 @@ interface View {
     /**
      * Set the redraw flag.
      *
-     * @returns {boolean}
+     * @param {boolean} redraw
      */
-    set redraw(value: boolean);
+    set redraw(redraw: boolean);
 
     /**
-     * Draw the waveform in the canvas HTML element.
+     * Get the HTML canvas element that is used for drawing the waveform.
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    get canvas(): HTMLCanvasElement;
+
+    /**
+     * Draw the waveform on the canvas HTML element.
      *
      * @returns {this}
      */
     draw(): this;
 
     /**
-     * Clear the canvas HTML element where the waveform is drawn in.
+     * Clear the canvas HTML element where the waveform is drawn on.
      *
      * @returns {this}
      */

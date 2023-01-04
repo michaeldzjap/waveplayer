@@ -213,8 +213,8 @@ class Player implements PlayerContract {
     /**
      * @inheritdoc
      */
-    public set volume(value: number) {
-        this._audioElement.volume = value;
+    public set volume(volume: number) {
+        this._audioElement.volume = volume;
     }
 
     /**
@@ -227,8 +227,8 @@ class Player implements PlayerContract {
     /**
      * @inheritdoc
      */
-    public set currentTime(value: number) {
-        this._audioElement.currentTime = value;
+    public set currentTime(currentTime: number) {
+        this._audioElement.currentTime = currentTime;
     }
 
     /**
@@ -313,7 +313,7 @@ class Player implements PlayerContract {
         };
 
         this._clickHandler = (): void => {
-            this.skipTo(this._view.progress * this._audioElement.duration);
+            this.currentTime = this._view.progress * this._audioElement.duration;
         };
 
         this._audioElement.addEventListener('timeupdate', this._timeUpdateHandler.bind(this));
@@ -514,15 +514,6 @@ class Player implements PlayerContract {
      */
     public pause(): this {
         this._audioElement.pause();
-
-        return this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public skipTo(seconds: number): this {
-        this._audioElement.currentTime = seconds;
 
         return this;
     }

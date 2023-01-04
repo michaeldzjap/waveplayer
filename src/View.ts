@@ -201,8 +201,8 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set width(value: number) {
-        this._options = { ...this._options, width: value };
+    public set width(width: number) {
+        this._options = { ...this._options, width };
 
         if (this._options.responsive) return;
 
@@ -226,8 +226,8 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set height(value: number) {
-        this._options = { ...this._options, height: value };
+    public set height(height: number) {
+        this._options = { ...this._options, height };
 
         style(this._waveContainer, { height: `${this._options.height}px` });
         style(this._canvas, {
@@ -249,8 +249,8 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set barWidth(value: number) {
-        this._options = { ...this._options, barWidth: value };
+    public set barWidth(barWidth: number) {
+        this._options = { ...this._options, barWidth };
 
         if (this._options.redraw) this.draw();
     }
@@ -265,8 +265,8 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set barGap(value: number) {
-        this._options = { ...this._options, barGap: value };
+    public set barGap(barGap: number) {
+        this._options = { ...this._options, barGap };
 
         if (this._options.redraw) this.draw();
     }
@@ -281,10 +281,10 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set responsive(value: boolean) {
-        this._options = { ...this._options, responsive: value };
+    public set responsive(responsive: boolean) {
+        this._options = { ...this._options, responsive };
 
-        value ? this.addResizeHandler() : this.removeResizeHandler();
+        responsive ? this.addResizeHandler() : this.removeResizeHandler();
     }
 
     /**
@@ -297,8 +297,8 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set gradient(value: boolean) {
-        this._options = { ...this._options, gradient: value };
+    public set gradient(gradient: boolean) {
+        this._options = { ...this._options, gradient };
 
         if (this._options.redraw) {
             this.clear();
@@ -316,10 +316,10 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set interact(value: boolean) {
-        this._options = { ...this._options, interact: value };
+    public set interact(interact: boolean) {
+        this._options = { ...this._options, interact };
 
-        value ? this.addClickHandler() : this.removeClickHandler();
+        interact ? this.addClickHandler() : this.removeClickHandler();
     }
 
     /**
@@ -332,8 +332,8 @@ class View implements ViewContract {
     /**
      * @inheritdoc
      */
-    public set redraw(value: boolean) {
-        this._options = { ...this._options, redraw: value };
+    public set redraw(redraw: boolean) {
+        this._options = { ...this._options, redraw };
     }
 
     /**

@@ -1,8 +1,28 @@
 import { Player } from './Player';
 
+interface PlaylistOptions {
+    forcePlay: boolean;
+}
+
 interface Playlist {
     /**
-     * Get the associated player instance.
+     * Get the flag that indicates whether playback should start after selecting
+     * another track in the playlist, regardless if the playlist is paused or not.
+     *
+     * @returns {boolean}
+     */
+    get forcePlay(): boolean;
+
+    /**
+     * Set the flag that indicates whether playback should start after selecting
+     * another track in the playlist, regardless if the playlist is paused or not.
+     *
+     * @param {boolean} forcePlay
+     */
+    set forcePlay(forcePlay: boolean);
+
+    /**
+     * Get the player instance associated with the playlist.
      *
      * @returns {Player}
      */
@@ -53,27 +73,24 @@ interface Playlist {
     /**
      * Go to the next track in the playlist.
      *
-     * @param {boolean} forcePlay
      * @returns {Promise<this>}
      */
-    next(forcePlay: boolean): Promise<this>;
+    next(): Promise<this>;
 
     /**
      * Go to the previous track in the playlist.
      *
-     * @param {boolean} forcePlay
      * @returns {Promise<this>}
      */
-    previous(forcePlay: boolean): Promise<this>;
+    previous(): Promise<this>;
 
     /**
      * Select a specific track in the playlist.
      *
      * @param {number} track
-     * @param {boolean} forcePlay
      * @returns {Promise<this>}
      */
-    select(track: number, forcePlay: boolean): Promise<this>;
+    select(track: number): Promise<this>;
 
     /**
      * Destroy the playlist instance and do the appropriate clean up.
@@ -83,4 +100,4 @@ interface Playlist {
     destroy(): void;
 }
 
-export { Playlist };
+export { Playlist, PlaylistOptions };

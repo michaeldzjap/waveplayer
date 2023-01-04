@@ -11,18 +11,18 @@ interface PlayerOptions {
 
 interface Player {
     /**
-     * Get the volume of the currently loaded / playing track.
+     * Get the volume of the currently playing audio file.
      *
      * @returns {number}
      */
     get volume(): number;
 
     /**
-     * Set the volume of the currently loaded / playing track.
+     * Set the volume of the currently playing audio file.
      *
-     * @param  {number} value
+     * @param {number} volume
      */
-    set volume(value: number);
+    set volume(volume: number);
 
     /**
      * Get the current playback time in seconds.
@@ -34,33 +34,33 @@ interface Player {
     /**
      * Set the current playback time in seconds.
      *
-     * @param {number} value
+     * @param {number} currentTime
      */
-    set currentTime(value: number);
+    set currentTime(currentTime: number);
 
     /**
-     * Get the duration of the currently loaded / playing track.
+     * Get the duration of the currently playing audio file.
      *
      * @returns {number}
      */
     get duration(): number;
 
     /**
-     * Check if audio playback is currently paused.
+     * Get the flag that checks if audio playback is currently paused.
      *
      * @returns {boolean}
      */
     get paused(): boolean;
 
     /**
-     * Get the associated view instance.
+     * Get the view instance associated with the player.
      *
      * @returns {View}
      */
     get view(): View;
 
     /**
-     * Get the HTML audio element..
+     * Get the HTML audio element associated with the player.
      *
      * @returns {HTMLAudioElement}
      */
@@ -88,14 +88,6 @@ interface Player {
      * @returns {this}
      */
     pause(): this;
-
-    /**
-     * Move the playback header to a specific time in the audio file.
-     *
-     * @param {number} seconds
-     * @returns {this}
-     */
-    skipTo(seconds: number): this;
 
     /**
      * Destroy the player instance and do the appropriate clean up.
