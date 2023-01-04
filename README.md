@@ -25,7 +25,6 @@ License: MIT
     - [Player](#player)
     - [Playlist](#playlist)
     - [View](#view)
-    - [Options](#options)
     - [Strategies](#strategies)
 - [Examples](#examples)
     - [Player](#player)
@@ -162,6 +161,13 @@ Get the view instance associated with the player.
 
 Get the HTML audio element associated with the player.
 
+#### Options
+
+| Option | Type | Default | Required | Description |
+|--------|------|---------|----------|-------------|
+| audioElement | `string | HTMLAudioElement` | `undefined` | No | The HTML audio element associated with the player instance. If not passed in as an option when creating a new player instance it will be created internally. | 
+| preload | `string` | `metadata` | No | The value of the preload attribute of the HTML audio element. **Note**: will only be used when the player instance creates the HTML audio element internally. |
+
 ### Playlist
 
 #### `playlist = new Playlist(player, tracks);`
@@ -254,6 +260,12 @@ Get the index of the currently playing track.
 
 Get the flag that indicates whether the playlist has finished playback.
 
+#### Options
+
+| Option | Type | Default | Required | Description |
+|--------|------|---------|----------|-------------|
+| forcePlay | `boolean` | `true` | No | Indicates whether playback should start after selecting another track in the playlist, regardless if the playlist is paused or not. |
+
 ### View
 
 #### `view = new View(data, options);`
@@ -289,7 +301,7 @@ The view instance on which the method was called.
 
 Destroy the view instance and do the appropriate clean up. This will remove all internally registered event handlers and remove the HTML canvas element from the DOM.
 
-### `view.data = [-0.1, 0.4, ...];`
+#### `view.data = [-0.1, 0.4, ...];`
 
 Get / set the waveform amplitude data.
 
@@ -297,7 +309,7 @@ Get / set the waveform amplitude data.
 |----------|---------|------|
 | data | `[-0.1, 0.4, ...]` | `Array<number>` |
 
-### `view.progress = 0.5;`
+#### `view.progress = 0.5;`
 
 Get / set the progress of the waveform, assumed to be in the range [0-1].
 
@@ -305,7 +317,7 @@ Get / set the progress of the waveform, assumed to be in the range [0-1].
 |----------|---------|------|
 | progress | `0.5` | `number` |
 
-### `view.container = '#container';`
+#### `view.container = '#container';`
 
 Get / set the HTML container element for the view instance.
 
@@ -313,7 +325,7 @@ Get / set the HTML container element for the view instance.
 |----------|---------|------|
 | container | `'#container'` | `HTMLDivElement | string` |
 
-### `view.width = 512;`
+#### `view.width = 512;`
 
 Get / set the width of the drawn waveform. Setting the width only has an effect if the view instance is not operating in responsive mode.
 
@@ -321,7 +333,7 @@ Get / set the width of the drawn waveform. Setting the width only has an effect 
 |----------|---------|------|
 | width | `512` | `number` |
 
-### `view.height = 128;`
+#### `view.height = 128;`
 
 Get / set the height of the drawn waveform.
 
@@ -329,7 +341,7 @@ Get / set the height of the drawn waveform.
 |----------|---------|------|
 | height | `128` | `number` |
 
-### `view.barWidth = 4;`
+#### `view.barWidth = 4;`
 
 Get / set the width of a bar representing an element of the waveform.
 
@@ -337,7 +349,7 @@ Get / set the width of a bar representing an element of the waveform.
 |----------|---------|------|
 | barWidth | `4` | `number` |
 
-### `view.barGap = 1;`
+#### `view.barGap = 1;`
 
 Get / set the width of the gap that separates consecutive bars.
 
@@ -345,7 +357,7 @@ Get / set the width of the gap that separates consecutive bars.
 |----------|---------|------|
 | barGap | `1` | `number` |
 
-### `view.responsive = true;`
+#### `view.responsive = true;`
 
 Get / set the flag that determines if the view instance is operating in responsive mode.
 
@@ -353,7 +365,7 @@ Get / set the flag that determines if the view instance is operating in responsi
 |----------|---------|------|
 | responsive | `true` | `boolean` |
 
-### `view.gradient = true;`
+#### `view.gradient = true;`
 
 Get / set the flag that determines if the waveform should be drawn with a gradient.
 
@@ -361,7 +373,7 @@ Get / set the flag that determines if the waveform should be drawn with a gradie
 |----------|---------|------|
 | gradient | `true` | `boolean` |
 
-### `view.interact = true;`
+#### `view.interact = true;`
 
 Get / set the interaction state of the view instance.
 
@@ -369,7 +381,7 @@ Get / set the interaction state of the view instance.
 |----------|---------|------|
 | interact | `true` | `boolean` |
 
-### `view.redraw = true;`
+#### `view.redraw = true;`
 
 Get / set the redraw flag. This flag determines whether the waveform should be redrawn when setting one of the view properties that affects the look of the waveform (e.g. width, height, gradient).
 
@@ -377,26 +389,11 @@ Get / set the redraw flag. This flag determines whether the waveform should be r
 |----------|---------|------|
 | redraw | `true` | `boolean` |
 
-### `view.canvas;`
+#### `view.canvas;`
 
 Get the HTML canvas element that is used for drawing the waveform.
 
-### Options
-
-#### Player
-
-| Option | Type | Default | Required | Description |
-|--------|------|---------|----------|-------------|
-| audioElement | `string | HTMLAudioElement` | `undefined` | No | The HTML audio element associated with the player instance. If not passed in as an option when creating a new player instance it will be created internally. | 
-| preload | `string` | `metadata` | No | The value of the preload attribute of the HTML audio element. **Note**: will only be used when the player instance creates the HTML audio element internally. |
-
-#### Playlist
-
-| Option | Type | Default | Required | Description |
-|--------|------|---------|----------|-------------|
-| forcePlay | `boolean` | `true` | No | Indicates whether playback should start after selecting another track in the playlist, regardless if the playlist is paused or not. |
-
-#### View
+#### Options
 
 | Option | Type | Default | Required | Description |
 |--------|------|---------|----------|-------------|
