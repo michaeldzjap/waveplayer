@@ -1,4 +1,6 @@
 * text=auto
 
-*.png binary
+*.aiff binary
 *.mp3 binary
+*.png binary
+*.wav binary

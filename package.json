@@ -8,12 +8,13 @@
     "dist"
   ],
   "scripts": {
-    "development": "cross-env NODE_ENV=local npx rollup --config rollup.config.js --bundleConfigAsCjs",
+    "test": "cross-env NODE_ENV=test npx jest",
+    "development": "cross-env NODE_ENV=local npx rollup --config rollup.config.ts --configPlugin typescript",
     "dev": "npm run development",
-    "production": "cross-env NODE_ENV=production npx rollup --config rollup.config.js --bundleConfigAsCjs",
+    "production": "cross-env NODE_ENV=production npx rollup --config rollup.config.ts --configPlugin typescript",
     "prod": "npm run production",
-    "watch": "cross-env NODE_ENV=local npx rollup --config rollup.config.js --watch --bundleConfigAsCjs",
-    "lint": "npx eslint --ext .js ./",
+    "watch": "cross-env NODE_ENV=local npx rollup --config rollup.config.ts --configPlugin typescript --watch",
+    "lint": "npx eslint --ext .ts,.js ./",
     "clean": "rm -rf dist"
   },
   "repository": {
@@ -34,30 +35,34 @@
   },
   "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
   "devDependencies": {
-    "@babel/core": "^7.20.2",
-    "@babel/eslint-parser": "^7.19.1",
-    "@babel/plugin-external-helpers": "^7.10.4",
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
-    "@rollup/plugin-babel": "^6.0.2",
-    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-commonjs": "^24.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-terser": "^0.1.0",
+    "@rollup/plugin-terser": "^0.2.1",
+    "@rollup/plugin-typescript": "^10.0.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@types/jest": "^29.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
+    "canvas": "^2.10.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^27.1.5",
+    "eslint-plugin-jest-dom": "^4.0.3",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.2",
+    "jest": "^29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "rollup": "^3.3.0"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.11.2"
+    "rollup": "^3.3.0",
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.8.4"
   },
   "lint-staged": {
-    "*.ts": "eslint --cache --fix"
+    "*.{ts,js}": "eslint --cache --fix"
   }
 }
