@@ -45,7 +45,7 @@ After that the package may be directly included using a `<script>` tag:
 ```
 or may be imported (ES6) in your own scripts files:
 ```javascript
-import WavePlayer from 'waveplayer';
+import { Player, Playlist, View } from 'waveplayer';
 ```
 
 ## API
@@ -240,7 +240,7 @@ A promise that resolves to the playlist instance on which the method was called.
 
 Destroy the player instance and do the appropriate clean up. This will remove all internally registered event handlers and call `player.destroy()`.
 
-### `playlist.forcePlay = true;`
+#### `playlist.forcePlay = true;`
 
 Get / set the flag that indicates whether playback should start after selecting another track in the playlist, regardless if the playlist is paused or not.
 
