@@ -1,11 +1,10 @@
 {
-  "name": "example",
-  "version": "1.0.0",
-  "description": "A playlist example for waveplayer.js",
-  "main": "dist/playlist.js",
+  "name": "waveplayer-examples",
+  "version": "2.0.0",
+  "description": "Waveplayer examples",
   "scripts": {
-    "build": "node -r @babel/register ./node_modules/.bin/webpack --progress",
-    "watch": "node -r @babel/register ./node_modules/.bin/webpack --watch --progress",
+    "build": "./node_modules/.bin/webpack --progress",
+    "watch": "npm run build -- --watch",
     "serve": "http-server ./"
   },
   "repository": {
@@ -20,23 +19,20 @@
     "javascript"
   ],
   "author": "Michael Dzjaparidze",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/michaeldzjap/waveplayer.js/issues"
   },
   "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
-  "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.11.5",
-    "@babel/register": "^7.11.5",
-    "babel-loader": "^9.1.0",
-    "webpack": "^5.6.0",
-    "webpack-cli": "^4.2.0"
-  },
   "dependencies": {
-    "@babel/runtime": "^7.11.2",
-    "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
-    "bulma": "^0.9.1",
+    "@fortawesome/fontawesome-free": "^6.2.1",
+    "bulma": "^0.9.4",
     "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.9.3",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
   }
 }

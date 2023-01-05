@@ -5,6 +5,7 @@ module.exports = {
     entry: {
         playlist: './src/playlist',
         simple: './src/simple',
+        view: './src/view',
     },
     output: {
         filename: '[name].js',
@@ -14,20 +15,14 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js/,
-                exclude: path.resolve(__dirname, 'node_modules'),
-                loader: 'babel-loader',
-                options: {
-                    cacheDirectory: true,
-                },
+                test: /\.ts$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
             },
         ],
     },
     resolve: {
-        extensions: ['.js'],
+        extensions: ['.js', '.ts'],
     },
     devtool: 'eval-cheap-module-source-map',
-    optimization: {
-        emitOnErrors: false,
-    },
 };
