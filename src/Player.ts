@@ -10,7 +10,14 @@
  */
 
 import { extractAmplitudes } from './audio';
-import { Strategy, Player as PlayerContract, PlayerOptions } from './types/Player';
+import {
+    DataStrategy,
+    JsonStrategy,
+    Player as PlayerContract,
+    PlayerOptions,
+    Strategy,
+    WebAudioStrategy,
+} from './types/Player';
 import { View } from './types/View';
 import { getJson } from './utils';
 
@@ -43,81 +50,6 @@ const isJsonStrategy = (strategy: Strategy): strategy is JsonStrategy => {
 const isWebAudioStrategy = (strategy: Strategy): strategy is WebAudioStrategy => {
     return strategy.type === 'webAudio';
 };
-
-/**
- * @class
- * @classdesc Data strategy class.
- */
-class DataStrategy implements Strategy {
-    /**
-     * The strategy type identifier.
-     *
-     * @var {string}
-     */
-    public readonly type: string;
-
-    /**
-     * Create a new data strategy instance.
-     *
-     * @param {(number[]|Object)} data
-     */
-    constructor(public readonly data: number[] | { [key: string]: number[] }) {
-        this.type = 'data';
-    }
-}
-
-/**
- * @class
- * @classdesc JSON strategy class.
- */
-class JsonStrategy implements Strategy {
-    /**
-     * The strategy type identifier.
-     *
-     * @var {string}
-     */
-    public readonly type: string;
-
-    /**
-     * Create a new data strategy instance.
-     *
-     * @param {string} url
-     * @param {boolean} cache
-     */
-    constructor(public readonly url: string, public readonly cache = true) {
-        this.type = 'json';
-    }
-}
-
-/**
- * @class
- * @classdesc Web Audio strategy class.
- */
-class WebAudioStrategy implements Strategy {
-    /**
-     * The strategy type identifier.
-     *
-     * @var {string}
-     */
-    public readonly type: string;
-
-    /**
-     * Create a new data strategy instance.
-     *
-     * @param {number} points
-     * @param {boolean} normalise
-     * @param {boolean} logarithmic
-     * @param {boolean} cache
-     */
-    constructor(
-        public readonly points = 800,
-        public readonly normalise = true,
-        public readonly logarithmic = true,
-        public readonly cache = true,
-    ) {
-        this.type = 'webAudio';
-    }
-}
 
 /**
  * @class
@@ -411,7 +343,9 @@ class Player implements PlayerContract {
      * @param {JsonStrategy} strategy
      * @returns {Promise<void>}
      */
-    private async applyJsonStrategy({ url, cache }: { url: string; cache: boolean }): Promise<void> {
+    private async applyJsonStrategy(strategy: JsonStrategy): Promise<void> {
+        const { url, cache } = { ...{ cache: true }, ...strategy };
+
         const data = await this.resolveData(url, cache, () => {
             return getJson<number[] | { [key: string]: number[] }>(url);
         });
@@ -426,15 +360,12 @@ class Player implements PlayerContract {
      * @param {WebAudioStrategy} strategy
      * @returns {Promise<void>}
      */
-    private async applyWebAudioStrategy(
-        url: string,
-        {
-            points,
-            normalise,
-            logarithmic,
-            cache,
-        }: { points?: number; normalise?: boolean; logarithmic?: boolean; cache: boolean },
-    ): Promise<void> {
+    private async applyWebAudioStrategy(url: string, strategy: WebAudioStrategy): Promise<void> {
+        const { points, normalise, logarithmic, cache } = {
+            ...{ points: 800, normalise: true, logarithmic: true, cache: true },
+            ...strategy,
+        };
+
         const data = await this.resolveData(url, cache, () => {
             return extractAmplitudes(url, { points, normalise, logarithmic });
         });
@@ -549,4 +480,3 @@ class Player implements PlayerContract {
 }
 
 export default Player;
-export { DataStrategy, JsonStrategy, WebAudioStrategy };

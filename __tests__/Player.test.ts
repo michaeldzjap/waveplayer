@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 
 import * as audio from '../src/audio';
 import * as utils from '../src/utils';
-import Player, { DataStrategy, JsonStrategy, WebAudioStrategy } from '../src/Player';
+import Player from '../src/Player';
 import View from '../src/View';
 import sine from './stubs/sine';
 
@@ -242,7 +242,7 @@ describe('Player', () => {
             audioElement.dispatchEvent(new Event('canplay'));
         }, 0);
 
-        await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+        await expect(player.load('/stubs/sine.wav', { type: 'data', data: { sine } })).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
     });
 
@@ -265,7 +265,7 @@ describe('Player', () => {
             audioElement.dispatchEvent(new Event('canplay'));
         }, 0);
 
-        await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json'))).resolves.toBe(player);
+        await expect(player.load('/stubs/sine.wav', { type: 'json', url: '/stubs/sine.json' })).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
         expect(spy).toHaveBeenCalledWith('/stubs/sine.json');
 
@@ -291,7 +291,7 @@ describe('Player', () => {
             audioElement.dispatchEvent(new Event('canplay'));
         }, 0);
 
-        await expect(player.load('/stubs/sine.wav', new WebAudioStrategy())).resolves.toBe(player);
+        await expect(player.load('/stubs/sine.wav', { type: 'webAudio' })).resolves.toBe(player);
         expect(mockLoad).toHaveBeenCalled();
         expect(spy).toHaveBeenCalledWith('/stubs/sine.wav', { points: 800, normalise: true, logarithmic: true });
 
@@ -318,9 +318,9 @@ describe('Player', () => {
                 audioElement.dispatchEvent(new Event('canplay'));
             }, 0);
 
-            await expect(player.load('/stubs/sine.wav', new JsonStrategy('/stubs/sine.json', true))).resolves.toBe(
-                player,
-            );
+            await expect(
+                player.load('/stubs/sine.wav', { type: 'json', url: '/stubs/sine.json', cache: true }),
+            ).resolves.toBe(player);
         }
 
         expect(mockLoad).toHaveBeenCalled();
@@ -389,7 +389,7 @@ describe('Player', () => {
                 audioElement.dispatchEvent(new Event('canplay'));
             }, 0);
 
-            await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+            await expect(player.load('/stubs/sine.wav', { type: 'data', data: sine })).resolves.toBe(player);
         }
 
         expect(mockLoad).toHaveBeenCalledTimes(2);
@@ -454,7 +454,9 @@ describe('Player', () => {
                 audioElement.dispatchEvent(new Event('error'));
             }, 0);
 
-            await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).rejects.toEqual(new Error(error));
+            await expect(player.load('/stubs/sine.wav', { type: 'data', data: sine })).rejects.toEqual(
+                new Error(error),
+            );
             expect(mockLoad).toHaveBeenCalled();
         });
     }
@@ -481,7 +483,7 @@ describe('Player', () => {
             audioElement.dispatchEvent(new Event('canplay'));
         }, 0);
 
-        await expect(player.load('/stubs/sine.wav', new DataStrategy(sine))).resolves.toBe(player);
+        await expect(player.load('/stubs/sine.wav', { type: 'data', data: sine })).resolves.toBe(player);
         expect(player.destroy()).toBeUndefined();
         expect(mockLoad).toHaveBeenCalled();
         expect(mockPause).toHaveBeenCalled();

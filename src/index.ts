@@ -9,7 +9,7 @@
  * This work is licensed under the MIT License (MIT)
  */
 
-import Player, { DataStrategy, JsonStrategy, WebAudioStrategy } from './Player';
+import Player from './Player';
 import Playlist from './Playlist';
 import View from './View';
 import { PlayerOptions, Strategy } from './types/Player';
@@ -29,7 +29,7 @@ class Factory {
      * @param {(PlayerOptions&ViewOptions)} options
      * @return {Player}
      */
-    public static create(options: Options): Player {
+    public static createPlayer(options: Options): Player {
         const { audioElement, preload, ...viewOptions } = options;
 
         return new Player(new View([], viewOptions), { audioElement, preload });
@@ -49,4 +49,4 @@ class Factory {
     }
 }
 
-export { DataStrategy, Factory, JsonStrategy, Player, Playlist, View, WebAudioStrategy };
+export { Factory, Player, Playlist, View };

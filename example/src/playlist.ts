@@ -1,5 +1,4 @@
 import { Factory } from '../../src/index';
-import { JsonStrategy } from '../../src/Player';
 import Playlist from '../../src/Playlist';
 import { addClass, removeClass } from './utils';
 
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const playlist = await Factory.createPlaylist(
         anchors.map((anchor) => ({
             url: `${anchor.dataset.path}.mp3`,
-            strategy: new JsonStrategy(`${anchor.dataset.path}.json`),
+            strategy: { type: 'json', url: `${anchor.dataset.path}.json` },
         })),
         { container: '#waveform' },
     ).prepare();

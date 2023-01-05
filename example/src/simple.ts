@@ -1,16 +1,15 @@
 import { Factory } from '../../src/index';
-import { JsonStrategy } from '../../src/Player';
 import { toggleClass } from './utils';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Create a new player instance
-    const player = Factory.create({ container: '#waveform' });
+    const player = Factory.createPlayer({ container: '#waveform' });
     const button = document.getElementById('playback-button') as HTMLButtonElement | null;
 
     if (!button) return;
 
     // Load a track and activate the playback button when finished
-    await player.load('../audio/extase_1.mp3', new JsonStrategy('../audio/extase_1.json'));
+    await player.load('../audio/extase_1.mp3', { type: 'json', url: '../audio/extase_1.json' });
 
     button.disabled = false;
 

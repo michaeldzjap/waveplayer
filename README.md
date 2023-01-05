@@ -56,7 +56,7 @@ The constructor of each class takes an option object as an argument. See the [Op
 
 A convenience class for building player or playlist instances without having to explicitly specify any dependencies yourself.
 
-#### `player = Factory.create(options);`
+#### `player = Factory.createPlayer(options);`
 
 Create a new player instance.
 
@@ -74,7 +74,7 @@ Create a new playlist instance.
 
 | Argument | Example | Type | Required | Description |
 |----------|---------|------|----------|-------------|
-| tracks | `[ { url: 'path-to-audio.mp3', strategy: new DataStrategy([...]) } ]` | `Array<{ url: string; strategy: Strategy }>` | Yes | An array of objects, where each object references an URL or path to an audio file and a strategy data object that instructs how to resolve the amplitude data associated with the audio file. See the [Strategies](#strategies) section for more information on the available strategies and how to use them. |
+| tracks | `[ { url: 'path-to-audio.mp3', strategy: { type: 'data', data: [0.1, -0.4, ...] } } ]` | `Array<{ url: string; strategy: Strategy }>` | Yes | An array of objects, where each object references an URL or path to an audio file and a strategy data object that instructs how to resolve the amplitude data associated with the audio file. See the [Strategies](#strategies) section for more information on the available strategies and how to use them. |
 | options | `{ container: '#container' }` | `Object` | Yes | An object where each key / value pair represents a valid player or view option. |
 
 ##### Returns
@@ -103,7 +103,7 @@ Load an audio track using a specific strategy.
 | Argument | Example | Type | Required | Description |
 |----------|---------|------|----------|-------------|
 | url | `'path-to-audio.mp3'` | `string` | Yes | A path or URL to an audio file |
-| strategy | `new JsonStrategy('path-to-amplitude-data.json')` | `Strategy` | Yes | A strategy data object that instructs how to resolve the amplitude data associated with the audio file. |
+| strategy | `{ type: 'json', url: 'path-to-amplitude-data.json' }` | `Strategy` | Yes | A strategy data object that instructs how to resolve the amplitude data associated with the audio file. |
 
 ##### Returns
 
@@ -177,7 +177,7 @@ Create a new playlist instance.
 | Argument | Example | Type | Required | Description |
 |----------|---------|------|----------|-------------|
 | player | `new Player(new View([], { container: '#container' }))` | `Player` | Yes | A player instance used for playing back all the tracks / audio files that make up the playlist. |
-| tracks | `[ { url: 'path-to-audio.mp3', strategy: new DataStrategy([...]) } ]` | `Array<{ url: string; strategy: Strategy }>` | Yes | An array of objects, where each object references an URL or path to an audio file and a strategy data object that instructs how to resolve the amplitude data associated with the audio file. See the [Strategies](#strategies) section for more information on the available strategies and how to use them. |
+| tracks | `[ { url: 'path-to-audio.mp3', strategy: { type: 'data', data: [0.1, -0.4, ...] } } ]` | `Array<{ url: string; strategy: Strategy }>` | Yes | An array of objects, where each object references an URL or path to an audio file and a strategy data object that instructs how to resolve the amplitude data associated with the audio file. See the [Strategies](#strategies) section for more information on the available strategies and how to use them. |
 
 ##### Returns
 
@@ -417,19 +417,38 @@ _waveplayer_ v2 introduces the concept of strategies for providing amplitude dat
 
 Use this strategy if your waveform amplitude data is readily available in the form of an array of floating point values, assumed to be in the range [-1, 1].
 
-```javascript
-const strategy = new DataStrategy([-0.1, 0.4, ...]);
-```
+| Key | Value | Type | Default | Required | Description |
+|-----|-------|------|---------|----------|-------------|
+| type | `'data'` | `string` | `undefined` | Yes | The strategy type identifier. |
+| data | `[0.1, -0.4, ...]` | `Array<number>` | `undefined` | Yes | An array of floating point values representing the amplitude of some audio file at equally spaced intervals that will be used to draw the waveform. |
 
 #### JSON Strategy
 
-Use this strategy if your waveform amplitude data is stored inside a _JSON_ file. This _JSON_ file should either consist of a single array structure containing floating point values, assumed to be in the range [-1, 1] or key / value pairs where the value point to such an array. Currently, only the first key / value pair is used for the amplitude data.
+Use this strategy if your waveform amplitude data is stored inside a _JSON_ file. This _JSON_ file should either consist of a single array structure containing floating point values, assumed to be in the range [-1, 1] or key / value pairs where the value point to such an array. Currently, only the first key / value pair is used for the amplitude data. Waveform amplitude data extracted from a _JSON_ file is cached by default
+
+| Key | Value | Type | Default | Required | Description |
+|-----|-------|------|---------|----------|-------------|
+| type | `'json'` | `string` | `undefined` | Yes | The strategy type identifier. |
+| url | `'path-to-amplitude-data.json'` | `string` | `undefined` | Yes | A path or URL to a _JSON_ file containing amplitude data for an audio file. |
+| cache | `true` | `boolean` | `true` | No | Determines whether to use cached amplitude data (if it exists) or to extract the data from the _JSON_ file. |
 
 #### WebAudio Strategy
 
 Although convenient, this strategy is a bit experimental and if you can use either the _JSON_ or data strategies it is generally adviced to use one of these. Use this strategy if you would like to extract the amplitude data of an audio file during runtime. Note that this could take a considerable amount of time depending on the duration of the audio file and the number of points you would like to extract. Also, not all audio file formats are supported, although _MP3_ and _WAV_ should work just fine.
 
-> _**Note**: The JSON and WebAudio strategies cache amplitude data by default in order to speed up subsequent loading of the same audio files. If you don't want this to happen you should set the "cache" flag of the relevant strategy to `false`._
+| Argument | Example | Type | Required | Description |
+|----------|---------|------|----------|-------------|
+
+
+| Key | Value | Type | Default | Required | Description |
+|-----|-------|------|---------|----------|-------------|
+| type | `'webAudio'` | `string` | `undefined` | Yes | The strategy type identifier. |
+| points | `1200` | `number` | `800` | No | The number of equally spaced amplitude data points to extract from the audio file. |
+| normalise | `false` | `boolean` | `true` | No | Determines whether to normalise the extracted data points (i.e. scale them such that the absolute maximum is 1). |
+| logarithmic | `true` | `boolean` | `true` | No | Determines whether to compute the extracted data points on a logarithmic or linear scale. |
+| cache | `false` | `boolean` | `true` | No | Determines whether to use cached amplitude data (if it exists) or to extract the data from the audio file. |
+
+> _**Note**: The JSON and WebAudio strategies cache amplitude data by default in order to speed up subsequent loading of the same audio files. If this is undesired behaviour you should set the "cache" flag of the relevant strategy to `false`._
 
 ## Examples
 
@@ -440,16 +459,16 @@ This section discusses a few simple examples for more worked out, fully working 
 Create a player instance and pass in some (optional) options:
 
 ```javascript
-import { DataStrategy, Factory } from 'waveplayer';
+import { Factory } from 'waveplayer';
 
-const player = Factory.create({
+const player = Factory.createPlayer({
     container: '#waveform',
     barWidth: 4,
     barGap: 1,
     height: 128,
 });
 
-await player.load('url-to-some-audio-file.mp3', new DataStrategy([...]));
+await player.load('url-to-some-audio-file.mp3', { type: 'data', data: [0.1, -0.4, ...] });
 
 player.play();
 ```
@@ -467,10 +486,10 @@ const player = new Player(new View([], { 'container': '#container' }), { 'audioE
 Load some audio files from a URL and start playback when loading has finished:
 
 ```javascript
-import { DataStrategy, Factory } from 'waveplayer';
+import { Factory } from 'waveplayer';
 
 playlist = await Factory.createPlaylist(
-    [{ url: 'url-to-some-audio-file.mp3', strategy: new DataStrategy([...]) }],
+    [{ url: 'url-to-some-audio-file.mp3', strategy: { type: 'data', data: [0.1, -0.4, ...] } }],
     { container: '#waveform' },
 ).prepare();
 
@@ -480,11 +499,11 @@ playlist.play();
 Similarly to the `Player` class you can also create a playlist instance explicitly:
 
 ```javascript
-import { Player, Playlist, View, JsonStrategy } from 'waveplayer';
+import { Player, Playlist, View } from 'waveplayer';
 
 const playlist = new Playlist(
     new Player(new View([], { container: '#waveform' })),
-    [{ url: 'url-to-some-audio-file.mp3', strategy: new JsonStrategy('url-to-some-amplitude-data.json') }],
+    [{ url: 'url-to-some-audio-file.mp3', strategy: { type: 'json', url: 'url-to-some-amplitude-data.json' } }],
 );
 ```
 
