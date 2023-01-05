@@ -29,6 +29,77 @@ export const lin2log = (value: number): number => {
 };
 
 /**
+ * Reduce a multi dimensional array of amplitudes to a single array of amplitudes
+ * by computing the average.
+ *
+ * @param {number[][]} input
+ * @returns {number[]}
+ */
+const averageChannels = (input: number[][]): number[] => {
+    const output = Array(input[0].length);
+
+    for (let i = 0; i < output.length; i++) {
+        let sum = 0;
+
+        for (let j = 0; j < input.length; j++) {
+            sum += input[j][i];
+        }
+
+        output[i] = sum / input.length;
+    }
+
+    return output;
+};
+
+/**
+ * Reduce the amplitude data of an audio file by linearly interpolating the original
+ * amplitude data at equally spaced points and summing over channels.
+ *
+ * @param {ArrayBuffer} data
+ * @param {AudioContext} context
+ * @param {Object} options
+ * @returns {Promise<number[]>}
+ */
+const computeAmplitudes = async (
+    data: ArrayBuffer,
+    context: AudioContext,
+    options: Readonly<{ points: number; normalise: boolean; logarithmic: boolean }>,
+): Promise<number[]> => {
+    const { points, normalise, logarithmic } = options;
+    const buffer = await context.decodeAudioData(data);
+    const amplitudes: number[][] = Array(buffer.numberOfChannels).fill(new Array(points));
+
+    for (let i = 0; i < buffer.numberOfChannels; i++) {
+        const data = buffer.getChannelData(i);
+        const ratio = data.length / points;
+
+        for (let j = 0, incr = 0; j < points; j++, incr += ratio) {
+            const x = Math.floor(incr);
+
+            amplitudes[i][j] = interpolate(data[x], data[x + 1] ?? 0, incr - x);
+        }
+    }
+
+    const output = buffer.numberOfChannels > 1 ? averageChannels(amplitudes) : amplitudes[0];
+
+    if (logarithmic) {
+        for (let i = 0; i < output.length; i++) {
+            output[i] = lin2log(output[i]);
+        }
+    }
+
+    if (normalise) {
+        const max = Math.max.apply(null, output.map(Math.abs));
+
+        for (let i = 0; i < output.length; i++) {
+            output[i] = output[i] / max;
+        }
+    }
+
+    return output;
+};
+
+/**
  * Extract the amplitude data from an audio file pointed to by "url".
  *
  * @param {string} url
@@ -39,8 +110,6 @@ export const extractAmplitudes = (
     url: string,
     options: Readonly<Partial<{ points: number; normalise: boolean; logarithmic: boolean }>> = {},
 ): Promise<number[]> => {
-    const { points, normalise, logarithmic } = { ...{ points: 800, normalise: true, logarithmic: true }, ...options };
-
     return new Promise((resolve): void => {
         const context = new AudioContext();
         const request = new XMLHttpRequest();
@@ -49,50 +118,10 @@ export const extractAmplitudes = (
         request.responseType = 'arraybuffer';
 
         request.onload = async () => {
-            let output: number[];
-            const buffer = await context.decodeAudioData(request.response);
-            const amplitudes: number[][] = Array(buffer.numberOfChannels).fill(new Array(points));
-
-            for (let i = 0; i < buffer.numberOfChannels; i++) {
-                const data = buffer.getChannelData(i);
-                const ratio = data.length / points;
-
-                for (let j = 0, incr = 0; j < points; j++, incr += ratio) {
-                    const x = Math.floor(incr);
-
-                    amplitudes[i][j] = interpolate(data[x], data[x + 1] ?? 0, incr - x);
-                }
-            }
-
-            if (buffer.numberOfChannels > 1) {
-                output = Array(points);
-
-                for (let i = 0; i < output.length; i++) {
-                    let sum = 0;
-
-                    for (let j = 0; j < buffer.numberOfChannels; j++) {
-                        sum += amplitudes[j][i];
-                    }
-
-                    output[i] = sum / buffer.numberOfChannels;
-                }
-            } else {
-                output = [...amplitudes[0]];
-            }
-
-            if (logarithmic) {
-                for (let i = 0; i < output.length; i++) {
-                    output[i] = lin2log(output[i]);
-                }
-            }
-
-            if (normalise) {
-                const max = Math.max.apply(null, output.map(Math.abs));
-
-                for (let i = 0; i < output.length; i++) {
-                    output[i] = output[i] / max;
-                }
-            }
+            const output = await computeAmplitudes(request.response, context, {
+                ...{ points: 800, normalise: true, logarithmic: true },
+                ...options,
+            });
 
             resolve(output);
         };
