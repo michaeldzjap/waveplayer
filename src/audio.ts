@@ -41,8 +41,8 @@ const averageChannels = (input: number[][]): number[] => {
     for (let i = 0; i < output.length; i++) {
         let sum = 0;
 
-        for (let j = 0; j < input.length; j++) {
-            sum += input[j][i];
+        for (const channel of input) {
+            sum += channel[i];
         }
 
         output[i] = sum / input.length;
