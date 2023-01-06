@@ -166,7 +166,7 @@ Get the HTML audio element associated with the player.
 
 | Option | Type | Default | Required | Description |
 |--------|------|---------|----------|-------------|
-| audioElement | `string | HTMLAudioElement` | `undefined` | No | The HTML audio element associated with the player instance. If not passed in as an option when creating a new player instance it will be created internally. | 
+| audioElement | `string \| HTMLAudioElement` | `undefined` | No | The HTML audio element associated with the player instance. If not passed in as an option when creating a new player instance it will be created internally. | 
 | preload | `string` | `metadata` | No | The value of the preload attribute of the HTML audio element. **Note**: will only be used when the player instance creates the HTML audio element internally. |
 
 ### Playlist
@@ -398,7 +398,7 @@ Get the HTML canvas element that is used for drawing the waveform.
 
 | Option | Type | Default | Required | Description |
 |--------|------|---------|----------|-------------|
-| container | `string | HTMLDivElement` | `undefined` | Yes | CSS selector or div HTML element that acts as the container for the HTML canvas element on which the waveform will be drawn. |
+| container | `string \| HTMLDivElement` | `undefined` | Yes | CSS selector or div HTML element that acts as the container for the HTML canvas element on which the waveform will be drawn. |
 | width | `integer` | `512` | No | The width of the waveform in pixels (only relevant when the `responsive` option is set to `false`). |
 | height | `integer` | `128` | No | The height of the waveform in pixels. |
 | waveformColor | `string` | `#428bca` | No | The fill color of the waveform bars that have not been played back so far. |
