@@ -1,6 +1,6 @@
 ![NPM Version](https://img.shields.io/npm/v/waveplayer.svg?branch=master)
 ![downloads](https://img.shields.io/npm/dt/waveplayer.svg)
-[![Build Status](https://travis-ci.org/michaeldzjap/waveplayer.js.svg?branch=master)](https://travis-ci.org/michaeldzjap/waveplayer.js)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/michaeldzjap/waveplayer/ci.yml?branch=master)
 ![dependencies](https://img.shields.io/librariesio/release/npm/waveplayer)
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/michaeldzjap/waveplayer/branch/master/graph/badge.svg)](https://codecov.io/gh/michaeldzjap/waveplayer)
@@ -9,13 +9,13 @@
 
 # waveplayer
 
-An HTML5 based audio player with a waveform view.
+An _HTML5_ based audio player with a waveform view.
 
 ![Screenshot](waveform.png?raw=true "Example")
 
-Author: Michael Dzjaparidze
+Author: _Michael Dzjaparidze_
 
-License: MIT
+License: _MIT_
 
 ## Table of Contents
 
@@ -33,7 +33,7 @@ License: MIT
     - [View](#view)
 
 ## Requirements
-In order to minimise waveform drawing times it is adviced to supply waveform amplitude data yourself using either the _data_ or _JSON_ strategies. There exist a number of tools for extracting waveform data in JSON format from an audio file; [wav2json](https://github.com/beschulz/wav2json) or [py-wav2json](https://github.com/michaeldzjap/py-wav2json) can be used for instance. It is enough to provide a single array of floating point values. If the JSON contains a collection of name / value pairs only the first name / value pair will be used.
+In order to minimise waveform drawing times it is adviced to supply waveform amplitude data yourself using either the data or _JSON_ strategies. There exist a number of tools for extracting waveform data in _JSON_ format from an audio file; [wav2json](https://github.com/beschulz/wav2json) or [py-wav2json](https://github.com/michaeldzjap/py-wav2json) can be used for instance. It is enough to provide a single array of floating point values. If the _JSON_ contains a collection of name / value pairs only the first name / value pair will be used.
 
 ## Installation
 This package is available through [npm](https://www.npmjs.com/):
