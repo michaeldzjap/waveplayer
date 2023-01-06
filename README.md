@@ -44,7 +44,7 @@ After that the package may be directly included using a `<script>` tag:
 ```html
 <script src="path-to-waveform-js/waveplayer.js"></script>
 ```
-or may be imported (ES6) in your own scripts files:
+or may be imported in your own scripts files:
 ```javascript
 import { Player, Playlist, View } from 'waveplayer';
 ```
@@ -437,10 +437,6 @@ Use this strategy if your waveform amplitude data is stored inside a _JSON_ file
 
 Although convenient, this strategy is a bit experimental and if you can use either the _JSON_ or data strategies it is generally adviced to use one of these. Use this strategy if you would like to extract the amplitude data of an audio file during runtime. Note that this could take a considerable amount of time depending on the duration of the audio file and the number of points you would like to extract. Also, not all audio file formats are supported, although _MP3_ and _WAV_ should work just fine.
 
-| Argument | Example | Type | Required | Description |
-|----------|---------|------|----------|-------------|
-
-
 | Key | Value | Type | Default | Required | Description |
 |-----|-------|------|---------|----------|-------------|
 | type | `'webAudio'` | `string` | `undefined` | Yes | The strategy type identifier. |
@@ -515,7 +511,7 @@ It is also possible to only use the view part of _waveplayer_ if you are interes
 ```javascript
 import { View } from 'waveplayer';
 
-const view = new View([...], { 'container': '#container' });
+const view = new View([0.1, -0.4, ...], { 'container': '#container' });
 
 view.progress = 0.5;
 
