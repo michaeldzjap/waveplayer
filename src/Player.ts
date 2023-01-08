@@ -1,7 +1,7 @@
 /**
  * Player.ts
  *
- * © Michaël Dzjaparidze 2022
+ * © Michaël Dzjaparidze 2023
  * https://github.com/michaeldzjap
  *
  * An HTML5 based audio player with a waveform view
