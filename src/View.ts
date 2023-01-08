@@ -1,7 +1,7 @@
 /**
  * View.ts
  *
- * © Michaël Dzjaparidze 2022
+ * © Michaël Dzjaparidze 2023
  * https://github.com/michaeldzjap
  *
  * Draws a waveform using the HTML5 canvas object

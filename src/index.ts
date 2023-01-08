@@ -1,7 +1,7 @@
 /**
  * Factory.ts
  *
- * © Michaël Dzjaparidze 2022
+ * © Michaël Dzjaparidze 2023
  * https://github.com/michaeldzjap
  *
  * Factory functionality for waveplayer
