@@ -60,7 +60,7 @@
     "prettier": "^2.7.1",
     "rollup": "^3.3.0",
     "ts-jest": "^29.0.3",
-    "typescript": "^4.8.4"
+    "typescript": "^5.0.2"
   },
   "lint-staged": {
     "*.{ts,js}": "eslint --cache --fix"
