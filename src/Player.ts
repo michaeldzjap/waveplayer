@@ -219,13 +219,13 @@ class Player implements PlayerContract {
      * @returns {HTMLAudioElement}
      */
     private createAudioElement(): HTMLAudioElement {
-        const audioElement = document.createElement('audio');
+        const element = document.createElement('audio');
 
-        audioElement.controls = false;
-        audioElement.autoplay = false;
-        audioElement.preload = this._options.preload;
+        element.controls = false;
+        element.autoplay = false;
+        element.preload = this._options.preload;
 
-        return audioElement;
+        return element;
     }
 
     /**
