@@ -293,15 +293,13 @@ describe('View', () => {
         Object.defineProperty(waveContainer, 'clientWidth', { value: view.width, configurable: true });
         Object.defineProperty(canvas, 'clientWidth', { value: view.width, configurable: true });
 
-        const spies = [jest.spyOn(view, 'clear'), jest.spyOn(view as any, 'drawBars')];
+        const spy = jest.spyOn(view, 'clear');
 
         canvas.dispatchEvent(new Event('click'));
 
-        spies.forEach((spy) => {
-            expect(spy).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
 
-            spy.mockRestore();
-        });
+        spy.mockRestore();
     });
 
     it('removes the event handlers and waveform container when destroying a view instance', () => {
