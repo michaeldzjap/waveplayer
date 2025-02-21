@@ -7,7 +7,7 @@
  * @returns {number}
  */
 export const interpolate = (x: number, y: number, frac: number): number => {
-    return x * (1 - frac) + y * frac;
+	return x * (1 - frac) + y * frac;
 };
 
 /**
@@ -19,13 +19,13 @@ export const interpolate = (x: number, y: number, frac: number): number => {
  * @returns {number}
  */
 export const lin2log = (value: number): number => {
-    let db = (3 + Math.log10(Math.min(Math.max(Math.abs(value), 0.001), 1))) / 3;
+	let db = (3 + Math.log10(Math.min(Math.max(Math.abs(value), 0.001), 1))) / 3;
 
-    if (value < 0) {
-        db *= -1;
-    }
+	if (value < 0) {
+		db *= -1;
+	}
 
-    return db;
+	return db;
 };
 
 /**
@@ -36,19 +36,19 @@ export const lin2log = (value: number): number => {
  * @returns {number[]}
  */
 const averageChannels = (input: number[][]): number[] => {
-    const output = Array(input[0].length);
+	const output = Array(input[0].length);
 
-    for (let i = 0; i < output.length; i++) {
-        let sum = 0;
+	for (let i = 0; i < output.length; i++) {
+		let sum = 0;
 
-        for (const channel of input) {
-            sum += channel[i];
-        }
+		for (const channel of input) {
+			sum += channel[i];
+		}
 
-        output[i] = sum / input.length;
-    }
+		output[i] = sum / input.length;
+	}
 
-    return output;
+	return output;
 };
 
 /**
@@ -61,42 +61,49 @@ const averageChannels = (input: number[][]): number[] => {
  * @returns {Promise<number[]>}
  */
 const computeAmplitudes = async (
-    data: ArrayBuffer,
-    context: AudioContext,
-    options: Readonly<{ points: number; normalise: boolean; logarithmic: boolean }>,
+	data: ArrayBuffer,
+	context: AudioContext,
+	options: Readonly<{
+		points: number;
+		normalise: boolean;
+		logarithmic: boolean;
+	}>,
 ): Promise<number[]> => {
-    const { points, normalise, logarithmic } = options;
-    const buffer = await context.decodeAudioData(data);
-    const amplitudes: number[][] = Array(buffer.numberOfChannels).fill(new Array(points));
+	const { points, normalise, logarithmic } = options;
+	const buffer = await context.decodeAudioData(data);
+	const amplitudes: number[][] = Array(buffer.numberOfChannels).fill(
+		new Array(points),
+	);
 
-    for (let i = 0; i < buffer.numberOfChannels; i++) {
-        const data = buffer.getChannelData(i);
-        const ratio = data.length / points;
+	for (let i = 0; i < buffer.numberOfChannels; i++) {
+		const data = buffer.getChannelData(i);
+		const ratio = data.length / points;
 
-        for (let j = 0, incr = 0; j < points; j++, incr += ratio) {
-            const x = Math.floor(incr);
+		for (let j = 0, incr = 0; j < points; j++, incr += ratio) {
+			const x = Math.floor(incr);
 
-            amplitudes[i][j] = interpolate(data[x], data[x + 1] ?? 0, incr - x);
-        }
-    }
+			amplitudes[i][j] = interpolate(data[x], data[x + 1] ?? 0, incr - x);
+		}
+	}
 
-    const output = buffer.numberOfChannels > 1 ? averageChannels(amplitudes) : amplitudes[0];
+	const output =
+		buffer.numberOfChannels > 1 ? averageChannels(amplitudes) : amplitudes[0];
 
-    if (logarithmic) {
-        for (let i = 0; i < output.length; i++) {
-            output[i] = lin2log(output[i]);
-        }
-    }
+	if (logarithmic) {
+		for (let i = 0; i < output.length; i++) {
+			output[i] = lin2log(output[i]);
+		}
+	}
 
-    if (normalise) {
-        const max = Math.max.apply(null, output.map(Math.abs));
+	if (normalise) {
+		const max = Math.max.apply(null, output.map(Math.abs));
 
-        for (let i = 0; i < output.length; i++) {
-            output[i] = output[i] / max;
-        }
-    }
+		for (let i = 0; i < output.length; i++) {
+			output[i] = output[i] / max;
+		}
+	}
 
-    return output;
+	return output;
 };
 
 /**
@@ -107,25 +114,27 @@ const computeAmplitudes = async (
  * @returns {Promise<number[]>}
  */
 export const extractAmplitudes = (
-    url: string,
-    options: Readonly<Partial<{ points: number; normalise: boolean; logarithmic: boolean }>> = {},
+	url: string,
+	options: Readonly<
+		Partial<{ points: number; normalise: boolean; logarithmic: boolean }>
+	> = {},
 ): Promise<number[]> => {
-    return new Promise((resolve): void => {
-        const context = new AudioContext();
-        const request = new XMLHttpRequest();
+	return new Promise((resolve): void => {
+		const context = new AudioContext();
+		const request = new XMLHttpRequest();
 
-        request.open('GET', url);
-        request.responseType = 'arraybuffer';
+		request.open('GET', url);
+		request.responseType = 'arraybuffer';
 
-        request.onload = async () => {
-            const output = await computeAmplitudes(request.response, context, {
-                ...{ points: 800, normalise: true, logarithmic: true },
-                ...options,
-            });
+		request.onload = async () => {
+			const output = await computeAmplitudes(request.response, context, {
+				...{ points: 800, normalise: true, logarithmic: true },
+				...options,
+			});
 
-            resolve(output);
-        };
+			resolve(output);
+		};
 
-        request.send();
-    });
+		request.send();
+	});
 };

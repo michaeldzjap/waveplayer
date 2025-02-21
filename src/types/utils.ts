@@ -1,13 +1,13 @@
 interface RgbColor {
-    r: number;
-    g: number;
-    b: number;
+	r: number;
+	g: number;
+	b: number;
 }
 
 interface HsvColor {
-    h: number;
-    s: number;
-    v: number;
+	h: number;
+	s: number;
+	v: number;
 }
 
-export { RgbColor, HsvColor };
+export type { RgbColor, HsvColor };

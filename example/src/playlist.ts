@@ -1,24 +1,40 @@
+import type Playlist from '../../src/Playlist';
 import { Factory } from '../../src/index';
-import Playlist from '../../src/Playlist';
 import { addClass, removeClass } from './utils';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const anchors = [...document.querySelectorAll<HTMLAnchorElement>('.panel-block')];
+	const anchors = [
+		...document.querySelectorAll<HTMLAnchorElement>('.panel-block'),
+	];
 
-    // Create a new playlist instance and prepare it for playback
-    const playlist = await Factory.createPlaylist(
-        anchors.map((anchor) => ({
-            url: `${anchor.dataset.path}.mp3`,
-            strategy: { type: 'json', url: `${anchor.dataset.path}.json` },
-        })),
-        { container: '#waveform' },
-    ).prepare();
+	// Create a new playlist instance and prepare it for playback
+	const playlist = await Factory.createPlaylist(
+		anchors.map((anchor) => ({
+			url: `${anchor.dataset.path}.mp3`,
+			strategy: { type: 'json', url: `${anchor.dataset.path}.json` },
+		})),
+		{ container: '#waveform' },
+	).prepare();
 
-    anchors.forEach((anchor) => anchor.addEventListener('click', handleClick.bind(null, playlist, anchor, anchors)));
+	for (const anchor of anchors) {
+		anchor.addEventListener(
+			'click',
+			handleClick.bind(null, playlist, anchor, anchors),
+		);
+	}
 
-    playlist.player.audioElement.addEventListener('play', handlePlay.bind(null, playlist, anchors));
-    playlist.player.audioElement.addEventListener('pause', handlePause.bind(null, playlist, anchors));
-    playlist.player.audioElement.addEventListener('ended', handleEnded.bind(null, playlist, anchors));
+	playlist.player.audioElement.addEventListener(
+		'play',
+		handlePlay.bind(null, playlist, anchors),
+	);
+	playlist.player.audioElement.addEventListener(
+		'pause',
+		handlePause.bind(null, playlist, anchors),
+	);
+	playlist.player.audioElement.addEventListener(
+		'ended',
+		handleEnded.bind(null, playlist, anchors),
+	);
 });
 
 /**
@@ -29,12 +45,16 @@ document.addEventListener('DOMContentLoaded', async () => {
  * @param {HTMLAnchorElement[]} anchors
  * @returns {void}
  */
-const handleClick = (playlist: Playlist, anchor: HTMLAnchorElement, anchors: HTMLAnchorElement[]): void => {
-    if (anchors[playlist.current] === anchor) {
-        playlist.player.paused ? playlist.player.play() : playlist.player.pause();
-    } else {
-        playlist.select(anchors.indexOf(anchor));
-    }
+const handleClick = (
+	playlist: Playlist,
+	anchor: HTMLAnchorElement,
+	anchors: HTMLAnchorElement[],
+): void => {
+	if (anchors[playlist.current] === anchor) {
+		playlist.player.paused ? playlist.player.play() : playlist.player.pause();
+	} else {
+		playlist.select(anchors.indexOf(anchor));
+	}
 };
 
 /**
@@ -45,23 +65,23 @@ const handleClick = (playlist: Playlist, anchor: HTMLAnchorElement, anchors: HTM
  * @returns {void}
  */
 const handlePlay = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => {
-    const icon = resolveIcon(anchors[playlist.current]);
+	const icon = resolveIcon(anchors[playlist.current]);
 
-    if (!icon) return;
+	if (!icon) return;
 
-    addClass(removeClass(icon, 'fa-play'), 'fa-pause');
-    addClass(anchors[playlist.current], 'is-active');
+	addClass(removeClass(icon, 'fa-play'), 'fa-pause');
+	addClass(anchors[playlist.current], 'is-active');
 
-    anchors
-        .filter((anchor) => anchor !== anchors[playlist.current])
-        .forEach((anchor) => {
-            const icon = resolveIcon(anchor);
+	for (const anchor of anchors.filter(
+		(anchor) => anchor !== anchors[playlist.current],
+	)) {
+		const icon = resolveIcon(anchor);
 
-            if (!icon) return;
+		if (!icon) return;
 
-            addClass(removeClass(icon, 'fa-pause'), 'fa-play');
-            removeClass(anchor, 'is-active');
-        });
+		addClass(removeClass(icon, 'fa-pause'), 'fa-play');
+		removeClass(anchor, 'is-active');
+	}
 };
 
 /**
@@ -71,12 +91,15 @@ const handlePlay = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => {
  * @param {HTMLAnchorElement[]} anchors
  * @returns {void}
  */
-const handlePause = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => {
-    const icon = resolveIcon(anchors[playlist.current]);
+const handlePause = (
+	playlist: Playlist,
+	anchors: HTMLAnchorElement[],
+): void => {
+	const icon = resolveIcon(anchors[playlist.current]);
 
-    if (!icon) return;
+	if (!icon) return;
 
-    addClass(removeClass(icon, 'fa-pause'), 'fa-play');
+	addClass(removeClass(icon, 'fa-pause'), 'fa-play');
 };
 
 /**
@@ -86,15 +109,18 @@ const handlePause = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => 
  * @param {HTMLAnchorElement[]} anchors
  * @returns {void}
  */
-const handleEnded = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => {
-    if (!playlist.ended) return;
+const handleEnded = (
+	playlist: Playlist,
+	anchors: HTMLAnchorElement[],
+): void => {
+	if (!playlist.ended) return;
 
-    const icon = resolveIcon(anchors[playlist.current]);
+	const icon = resolveIcon(anchors[playlist.current]);
 
-    if (!icon) return;
+	if (!icon) return;
 
-    addClass(removeClass(icon, 'fa-pause'), 'fa-play');
-    removeClass(anchors[playlist.current], 'is-active');
+	addClass(removeClass(icon, 'fa-pause'), 'fa-play');
+	removeClass(anchors[playlist.current], 'is-active');
 };
 
 /**
@@ -103,8 +129,10 @@ const handleEnded = (playlist: Playlist, anchors: HTMLAnchorElement[]): void => 
  * @param {HTMLAnchorElement} anchor
  * @returns {(?HTMLLIElement|undefined)}
  */
-const resolveIcon = (anchor: HTMLAnchorElement): HTMLLIElement | undefined | null => {
-    if (!anchor.firstElementChild) return;
+const resolveIcon = (
+	anchor: HTMLAnchorElement,
+): HTMLLIElement | undefined | null => {
+	if (!anchor.firstElementChild) return;
 
-    return anchor.firstElementChild.firstElementChild as HTMLLIElement | null;
+	return anchor.firstElementChild.firstElementChild as HTMLLIElement | null;
 };

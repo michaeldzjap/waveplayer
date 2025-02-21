@@ -6,11 +6,11 @@
  * @returns {boolean}
  */
 export const hasClass = (element: HTMLElement, className: string): boolean => {
-    if (element.classList) {
-        return element.classList.contains(className);
-    }
+	if (element.classList) {
+		return element.classList.contains(className);
+	}
 
-    return !!element.className.match(new RegExp(`(\\s|^)${className}(\\s|$)`));
+	return !!element.className.match(new RegExp(`(\\s|^)${className}(\\s|$)`));
 };
 
 /**
@@ -20,14 +20,17 @@ export const hasClass = (element: HTMLElement, className: string): boolean => {
  * @param {string} className
  * @returns {HTMLElement}
  */
-export const addClass = (element: HTMLElement, className: string): HTMLElement => {
-    if (element.classList) {
-        element.classList.add(className);
-    } else if (!hasClass(element, className)) {
-        element.className += ` ${className}`;
-    }
+export const addClass = (
+	element: HTMLElement,
+	className: string,
+): HTMLElement => {
+	if (element.classList) {
+		element.classList.add(className);
+	} else if (!hasClass(element, className)) {
+		element.className += ` ${className}`;
+	}
 
-    return element;
+	return element;
 };
 
 /**
@@ -37,14 +40,20 @@ export const addClass = (element: HTMLElement, className: string): HTMLElement =
  * @param {string} className
  * @returns {HTMLElement}
  */
-export const removeClass = (element: HTMLElement, className: string): HTMLElement => {
-    if (element.classList) {
-        element.classList.remove(className);
-    } else if (hasClass(element, className)) {
-        element.className = element.className.replace(new RegExp(`(\\s|^)${className}(\\s|$)`), ' ');
-    }
+export const removeClass = (
+	element: HTMLElement,
+	className: string,
+): HTMLElement => {
+	if (element.classList) {
+		element.classList.remove(className);
+	} else if (hasClass(element, className)) {
+		element.className = element.className.replace(
+			new RegExp(`(\\s|^)${className}(\\s|$)`),
+			' ',
+		);
+	}
 
-    return element;
+	return element;
 };
 
 /**
@@ -55,10 +64,14 @@ export const removeClass = (element: HTMLElement, className: string): HTMLElemen
  * @param {string} secondClass
  * @returns {void}
  */
-export const toggleClass = (element: HTMLElement, firstClass: string, secondClass: string): void => {
-    if (hasClass(element, firstClass)) {
-        addClass(removeClass(element, firstClass), secondClass);
-    } else {
-        addClass(removeClass(element, secondClass), firstClass);
-    }
+export const toggleClass = (
+	element: HTMLElement,
+	firstClass: string,
+	secondClass: string,
+): void => {
+	if (hasClass(element, firstClass)) {
+		addClass(removeClass(element, firstClass), secondClass);
+	} else {
+		addClass(removeClass(element, secondClass), firstClass);
+	}
 };

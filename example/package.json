@@ -1,38 +1,32 @@
 {
-  "name": "waveplayer-examples",
-  "version": "2.0.0",
-  "description": "Waveplayer examples",
-  "scripts": {
-    "build": "./node_modules/.bin/webpack --progress",
-    "watch": "npm run build -- --watch",
-    "serve": "http-server ./"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/michaeldzjap/waveplayer.js.git"
-  },
-  "keywords": [
-    "audio",
-    "waveform",
-    "canvas",
-    "html",
-    "javascript"
-  ],
-  "author": "Michael Dzjaparidze",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/michaeldzjap/waveplayer.js/issues"
-  },
-  "homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.2.1",
-    "bulma": "^1.0.1",
-    "http-server": "^14.1.1"
-  },
-  "devDependencies": {
-    "ts-loader": "^9.4.1",
-    "typescript": "^5.0.2",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.0"
-  }
+	"name": "waveplayer-examples",
+	"version": "2.0.0",
+	"description": "Waveplayer examples",
+	"scripts": {
+		"build": "./node_modules/.bin/webpack --progress",
+		"watch": "npm run build -- --watch",
+		"serve": "http-server ./"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/michaeldzjap/waveplayer.js.git"
+	},
+	"keywords": ["audio", "waveform", "canvas", "html", "javascript"],
+	"author": "Michael Dzjaparidze",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/michaeldzjap/waveplayer.js/issues"
+	},
+	"homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
+	"dependencies": {
+		"@fortawesome/fontawesome-free": "^6.2.1",
+		"bulma": "^1.0.1",
+		"http-server": "^14.1.1"
+	},
+	"devDependencies": {
+		"ts-loader": "^9.4.1",
+		"typescript": "^5.0.2",
+		"webpack": "^5.75.0",
+		"webpack-cli": "^5.0.0"
+	}
 }
