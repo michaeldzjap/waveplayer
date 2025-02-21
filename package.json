@@ -4,7 +4,9 @@
 	"description": "A HTML and JavaScript based audio player with a waveform view",
 	"main": "dist/waveplayer.js",
 	"module": "dist/waveplayer.es.js",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"test": "cross-env NODE_ENV=test npx jest",
 		"development": "cross-env NODE_ENV=local npx rollup --config rollup.config.ts --configPlugin typescript",
@@ -13,13 +15,20 @@
 		"prod": "npm run production",
 		"watch": "cross-env NODE_ENV=local npx rollup --config rollup.config.ts --configPlugin typescript --watch",
 		"check": "./node_modules/.bin/biome check --write ./",
-		"clean": "rm -rf dist"
+		"clean": "rm -rf dist",
+		"prepare": "husky"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/michaeldzjap/waveplayer.js.git"
 	},
-	"keywords": ["audio", "waveform", "canvas", "html", "javascript"],
+	"keywords": [
+		"audio",
+		"waveform",
+		"canvas",
+		"html",
+		"javascript"
+	],
 	"author": "Michael Dzjaparidze",
 	"license": "MIT",
 	"bugs": {
@@ -36,7 +45,7 @@
 		"@types/jest": "^29.2.2",
 		"canvas": "^3.1.0",
 		"cross-env": "^7.0.3",
-		"husky": "^9.0.11",
+		"husky": "^9.1.7",
 		"jest": "^29.3.1",
 		"jest-environment-jsdom": "^29.3.1",
 		"lint-staged": "^15.2.0",
