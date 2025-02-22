@@ -20,7 +20,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/michaeldzjap/waveplayer.js.git"
+		"url": "git+https://github.com/michaeldzjap/waveplayer.git"
 	},
 	"keywords": [
 		"audio",
@@ -32,9 +32,9 @@
 	"author": "Michael Dzjaparidze",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/michaeldzjap/waveplayer.js/issues"
+		"url": "https://github.com/michaeldzjap/waveplayer/issues"
 	},
-	"homepage": "https://github.com/michaeldzjap/waveplayer.js#readme",
+	"homepage": "https://github.com/michaeldzjap/waveplayer#readme",
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@rollup/plugin-commonjs": "^28.0.2",
