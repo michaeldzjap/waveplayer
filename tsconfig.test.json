@@ -1,8 +1,7 @@
 {
-	"extends": "./tsconfig.base",
-	"compilerOptions": {
-		"target": "es6",
-		"esModuleInterop": true
-	},
-	"include": ["__tests__/**/*"]
+  "extends": "./tsconfig.base",
+  "compilerOptions": {
+    "verbatimModuleSyntax": false
+  },
+  "include": ["__tests__/**/*"]
 }
