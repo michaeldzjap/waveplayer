@@ -4,7 +4,7 @@
 ![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/michaeldzjap/waveplayer)
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/michaeldzjap/waveplayer/branch/master/graph/badge.svg)](https://codecov.io/gh/michaeldzjap/waveplayer)
-[![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-highlight.svg)](https://sonarcloud.io/summary/new_code?id=michaeldzjap_waveplayer)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=michaeldzjap_waveplayer)](https://sonarcloud.io/summary/new_code?id=michaeldzjap_waveplayer)
 [![License](https://img.shields.io/npm/l/waveplayer.svg)](https://github.com/michaeldzjap/waveplayer.js/blob/master/LICENSE)
 
 # waveplayer
