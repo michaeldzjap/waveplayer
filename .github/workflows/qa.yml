@@ -35,9 +35,8 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '23.x' }}
-    - name: SonarCloud scan
-      uses: sonarsource/sonarcloud-github-action@master
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '23.x' }}
+    - name: SonarQube scan
+      uses: SonarSource/sonarqube-scan-action@v4
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '23.x' }}
