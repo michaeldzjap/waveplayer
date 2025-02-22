@@ -11,7 +11,7 @@
 
 An _HTML5_ based audio player with a waveform view.
 
-![Screenshot](waveform.png?raw=true "Example")
+![Screenshot](waveplayer.png?raw=true "Example")
 
 Author: _Michael Dzjaparidze_
 
