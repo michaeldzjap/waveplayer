@@ -453,7 +453,6 @@ class Player implements PlayerContract {
 	 * @returns {(number[]|Object)}
 	 */
 	private parseCachedData(key: string): number[] | { [key: string]: number[] } {
-		// eslint-disable-next-line require-jsdoc
 		const guard = (
 			data: unknown,
 		): data is number[] | { [key: string]: number[] } =>

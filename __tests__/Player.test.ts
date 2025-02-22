@@ -216,7 +216,6 @@ describe('Player', () => {
 		if (!audioElement) return;
 
 		Object.defineProperty(ViewMock.prototype, 'progress', {
-			// eslint-disable-next-line require-jsdoc, @typescript-eslint/no-empty-function
 			set: jest.fn(),
 			configurable: true,
 		});

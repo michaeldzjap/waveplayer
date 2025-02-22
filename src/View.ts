@@ -412,7 +412,6 @@ class View implements ViewContract {
 	 * @returns {ViewColors}
 	 */
 	private createColorVariations(): ViewColors {
-		// eslint-disable-next-line require-jsdoc
 		const createColorVariation = (color: string): [RgbColor, RgbColor] => {
 			const rgb = hex2rgb(color);
 			const hsv = rgb2hsv(rgb);

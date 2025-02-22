@@ -64,7 +64,6 @@ const mockWebAudio = (numberOfChannels: number, data: Float32Array[]) => {
 		decodeAudioData: mockDecodeAudioData,
 	}));
 
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	window.AudioContext = mockAudioContext;
 
