@@ -14,11 +14,27 @@ import Playlist from './Playlist';
 import View from './View';
 import type { PlayerOptions, Strategy } from './types/Player';
 import type { ViewOptions } from './types/View';
+import { pick } from './utils';
 
 type Options = Readonly<Partial<PlayerOptions>> &
 	Readonly<
 		Partial<Omit<ViewOptions, 'container'>> & Pick<ViewOptions, 'container'>
 	>;
+
+const PLAYER_OPTIONS: (keyof PlayerOptions)[] = ['audioElement', 'preload'];
+const VIEW_OPTIONS: (keyof ViewOptions)[] = [
+	'container',
+	'width',
+	'height',
+	'waveformColor',
+	'progressColor',
+	'barWidth',
+	'barGap',
+	'responsive',
+	'gradient',
+	'interact',
+	'redraw',
+];
 
 /**
  * @class
@@ -32,9 +48,10 @@ class Factory {
 	 * @return {Player}
 	 */
 	public static createPlayer(options: Options): Player {
-		const { audioElement, preload, ...viewOptions } = options;
-
-		return new Player(new View([], viewOptions), { audioElement, preload });
+		return new Player(
+			new View([], pick(options, VIEW_OPTIONS)),
+			pick(options, PLAYER_OPTIONS),
+		);
 	}
 
 	/**
@@ -47,11 +64,10 @@ class Factory {
 		tracks: Readonly<{ url: string; strategy: Strategy }[]>,
 		options: Options,
 	) {
-		const { audioElement, preload, ...viewOptions } = options;
-		const player = new Player(new View([], viewOptions), {
-			audioElement,
-			preload,
-		});
+		const player = new Player(
+			new View([], pick(options, VIEW_OPTIONS)),
+			pick(options, PLAYER_OPTIONS),
+		);
 
 		return new Playlist(player, tracks);
 	}

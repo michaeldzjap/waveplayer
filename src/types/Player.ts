@@ -23,7 +23,7 @@ type Strategy = DataStrategy | JsonStrategy | WebAudioStrategy;
 
 interface PlayerOptions {
 	audioElement?: HTMLAudioElement | string;
-	preload: '' | 'metadata' | 'none' | 'auto';
+	preload: 'metadata' | 'none' | 'auto';
 }
 
 interface Player {
