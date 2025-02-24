@@ -6,6 +6,7 @@ import {
 	getJson,
 	hex2rgb,
 	hsv2rgb,
+	pick,
 	rgb2hsv,
 	style,
 	throttle,
@@ -159,6 +160,25 @@ describe('utils', () => {
 			);
 			expect(mockOpen).toHaveBeenCalledWith('GET', '/sample.json');
 			expect(mockSend).toHaveBeenCalled();
+		});
+	});
+
+	describe('pick', () => {
+		it('returns a copy of an object only containing selected properties', () => {
+			expect(
+				pick(
+					{
+						a: 1,
+						b: 2,
+						c: 3,
+						d: 4,
+					},
+					['b', 'd'],
+				),
+			).toEqual({
+				b: 2,
+				d: 4,
+			});
 		});
 	});
 });

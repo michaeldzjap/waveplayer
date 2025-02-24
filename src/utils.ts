@@ -181,3 +181,26 @@ export const getJson = <T>(url: string): Promise<T> => {
 		request.send();
 	});
 };
+
+/**
+ * Pick selected properties from an object.
+ *
+ * @param {Object} obj
+ * @param {string[]} keys
+ * @returns {Object}
+ */
+export const pick = <T extends object, K extends keyof T>(
+	obj: T,
+	keys: K[],
+): Pick<T, K> => {
+	return keys.reduce(
+		(result, key) => {
+			if (Object.hasOwnProperty.call(obj, key)) {
+				result[key] = obj[key];
+			}
+
+			return result;
+		},
+		{} as Pick<T, K>,
+	);
+};
