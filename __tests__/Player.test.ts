@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom';
 
-import Player from '../src/Player';
-import View from '../src/View';
 import * as audio from '../src/audio';
+import Player from '../src/Player';
 import * as utils from '../src/utils';
+import View from '../src/View';
 import sine from './stubs/sine';
 
 jest.mock('../src/View');

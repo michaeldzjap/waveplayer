@@ -3,6 +3,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ES6",
+    "lib": ["ESNext"],
     "noEmit": true,
     "removeComments": true,
     "resolveJsonModule": true,

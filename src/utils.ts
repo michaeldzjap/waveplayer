@@ -195,7 +195,7 @@ export const pick = <T extends object, K extends keyof T>(
 ): Pick<T, K> => {
 	return keys.reduce(
 		(result, key) => {
-			if (Object.hasOwnProperty.call(obj, key)) {
+			if (Object.hasOwn(obj, key)) {
 				result[key] = obj[key];
 			}
 

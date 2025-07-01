@@ -357,7 +357,9 @@ class Player implements PlayerContract {
 	 */
 	private applyDataStrategy({
 		data,
-	}: { data: number[] | { [key: string]: number[] } }): void {
+	}: {
+		data: number[] | { [key: string]: number[] };
+	}): void {
 		this._view.data = Array.isArray(data) ? data : data[Object.keys(data)[0]];
 	}
 

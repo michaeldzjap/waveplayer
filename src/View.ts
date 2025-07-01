@@ -9,12 +9,12 @@
  * This work is licensed under the MIT License (MIT)
  */
 
+import type { RgbColor } from './types/utils';
 import type {
 	ViewColors,
 	View as ViewContract,
 	ViewOptions,
 } from './types/View';
-import type { RgbColor } from './types/utils';
 import { average, hex2rgb, hsv2rgb, rgb2hsv, style, throttle } from './utils';
 
 /**

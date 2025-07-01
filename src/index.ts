@@ -11,10 +11,10 @@
 
 import Player from './Player';
 import Playlist from './Playlist';
-import View from './View';
 import type { PlayerOptions, Strategy } from './types/Player';
 import type { ViewOptions } from './types/View';
 import { pick } from './utils';
+import View from './View';
 
 type Options = Readonly<Partial<PlayerOptions>> &
 	Readonly<
