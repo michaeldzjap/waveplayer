@@ -3,7 +3,7 @@
 		"moduleResolution": "node",
 		"target": "es6",
 		"module": "esnext",
-		"lib": ["es6", "es7", "dom"],
+		"lib": ["ESNext", "DOM"],
 		"removeComments": true,
 		"strict": true,
 		"sourceMap": true,
