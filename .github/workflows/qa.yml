@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [21.x, 22.x, 23.x]
+        node-version: [22.x, 23.x, 24.x]
     steps:
     - name: Check out repository code
       uses: actions/checkout@v4
@@ -32,11 +32,9 @@ jobs:
       run: npm run test
     - name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '23.x' }}
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '24.x' }}
     - name: SonarQube scan
       uses: SonarSource/sonarqube-scan-action@v4
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '23.x' }}
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '24.x' }}
