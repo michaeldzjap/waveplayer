@@ -44,7 +44,7 @@
 		"@testing-library/jest-dom": "^6.1.5",
 		"@types/jest": "^30.0.0",
 		"canvas": "^3.1.0",
-		"cross-env": "^7.0.3",
+		"cross-env": "^10.0.0",
 		"husky": "^9.1.7",
 		"jest": "^30.0.3",
 		"jest-environment-jsdom": "^30.0.2",
