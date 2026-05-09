@@ -10,4 +10,4 @@ interface HsvColor {
 	v: number;
 }
 
-export type { RgbColor, HsvColor };
+export type { HsvColor, RgbColor };

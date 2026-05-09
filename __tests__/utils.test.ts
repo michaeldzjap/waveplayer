@@ -35,11 +35,11 @@ const mockXHR = (status: number) => {
 		status,
 	};
 
-	// @ts-ignore
+	// @ts-expect-error
 	window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
 
 	setTimeout(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		xhrMock.onload();
 	}, 0);
 

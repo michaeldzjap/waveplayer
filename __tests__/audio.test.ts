@@ -32,11 +32,11 @@ const mockXHR = async (filename: string) => {
 		status: 200,
 	};
 
-	// @ts-ignore
+	// @ts-expect-error
 	window.XMLHttpRequest = jest.fn().mockImplementation(() => xhrMock);
 
 	setTimeout(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		xhrMock.onload();
 	}, 0);
 
@@ -64,7 +64,7 @@ const mockWebAudio = (numberOfChannels: number, data: Float32Array[]) => {
 		decodeAudioData: mockDecodeAudioData,
 	}));
 
-	// @ts-ignore
+	// @ts-expect-error
 	window.AudioContext = mockAudioContext;
 
 	return { mockDecodeAudioData, mockGetChannelData };
