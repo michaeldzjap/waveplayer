@@ -1,14 +1,15 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"target": "es6",
-		"module": "esnext",
+		"moduleResolution": "Bundler",
+		"target": "ESNext",
+		"module": "ESNext",
 		"lib": ["ESNext", "DOM"],
 		"removeComments": true,
 		"strict": true,
 		"sourceMap": true,
 		"declaration": true,
 		"declarationDir": "./dist",
+		"rootDir": "..",
 		"outDir": "./dist"
 	},
 	"include": ["**/*"],
