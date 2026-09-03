@@ -1,6 +1,6 @@
 ![NPM Version](https://img.shields.io/npm/v/waveplayer.svg?branch=master)
 ![downloads](https://img.shields.io/npm/dt/waveplayer.svg)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/michaeldzjap/waveplayer/qa.yml?branch=master)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/michaeldzjap/waveplayer/ci.yml?branch=master)
 ![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/michaeldzjap/waveplayer)
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/michaeldzjap/waveplayer/branch/master/graph/badge.svg)](https://codecov.io/gh/michaeldzjap/waveplayer)
